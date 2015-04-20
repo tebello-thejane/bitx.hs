@@ -1,0 +1,7 @@
+.cabal-sandbox/
+dist/
+cabal.sandbox.config
+.project-dettings.yml
+
+*.*~
+
