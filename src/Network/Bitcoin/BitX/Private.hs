@@ -1,5 +1,8 @@
 module Network.Bitcoin.BitX.Private
   (
+  getAllOrders,
+  postOrder,
+  stopOrder
   ) where
 
 import Network.Bitcoin.BitX.Types
@@ -19,3 +22,5 @@ postOrder = undefined
 {- | Request to stop an order. -}
 
 stopOrder :: BitXAuth -> OrderID -> IO StopOrderSuccess
+stopOrder = undefined
+
