@@ -18,7 +18,8 @@ module Network.Bitcoin.BitX.Types
     StopOrderSuccess(..),
     PublicTrades,
     BitXError,
-    Tickers
+    Tickers,
+    PrivateOrders
   ) where
 
 import Data.Aeson (ToJSON(..), FromJSON(..))
@@ -93,6 +94,10 @@ type PrivateOrder =
          pair :: CcyPair,
          state :: OrderStatus,
          orderType :: OrderType } |]
+
+type PrivateOrders =
+    [record|
+        {orders :: [PrivateOrder]} |]
 
 type OrderID = Text
 

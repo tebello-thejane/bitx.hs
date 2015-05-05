@@ -13,7 +13,8 @@ module Network.Bitcoin.BitX.Types.Internal
     Tickers_(..),
     tickersConverter_,
     timestampMsToUTCTime_,
-    OrderRequest_(..)
+    OrderRequest_(..),
+    privateOrdersConverter_
     )
 where
 
@@ -338,3 +339,18 @@ tickersConverter_ (Tickers_ tickers''tickers) =
 
 instance BitXRecordConvert Tickers Tickers_ where
     aesToRec = tickersConverter_
+
+------------------------------------------ PrivateOrders type --------------------------------------
+
+data PrivateOrders_ = PrivateOrders_
+    {privateOrders'orders :: [PrivateOrder_]
+    } deriving (Read, Show)
+
+$(AesTH.deriveJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = chopUpToPrime} ''PrivateOrders_)
+
+privateOrdersConverter_ :: PrivateOrders_ -> PrivateOrders
+privateOrdersConverter_ (PrivateOrders_ privateOrders''orders) =
+    [record| {orders = map privateOrderConverter_ privateOrders''orders} |]
+
+instance BitXRecordConvert PrivateOrders PrivateOrders_ where
+    aesToRec = privateOrdersConverter_
