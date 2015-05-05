@@ -1,78 +1,122 @@
+{-# LANGUAGE DeriveGeneric, DefaultSignatures, QuasiQuotes, OverloadedStrings #-}
+
 module Network.Bitcoin.BitX.Types
   (
     Ticker,
-    CcyPair
+    CcyPair(..),
+    Orderbook,
+    Order,
+    Bid,
+    Ask,
+    Trade,
+    BitXAuth,
+    PrivateOrder,
+    OrderID,
+    OrderType(..),
+    OrderStatus(..),
+    OrderRequest,
+    StopOrderSuccess(..),
+    PublicTrades,
+    BitXError,
+    Tickers
   ) where
 
-import Data.Aeson (ToJSON, FromJSON)
+import Data.Aeson (ToJSON(..), FromJSON(..))
+import Data.Text (Text)
+import Data.Time.Clock
+import Record
+import GHC.Generics (Generic)
 import Data.Decimal
 
-data Ticker = Ticker {
-  timestamp :: Time,
-  bid :: Decimal,
-  ask :: Decimal,
-  last_trade :: Decimal,
-  rolling_24_hour_volume :: Decimal,
-  tickerPair :: CcyPair
-  } deriving (ToJSON, FromJSON)
+type BitXError =
+    [record|
+        {error :: Text,
+         errorCode :: Text} |]
 
-data CcyPair = XBTZAR | XBTNAD | ZARXBT | NADXBT
-  deriving (Show, Read)
+type Ticker =
+    [record|
+        {ask :: Decimal,
+         timestamp :: UTCTime,
+         bid :: Decimal,
+         rolling24HourVolume :: Decimal,
+         lastTrade :: Decimal,
+         pair :: CcyPair} |]
 
-data Orderbook = Orderbook {
-  orderTimestamp :: Time,
-  bids :: [Bid],
-  asks :: [Ask]
-} deriving (ToJSON, FromJSON)
+type Tickers =
+    [record|
+        {tickers :: [Ticker]} |]
 
-data Order = Order {
-  orderVolume :: Decimal,
-  orderPrice :: Decimal
-} deriving (ToJSON, FromJSON)
+data CcyPair = XBTZAR | XBTNAD | ZARXBT | NADXBT | XBTKES | KESXBT | XBTMYR | MYRXBT
+  deriving (Show, Read, Generic)
+
+type Orderbook =
+    [record|
+        {timestamp :: UTCTime,
+         bids :: [Bid],
+         asks :: [Ask]} |]
+
+type Order =
+    [record|
+        {volume :: Decimal,
+         price :: Decimal} |]
 
 type Bid = Order
 type Ask = Order
 
-data Trade = Trade {
-  tradeVolume :: Decimal,
-  tradeTimestamp :: Time,
-  tradePrice :: Decimal
-}
+type Trade =
+    [record|
+        {volume :: Decimal,
+         timestamp :: UTCTime,
+         price :: Decimal} |]
 
-data BitXAuth = BitXAuth {
-  bitXID :: String,
-  bitXSecret :: String
-}
+type PublicTrades =
+    [record|
+        {trades :: [Trade],
+         currency :: Text} |]
 
-data PrivateOrder = PrivateOrder {
-  base :: Decimal,
-  counter :: Decimal,
-  creationTimestamp :: Time,
-  expirationTimestamp :: Time,
-  feeBase :: Decimal,
-  feeCounter :: Decimal,
-  limitPrice :: Decimal,
-  limitVolume :: Decimal,
-  orderID :: OrderID,
-  privateOrderPair :: CcyPair,
-  state :: OrderStatus,
-  type :: OrderType
-}
+type BitXAuth =
+    [record|
+        {id :: Text,
+         secret :: Text} |]
 
-type OrderID = String
+type PrivateOrder =
+    [record|
+        {base :: Decimal,
+         counter :: Decimal,
+         creationTimestamp :: UTCTime,
+         expirationTimestamp :: UTCTime,
+         feeBase :: Decimal,
+         feeCounter :: Decimal,
+         limitPrice :: Decimal,
+         limitVolume :: Decimal,
+         orderID :: OrderID,
+         pair :: CcyPair,
+         state :: OrderStatus,
+         orderType :: OrderType } |]
 
-data OrderType = ASK | BID
+type OrderID = Text
 
-type OrderStatus = PENDING | COMPLETE
+data OrderType = ASK | BID deriving (Show, Read, Generic)
 
-data OrderRequest = OrderRequest {
-  requestPair :: CcyPair,
-  requestType :: OrderType,
-  requestVolume :: Decimal,
-  requestPrice :: Decimal,
-}
+data OrderStatus = PENDING | COMPLETE deriving (Show, Read, Generic)
 
-data StopOrderSuccess = StopOrderSuccess
+type OrderRequest =
+    [record|
+        {pair :: CcyPair,
+         requestType :: OrderType,
+         volume :: Decimal,
+         price :: Decimal } |]
 
+data StopOrderSuccess = StopOrderSuccess deriving (Show, Read, Generic)
 
+instance ToJSON CcyPair
+instance FromJSON CcyPair
 
+instance ToJSON OrderType
+instance FromJSON OrderType
+
+instance ToJSON OrderStatus
+instance FromJSON OrderStatus
+
+instance ToJSON StopOrderSuccess
+instance FromJSON StopOrderSuccess
