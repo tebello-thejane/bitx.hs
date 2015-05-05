@@ -1,10 +1,19 @@
+binary-ghc-args:
+- -O
+- -threaded
 module-template: ! 'module MODULE_NAME where
 
 '
 extensions: {}
-environment: default
+environment: ghc-7.8-stable-14.09
+auto-hidden: []
 cabal-file: project.cabal
 version: 1
+extra-packages: ! 'Hackage: base-prelude 0.1.19
+
+  Hackage: record 0.3.1.1
+
+  Hackage: Decimal 0.4.2'
 ghc-args: []
 excluded-modules:
 - Setup.hs
