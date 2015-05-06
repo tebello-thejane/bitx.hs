@@ -5,14 +5,13 @@
 
 module Network.Bitcoin.BitX.Types.Internal
     (
-    BitXRecordConvert(..),
+    BitXAesRecordConvert(..),
     Ticker_(..),
     tickerConverter_,
     BitXError_(..),
     bitXErrorConverter_,
     Tickers_(..),
     tickersConverter_,
-    timestampMsToUTCTime_,
     OrderRequest_(..),
     privateOrdersConverter_
     )
@@ -33,26 +32,24 @@ import Data.Monoid (mempty)
 import Network.Bitcoin.BitX.Internal
 import Data.Decimal
 
-timestampMsToUTCTime_ :: Text -> UTCTime
-timestampMsToUTCTime_ xx =
-     posixSecondsToUTCTime . fromRational . toRational $ ((read . reverse . div100Rev
-        . reverse . Txt.unpack $ xx) :: Decimal)
+timestampParse_ :: Integer -> UTCTime
+timestampParse_ = posixSecondsToUTCTime
+        . fromRational . toRational
+        . ( / 1000)
+        . (fromIntegral :: Integer -> Decimal)
      where
          div100Rev st = (take 3 st) ++ "." ++ (drop 3 st)
-
-timestampParse_ :: Integer -> UTCTime
-timestampParse_ = timestampMsToUTCTime_ . ((Txt.pack . show) :: (Integer -> Text))
 
 {-
 _UTCTimeToTimestampMs :: UTCTime -> Text
 _UTCTimeToTimestampMs = undefined
 -}
 
-class (FromJSON aes, ToJSON aes) => BitXRecordConvert rec aes | rec -> aes where
+class (FromJSON aes) => BitXAesRecordConvert rec aes | rec -> aes where
     aesToRec :: aes -> rec
-    recToAes :: rec -> aes
 
-    recToAes = undefined
+class (ToJSON aes) => BitXRecordAesConvert rec aes | rec -> aes where
+    recToAes :: rec -> aes
 
 -------------------------------------------- Ticker type -------------------------------------------
 
@@ -90,7 +87,7 @@ tickerConverter_ (Ticker_ ticker''timestamp ticker''bid ticker''ask ticker''last
               rolling24HourVolume = ticker''rolling24HourVolume,
               pair = ticker''pair} |]
 
-instance BitXRecordConvert Ticker Ticker_ where
+instance BitXAesRecordConvert Ticker Ticker_ where
     aesToRec = tickerConverter_
 
 -------------------------------------------- BitXError type ----------------------------------------
@@ -107,7 +104,7 @@ bitXErrorConverter_ (BitXError_ bitXError''error bitXError''error_code) =
     [record| {error = bitXError''error,
               errorCode = bitXError''error_code} |]
 
-instance BitXRecordConvert BitXError BitXError_ where
+instance BitXAesRecordConvert BitXError BitXError_ where
     aesToRec = bitXErrorConverter_
 
 -------------------------------------------- Order type --------------------------------------------
@@ -132,7 +129,7 @@ orderConverter_ (Order_ order''volume order''price) =
     [record| {volume = order''volume,
               price = order''price} |]
 
-instance BitXRecordConvert Order Order_ where
+instance BitXAesRecordConvert Order Order_ where
     aesToRec = orderConverter_
 
 -------------------------------------------- Orderbook type ----------------------------------------
@@ -163,7 +160,7 @@ orderbookConverter_ (Orderbook_ orderbook''timestamp orderbook''bids orderbook''
               bids = map orderConverter_ orderbook''bids,
               asks = map orderConverter_ orderbook''asks} |]
 
-instance BitXRecordConvert Orderbook Orderbook_ where
+instance BitXAesRecordConvert Orderbook Orderbook_ where
     aesToRec = orderbookConverter_
 
 -------------------------------------------- Trade type --------------------------------------------
@@ -192,7 +189,7 @@ tradeConverter_ (Trade_ trade''volume trade''timestamp trade''price) =
               timestamp = trade''timestamp,
               price = trade''price} |]
 
-instance BitXRecordConvert Trade Trade_ where
+instance BitXAesRecordConvert Trade Trade_ where
     aesToRec = tradeConverter_
 
 ----------------------------------------- PublicTrades type ----------------------------------------
@@ -210,7 +207,7 @@ publicTradesConverter_ (PublicTrades_ publicTrades''trades publicTrades''currenc
     [record| {trades = map tradeConverter_ publicTrades''trades,
               currency = publicTrades''currency} |]
 
-instance BitXRecordConvert PublicTrades PublicTrades_ where
+instance BitXAesRecordConvert PublicTrades PublicTrades_ where
     aesToRec = publicTradesConverter_
 
 -------------------------------------------- BitXAuth type -----------------------------------------
@@ -233,8 +230,7 @@ bitXAuthConverterRev_ :: BitXAuth -> BitXAuth_
 bitXAuthConverterRev_ bxa =
     BitXAuth_ (view [lens| id |] bxa) (view [lens| secret |] bxa)
 
-instance BitXRecordConvert BitXAuth BitXAuth_ where
-    aesToRec = undefined
+instance BitXRecordAesConvert BitXAuth BitXAuth_ where   
     recToAes = bitXAuthConverterRev_
 
 ------------------------------------------ PrivateOrder type ---------------------------------------
@@ -292,7 +288,7 @@ privateOrderConverter_ (PrivateOrder_ privateOrder''base privateOrder''counter
               state = privateOrder''state,
               orderType = privateOrder''type} |]
 
-instance BitXRecordConvert PrivateOrder PrivateOrder_ where
+instance BitXAesRecordConvert PrivateOrder PrivateOrder_ where
     aesToRec = privateOrderConverter_
 
 ------------------------------------------ OrderRequest type ---------------------------------------
@@ -321,8 +317,7 @@ orderRequestConverterRev_ oreq =
     OrderRequest_ (view [lens| pair |] oreq) (view [lens| requestType |] oreq)
         (view [lens| volume |] oreq) (view [lens| price |] oreq)
 
-instance BitXRecordConvert OrderRequest OrderRequest_ where
-    aesToRec = undefined
+instance BitXRecordAesConvert OrderRequest OrderRequest_ where
     recToAes = orderRequestConverterRev_
 
 --------------------------------------------- Tickers type -----------------------------------------
@@ -337,7 +332,7 @@ tickersConverter_ :: Tickers_ -> Tickers
 tickersConverter_ (Tickers_ tickers''tickers) =
     [record| {tickers = map tickerConverter_ tickers''tickers} |]
 
-instance BitXRecordConvert Tickers Tickers_ where
+instance BitXAesRecordConvert Tickers Tickers_ where
     aesToRec = tickersConverter_
 
 ------------------------------------------ PrivateOrders type --------------------------------------
@@ -352,5 +347,5 @@ privateOrdersConverter_ :: PrivateOrders_ -> PrivateOrders
 privateOrdersConverter_ (PrivateOrders_ privateOrders''orders) =
     [record| {orders = map privateOrderConverter_ privateOrders''orders} |]
 
-instance BitXRecordConvert PrivateOrders PrivateOrders_ where
+instance BitXAesRecordConvert PrivateOrders PrivateOrders_ where
     aesToRec = privateOrdersConverter_
