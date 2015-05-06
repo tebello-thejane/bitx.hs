@@ -12,7 +12,7 @@ import Network.Bitcoin.BitX.Types.Internal
 import qualified Network.HTTP.Conduit as NetCon
 import qualified Data.ByteString.Lazy as BL
 import Control.Exception (try, SomeException)
-import Network (withSockets)
+import Network (withSocketsDo)
 
 simpleBitXGet_ :: BitXRecordConvert rec aes => String -> IO (Maybe (Either BitXError rec))
 simpleBitXGet_ verb = withSockets $ do
