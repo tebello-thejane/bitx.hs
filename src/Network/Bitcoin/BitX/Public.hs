@@ -12,9 +12,10 @@ import Network.Bitcoin.BitX.Types.Internal
 import qualified Network.HTTP.Conduit as NetCon
 import qualified Data.ByteString.Lazy as BL
 import Control.Exception (try, SomeException)
+import Network (withSockets)
 
 simpleBitXGet_ :: BitXRecordConvert rec aes => String -> IO (Maybe (Either BitXError rec))
-simpleBitXGet_ verb = do
+simpleBitXGet_ verb = withSockets $ do
     resp <- try $ NetCon.simpleHttp ("https://api.mybitx.com/api/1/" ++ verb)
         :: IO (Either SomeException BL.ByteString)
     case resp of
