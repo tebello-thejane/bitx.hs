@@ -13,7 +13,9 @@ module Network.Bitcoin.BitX.Types.Internal
     Tickers_(..),
     tickersConverter_,
     OrderRequest_(..),
-    privateOrdersConverter_
+    privateOrdersConverter_,
+    BitXAuth_(..),
+    Order_(..)
     )
 where
 
@@ -121,9 +123,6 @@ instance FromJSON Order_ where
         <*> liftM read (v .: "price")
     parseJSON _ = mempty
 
-instance ToJSON Order_ where
-    toJSON _ = Null
-
 orderConverter_ :: Order_ -> Order
 orderConverter_ (Order_ order''volume order''price) =
     [record| {volume = order''volume,
@@ -151,9 +150,6 @@ instance FromJSON Orderbook_ where
         <*> (v .: "asks")
     parseJSON _ = mempty
 
-instance ToJSON Orderbook_ where
-    toJSON _ = Null
-
 orderbookConverter_ :: Orderbook_ -> Orderbook
 orderbookConverter_ (Orderbook_ orderbook''timestamp orderbook''bids orderbook''asks) =
     [record| {timestamp = orderbook''timestamp,
@@ -180,9 +176,6 @@ instance FromJSON Trade_ where
         <*> liftM read (v .: "price")
     parseJSON _ = mempty
 
-instance ToJSON Trade_ where
-    toJSON _ = Null
-
 tradeConverter_ :: Trade_ -> Trade
 tradeConverter_ (Trade_ trade''volume trade''timestamp trade''price) =
     [record| {volume = trade''volume,
@@ -199,7 +192,7 @@ data PublicTrades_ = PublicTrades_
     , publicTrades'currency :: Text
     } deriving (Show, Read)
 
-$(AesTH.deriveJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = chopUpToPrime}
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = chopUpToPrime}
     ''PublicTrades_)
 
 publicTradesConverter_ :: PublicTrades_ -> PublicTrades
@@ -217,7 +210,7 @@ data BitXAuth_ = BitXAuth_
     , bitXAuth'secret :: Text
     } deriving (Show, Read)
 
-$(AesTH.deriveJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = chopUpToPrime} ''BitXAuth_)
+$(AesTH.deriveToJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = chopUpToPrime} ''BitXAuth_)
 
 {-
 bitXAuthConverter_ :: BitXAuth_ -> BitXAuth
@@ -230,7 +223,7 @@ bitXAuthConverterRev_ :: BitXAuth -> BitXAuth_
 bitXAuthConverterRev_ bxa =
     BitXAuth_ (view [lens| id |] bxa) (view [lens| secret |] bxa)
 
-instance BitXRecordAesConvert BitXAuth BitXAuth_ where   
+instance BitXRecordAesConvert BitXAuth BitXAuth_ where
     recToAes = bitXAuthConverterRev_
 
 ------------------------------------------ PrivateOrder type ---------------------------------------
@@ -266,9 +259,6 @@ instance FromJSON PrivateOrder_ where
         <*> (v .: "state")
         <*> (v .: "type")
     parseJSON _ = mempty
-
-instance ToJSON PrivateOrder_ where
-    toJSON _ = Null
 
 privateOrderConverter_ :: PrivateOrder_ -> PrivateOrder
 privateOrderConverter_ (PrivateOrder_ privateOrder''base privateOrder''counter
@@ -309,9 +299,6 @@ instance ToJSON OrderRequest_ where
                ,   "price" .= show orderRequest''price
                ]
 
-instance FromJSON OrderRequest_ where
-    parseJSON _ = mempty
-
 orderRequestConverterRev_ :: OrderRequest -> OrderRequest_
 orderRequestConverterRev_ oreq =
     OrderRequest_ (view [lens| pair |] oreq) (view [lens| requestType |] oreq)
@@ -341,7 +328,8 @@ data PrivateOrders_ = PrivateOrders_
     {privateOrders'orders :: [PrivateOrder_]
     } deriving (Read, Show)
 
-$(AesTH.deriveJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = chopUpToPrime} ''PrivateOrders_)
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = chopUpToPrime}
+    ''PrivateOrders_)
 
 privateOrdersConverter_ :: PrivateOrders_ -> PrivateOrders
 privateOrdersConverter_ (PrivateOrders_ privateOrders''orders) =
