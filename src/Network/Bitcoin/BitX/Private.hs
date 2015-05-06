@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, QuasiQuotes, TemplateHaskell #-}
 
 module Network.Bitcoin.BitX.Private
   (
@@ -16,6 +16,10 @@ import qualified Data.ByteString.Lazy as BL
 import Data.Maybe (fromJust)
 import Network (withSocketsDo)
 import Network.Bitcoin.BitX.Types.Internal
+import Record (lens)
+import Record.Lens (view)
+import qualified Data.Text as Txt
+import qualified Data.Text.Encoding as Txt
 
 {- | Returns a list of the most recently placed orders.
 
@@ -24,8 +28,10 @@ This list is truncated after 100 items. -}
 getAllOrders :: BitXAuth -> Maybe CcyPair -> IO (Maybe (Either BitXError PrivateOrders))
 getAllOrders auth pair = withSocketsDo $ do
     --let request =
-    response <- try . NetCon.withManager . NetCon.httpLbs . NetCon.applyBasicAuth "a" "pass"
-        . fromJust . NetCon.parseUrl $ "http://google.com/"
+    response <- try . NetCon.withManager . NetCon.httpLbs . NetCon.applyBasicAuth
+          userID
+          userSecret
+        . fromJust . NetCon.parseUrl $ url
         :: IO (Either SomeException (Response BL.ByteString))
     case response of
         Left _  -> return Nothing -- gobble up all exceptions and just return Nothing
@@ -38,6 +44,13 @@ getAllOrders auth pair = withSocketsDo $ do
                     case respTT of
                         Just t  -> return (Just (Right (privateOrdersConverter_ t)))
                         Nothing -> return Nothing
+    where
+        userID = Txt.encodeUtf8 $ (view [lens| id |] auth)
+        userSecret = Txt.encodeUtf8 $ (view [lens| secret |] auth)
+        url =
+            case pair of
+                Nothing  -> "https://api.mybitx.com/api/1/listorders"
+                Just st  -> "https://api.mybitx.com/api/1/listorders?pair=" ++ show st
 
    {- case request of
         Nothing

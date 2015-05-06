@@ -28,7 +28,7 @@ import Data.Time.Clock
 import Data.Time.Clock.POSIX (posixSecondsToUTCTime)
 import Control.Monad (liftM)
 import Record
-import Record.Lens
+import Record.Lens (view)
 import Data.Monoid (mempty)
 import Network.Bitcoin.BitX.Internal
 import Data.Decimal
