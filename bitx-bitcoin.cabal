@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                bitx-bitcoin
-version:             0.1.0.0
+version:             0.0.1.0
 synopsis:            A Haskell library for working with the BitX bitcoin exchange.
 -- description:
 
@@ -39,6 +39,7 @@ library
 
   other-modules:
     Network.Bitcoin.BitX.Types.Internal
+    Network.Bitcoin.BitX.Internal
 
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:
