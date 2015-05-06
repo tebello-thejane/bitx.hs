@@ -15,7 +15,7 @@ import Control.Exception (try, SomeException)
 import Network (withSocketsDo)
 
 simpleBitXGet_ :: BitXRecordConvert rec aes => String -> IO (Maybe (Either BitXError rec))
-simpleBitXGet_ verb = withSockets $ do
+simpleBitXGet_ verb = withSocketsDo $ do
     resp <- try $ NetCon.simpleHttp ("https://api.mybitx.com/api/1/" ++ verb)
         :: IO (Either SomeException BL.ByteString)
     case resp of
