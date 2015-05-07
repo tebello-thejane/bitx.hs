@@ -12,7 +12,6 @@ module Network.Bitcoin.BitX.Types.Internal
     bitXErrorConverter_,
     Tickers_(..),
     tickersConverter_,
-    OrderRequest_(..),
     privateOrdersConverter_,
     --BitXAuth_(..),
     Order_(..),
@@ -287,13 +286,14 @@ instance BitXAesRecordConvert PrivateOrder PrivateOrder_ where
     aesToRec = privateOrderConverter_
 
 ------------------------------------------ OrderRequest type ---------------------------------------
-
+{-
 data OrderRequest_ = OrderRequest_
     { orderRequest'pair :: CcyPair
     , orderRequest'type :: OrderType
     , orderRequest'volume :: Decimal
     , orderRequest'price :: Decimal
     } deriving (Show, Read)
+-}
 {-
 instance ToJSON OrderRequest_ where
     toJSON (OrderRequest_ orderRequest''pair orderRequest''type orderRequest''volume
