@@ -3,7 +3,8 @@
 module Network.Bitcoin.BitX.Internal
     (
     simpleBitXGetAuth_,
-    simpleBitXGet_
+    simpleBitXGet_,
+    simpleBitXPOSTAuth_
     )
 where
 
@@ -58,28 +59,22 @@ consumeResponse :: BitXAesRecordConvert rec aes => Either SomeException BL.ByteS
 consumeResponse resp =
     case resp of
         Left _  -> return Nothing -- gobble up all exceptions and just return Nothing
-        Right k -> do
-            let respTE = (Aeson.decode $ k) -- is it a BitX error?
-            case respTE of
-                Just e  -> return (Just (Left (bitXErrorConverter_ e)))
-                Nothing -> do
-                    let respTT = (Aeson.decode $ k)
-                    case respTT of
-                        Just t  -> return (Just (Right (aesToRec t)))
-                        Nothing -> return Nothing
+        Right k -> bitXErrorOrPayload k
 
 consumeResponseBody :: BitXAesRecordConvert rec aes => Either SomeException (NetCon.Response BL.ByteString) -> IO (Maybe (Either BitXError rec))
 consumeResponseBody resp =
     case resp of
         Left _  -> return Nothing -- gobble up all exceptions and just return Nothing
-        Right k -> do
-            let respTE = (Aeson.decode $ NetCon.responseBody k) -- is it a BitX error?
+        Right k -> bitXErrorOrPayload $ NetCon.responseBody k
+
+bitXErrorOrPayload :: BitXAesRecordConvert rec aes => BL.ByteString -> IO (Maybe (Either BitXError rec))
+bitXErrorOrPayload body = do
+            let respTE = (Aeson.decode $ body) -- is it a BitX error?
             case respTE of
                 Just e  -> return (Just (Left (bitXErrorConverter_ e)))
                 Nothing -> do
-                    let respTT = (Aeson.decode $ NetCon.responseBody k)
+                    let respTT = (Aeson.decode $ body)
                     case respTT of
                         Just t  -> return (Just (Right (aesToRec t)))
                         Nothing -> return Nothing
-
 

@@ -269,7 +269,8 @@ data Tickers_ = Tickers_
     { tickers'tickers :: [Ticker_]
     } deriving (Show, Read)
 
-$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"} ''Tickers_)
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''Tickers_)
 
 tickersConverter_ :: Tickers_ -> Tickers
 tickersConverter_ (Tickers_ tickers''tickers) =
@@ -293,3 +294,19 @@ privateOrdersConverter_ (PrivateOrders_ privateOrders''orders) =
 
 instance BitXAesRecordConvert PrivateOrders PrivateOrders_ where
     aesToRec = privateOrdersConverter_
+
+----------------------------------------- OrderIDResponse type -------------------------------------
+
+data OrderIDResponse_ = OrderIDResponse_
+    { orderIDResponse'order_id :: OrderID
+    } deriving (Show, Read)
+
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''OrderIDResponse_)
+
+orderIDResponseConverter_ :: OrderIDResponse_ -> OrderIDResponse
+orderIDResponseConverter_ (OrderIDResponse_ orderIDResponse''order_id) =
+    [record| {orderID = orderIDResponse''order_id} |]
+
+instance BitXAesRecordConvert OrderIDResponse OrderIDResponse_ where
+    aesToRec = orderIDResponseConverter_

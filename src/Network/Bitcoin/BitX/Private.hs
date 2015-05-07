@@ -51,8 +51,8 @@ getPendingOrders auth pair = simpleBitXGetAuth_ auth url
 
 {- | Create a new order. -}
 
-postOrder :: BitXAuth -> OrderRequest -> IO OrderID
-postOrder = undefined
+postOrder :: BitXAuth -> OrderRequest -> IO (Maybe (Either BitXError OrderIDResponse))
+postOrder auth oreq = simpleBitXPOSTAuth_ auth oreq "postorder"
 
 {- | Request to stop an order. -}
 

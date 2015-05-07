@@ -38,7 +38,8 @@ module Network.Bitcoin.BitX.Types
     PublicTrades,
     BitXError,
     Tickers,
-    PrivateOrders
+    PrivateOrders,
+    OrderIDResponse
   ) where
 
 import Data.Aeson (ToJSON(..), FromJSON(..))
@@ -123,6 +124,10 @@ type PrivateOrders =
         {orders :: [PrivateOrder]} |]
 
 type OrderID = Text
+
+type OrderIDResponse =
+    [record|
+        {orderID :: OrderID} |]
 
 data OrderType = ASK | BID deriving (Show, Read, Generic)
 
