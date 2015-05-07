@@ -1,5 +1,24 @@
 {-# LANGUAGE DeriveGeneric, DefaultSignatures, QuasiQuotes, OverloadedStrings #-}
 
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Network.Bitcoin.BitX.Types
+-- Copyright   :  No Rights Reserved
+-- License     :  Public Domain
+--
+-- Maintainer  :  Tebello Thejane <zyxoas+hackage@gmail.com>
+-- Stability   :  Experimental
+-- Portability :  non-portable (GHC Extensions)
+--
+-- The types used for the various BitX API calls.
+--
+-- Note that these are all `record` types, as provided by Nikita Volkov's
+-- `record` library. The main motivation for using the `record` library was
+-- to avoid using record field prefixes and other awkward hacks to get around
+-- the fact that Haskell does not yet have a real records' system.
+--
+-----------------------------------------------------------------------------
+
 module Network.Bitcoin.BitX.Types
   (
     Ticker,
@@ -29,6 +48,10 @@ import Record
 import GHC.Generics (Generic)
 import Data.Decimal
 
+-- | A record representing a possible error which the BitX API might return,
+-- instead of returning the requested data. Note that as yet there is no
+-- exhaustive list of error codes available, so comparisons will have to be
+-- done via Text comparisons (as opposed to typed pattern matching). Sorry...
 type BitXError =
     [record|
         {error :: Text,
