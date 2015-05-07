@@ -15,7 +15,7 @@ module Network.Bitcoin.BitX.Types.Internal
     privateOrdersConverter_,
     --BitXAuth_(..),
     Order_(..),
-    POSTEncodeable
+    POSTEncodeable(..)
     )
 where
 
@@ -32,9 +32,9 @@ import Control.Monad (liftM)
 import Record
 import Record.Lens (view)
 import Data.Monoid (mempty)
-import Network.Bitcoin.BitX.Internal
 import Data.Decimal
 import Data.ByteString (ByteString)
+import Data.List.Split (splitOn)
 
 timestampParse_ :: Integer -> UTCTime
 timestampParse_ = posixSecondsToUTCTime
@@ -44,16 +44,8 @@ timestampParse_ = posixSecondsToUTCTime
      where
          div100Rev st = (take 3 st) ++ "." ++ (drop 3 st)
 
-{-
-_UTCTimeToTimestampMs :: UTCTime -> Text
-_UTCTimeToTimestampMs = undefined
--}
-
 class (FromJSON aes) => BitXAesRecordConvert rec aes | rec -> aes where
     aesToRec :: aes -> rec
-
---class (ToJSON aes) => BitXRecordAesConvert rec aes | rec -> aes where
---    recToAes :: rec -> aes
 
 class POSTEncodeable rec where
     postEncode :: rec -> [(ByteString, ByteString)]
@@ -103,7 +95,7 @@ data BitXError_= BitXError_
       bitXError'error_code :: Text
     } deriving (Show, Read)
 
-$(AesTH.deriveJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = chopUpToPrime} ''BitXError_)
+$(AesTH.deriveJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"} ''BitXError_)
 
 bitXErrorConverter_ :: BitXError_ -> BitXError
 bitXErrorConverter_ (BitXError_ bitXError''error bitXError''error_code) =
@@ -196,7 +188,7 @@ data PublicTrades_ = PublicTrades_
     , publicTrades'currency :: Text
     } deriving (Show, Read)
 
-$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = chopUpToPrime}
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''PublicTrades_)
 
 publicTradesConverter_ :: PublicTrades_ -> PublicTrades
@@ -206,29 +198,6 @@ publicTradesConverter_ (PublicTrades_ publicTrades''trades publicTrades''currenc
 
 instance BitXAesRecordConvert PublicTrades PublicTrades_ where
     aesToRec = publicTradesConverter_
-
-{-
--------------------------------------------- BitXAuth type -----------------------------------------
-
-data BitXAuth_ = BitXAuth_
-    { bitXAuth'id :: Text
-    , bitXAuth'secret :: Text
-    } deriving (Show, Read)
--}
-{-
-$(AesTH.deriveToJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = chopUpToPrime} ''BitXAuth_)
--}
-{-
-bitXAuthConverter_ :: BitXAuth_ -> BitXAuth
-bitXAuthConverter_ (BitXAuth_ bitXAuth''id bitXAuth''secret) =
-    [record| {id = bitXAuth''id,
-              secret = bitXAuth''secret} |]
--}
-{-
-bitXAuthConverterRev_ :: BitXAuth -> BitXAuth_
-bitXAuthConverterRev_ bxa =
-    BitXAuth_ (view [lens| id |] bxa) (view [lens| secret |] bxa)
--}
 
 ------------------------------------------ PrivateOrder type ---------------------------------------
 
@@ -286,32 +255,7 @@ instance BitXAesRecordConvert PrivateOrder PrivateOrder_ where
     aesToRec = privateOrderConverter_
 
 ------------------------------------------ OrderRequest type ---------------------------------------
-{-
-data OrderRequest_ = OrderRequest_
-    { orderRequest'pair :: CcyPair
-    , orderRequest'type :: OrderType
-    , orderRequest'volume :: Decimal
-    , orderRequest'price :: Decimal
-    } deriving (Show, Read)
--}
-{-
-instance ToJSON OrderRequest_ where
-    toJSON (OrderRequest_ orderRequest''pair orderRequest''type orderRequest''volume
-            orderRequest''price) =
-        object [    "pair" .= show orderRequest''pair
-               ,    "type" .= show orderRequest''type
-               , "volumne" .= show orderRequest''volume
-               ,   "price" .= show orderRequest''price
-               ]
 
-orderRequestConverterRev_ :: OrderRequest -> OrderRequest_
-orderRequestConverterRev_ oreq =
-    OrderRequest_ (view [lens| pair |] oreq) (view [lens| requestType |] oreq)
-        (view [lens| volume |] oreq) (view [lens| price |] oreq)
-
-instance BitXRecordAesConvert OrderRequest OrderRequest_ where
-    recToAes = orderRequestConverterRev_
--}
 instance POSTEncodeable OrderRequest where
     postEncode oreq =
         [("pair", showableToBytestring (view [lens| pair |] oreq)),
@@ -325,7 +269,7 @@ data Tickers_ = Tickers_
     { tickers'tickers :: [Ticker_]
     } deriving (Show, Read)
 
-$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = chopUpToPrime} ''Tickers_)
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"} ''Tickers_)
 
 tickersConverter_ :: Tickers_ -> Tickers
 tickersConverter_ (Tickers_ tickers''tickers) =
@@ -340,7 +284,7 @@ data PrivateOrders_ = PrivateOrders_
     {privateOrders'orders :: [PrivateOrder_]
     } deriving (Read, Show)
 
-$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = chopUpToPrime}
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''PrivateOrders_)
 
 privateOrdersConverter_ :: PrivateOrders_ -> PrivateOrders

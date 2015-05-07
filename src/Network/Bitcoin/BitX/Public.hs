@@ -6,6 +6,7 @@ module Network.Bitcoin.BitX.Public
     getTrades
   ) where
 
+import Network.Bitcoin.BitX.Internal
 import qualified Data.Aeson as Aeson (decode, encode)
 import Network.Bitcoin.BitX.Types
 import Network.Bitcoin.BitX.Types.Internal
@@ -13,22 +14,6 @@ import qualified Network.HTTP.Conduit as NetCon
 import qualified Data.ByteString.Lazy as BL
 import Control.Exception (try, SomeException)
 import Network (withSocketsDo)
-
-simpleBitXGet_ :: BitXAesRecordConvert rec aes => String -> IO (Maybe (Either BitXError rec))
-simpleBitXGet_ verb = withSocketsDo $ do
-    resp <- try $ NetCon.simpleHttp ("https://api.mybitx.com/api/1/" ++ verb)
-        :: IO (Either SomeException BL.ByteString)
-    case resp of
-        Left _  -> return Nothing -- gobble up all exceptions and just return Nothing
-        Right k -> do
-            let respTE = (Aeson.decode $ k) -- is it a BitX error?
-            case respTE of
-                Just e  -> return (Just (Left (bitXErrorConverter_ e)))
-                Nothing -> do
-                    let respTT = (Aeson.decode $ k)
-                    case respTT of
-                        Just t  -> return (Just (Right (aesToRec t)))
-                        Nothing -> return Nothing
 
 {- | Returns the latest ticker indicators. -}
 

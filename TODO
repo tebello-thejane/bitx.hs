@@ -1,0 +1,5 @@
+*Add haddocks everywhere possible.
+*Add all private method skeletons.
+*Generalise public and private methods.
+*Add PostEncodeable instances for all relevant records.
+*Generalise generalised methods and move them to Network.Bitcoin.BitX.Internal.
