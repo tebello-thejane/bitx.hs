@@ -7,13 +7,7 @@ module Network.Bitcoin.BitX.Public
   ) where
 
 import Network.Bitcoin.BitX.Internal
-import qualified Data.Aeson as Aeson (decode, encode)
 import Network.Bitcoin.BitX.Types
-import Network.Bitcoin.BitX.Types.Internal
-import qualified Network.HTTP.Conduit as NetCon
-import qualified Data.ByteString.Lazy as BL
-import Control.Exception (try, SomeException)
-import Network (withSocketsDo)
 
 {- | Returns the latest ticker indicators. -}
 

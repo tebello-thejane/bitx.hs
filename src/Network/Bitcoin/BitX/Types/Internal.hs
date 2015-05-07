@@ -7,12 +7,9 @@ module Network.Bitcoin.BitX.Types.Internal
     (
     BitXAesRecordConvert(..),
     Ticker_(..),
-    tickerConverter_,
     BitXError_(..),
     bitXErrorConverter_,
     Tickers_(..),
-    tickersConverter_,
-    privateOrdersConverter_,
     --BitXAuth_(..),
     Order_(..),
     POSTEncodeable(..)
@@ -295,18 +292,39 @@ privateOrdersConverter_ (PrivateOrders_ privateOrders''orders) =
 instance BitXAesRecordConvert PrivateOrders PrivateOrders_ where
     aesToRec = privateOrdersConverter_
 
------------------------------------------ OrderIDResponse type -------------------------------------
+-------------------------------------------- OrderIDRec type ---------------------------------------
 
-data OrderIDResponse_ = OrderIDResponse_
+data OrderIDRec_ = OrderIDRec_
     { orderIDResponse'order_id :: OrderID
     } deriving (Show, Read)
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
-    ''OrderIDResponse_)
+    ''OrderIDRec_)
 
-orderIDResponseConverter_ :: OrderIDResponse_ -> OrderIDResponse
-orderIDResponseConverter_ (OrderIDResponse_ orderIDResponse''order_id) =
-    [record| {orderID = orderIDResponse''order_id} |]
+orderIDRecConverter_ :: OrderIDRec_ -> OrderID
+orderIDRecConverter_ (OrderIDRec_ orderIDResponse''order_id) =
+    orderIDResponse''order_id
 
-instance BitXAesRecordConvert OrderIDResponse OrderIDResponse_ where
-    aesToRec = orderIDResponseConverter_
+instance BitXAesRecordConvert OrderID OrderIDRec_ where
+    aesToRec = orderIDRecConverter_
+
+instance POSTEncodeable OrderID where
+    postEncode oid =
+        [("order_id", showableToBytestring oid)]
+
+----------------------------------------- StopOrderSuccess type ------------------------------------
+
+data StopOrderSuccess_ = StopOrderSuccess_
+    { stopOrderSuccess'success :: Bool
+    } deriving (Show, Read)
+
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''StopOrderSuccess_)
+
+stopOrderSuccessConverter_ :: StopOrderSuccess_ -> StopOrderSuccess
+stopOrderSuccessConverter_ (StopOrderSuccess_ stopOrderSuccess''success) =
+    stopOrderSuccess''success
+
+instance BitXAesRecordConvert StopOrderSuccess StopOrderSuccess_ where
+    aesToRec = stopOrderSuccessConverter_
+

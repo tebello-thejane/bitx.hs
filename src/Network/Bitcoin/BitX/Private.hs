@@ -3,23 +3,12 @@ module Network.Bitcoin.BitX.Private
   getAllOrders,
   postOrder,
   stopOrder,
-  getPendingOrders
+  getPendingOrders,
+  getOrder
   ) where
 
 import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
-import qualified Network.HTTP.Conduit as NetCon
-import Network.HTTP.Conduit (Response(..))
-import Control.Exception (try, SomeException)
-import qualified Data.Aeson as Aeson (decode, encode)
-import qualified Data.ByteString.Lazy as BL
-import Data.Maybe (fromJust)
-import Network (withSocketsDo)
-import Network.Bitcoin.BitX.Types.Internal
-import Record (lens)
-import Record.Lens (view)
-import qualified Data.Text as Txt
-import qualified Data.Text.Encoding as Txt
 
 {- | Returns a list of the most recently placed orders.
 
@@ -49,13 +38,22 @@ getPendingOrders auth pair = simpleBitXGetAuth_ auth url
             Nothing  -> "listorders?state=PENDING"
             Just st  -> "listorders?state=PENDING&pair=" ++ show st
 
-{- | Create a new order. -}
+{- | Create a new order.
 
-postOrder :: BitXAuth -> OrderRequest -> IO (Maybe (Either BitXError OrderIDResponse))
+__Warning! Orders cannot be reversed once they have executed. Please ensure your program has been
+thoroughly tested before submitting orders.__
+
+-}
+
+postOrder :: BitXAuth -> OrderRequest -> IO (Maybe (Either BitXError OrderID))
 postOrder auth oreq = simpleBitXPOSTAuth_ auth oreq "postorder"
 
 {- | Request to stop an order. -}
 
-stopOrder :: BitXAuth -> OrderID -> IO StopOrderSuccess
-stopOrder = undefined
+stopOrder :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError StopOrderSuccess))
+stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
 
+{- | Get an order by its ID -}
+
+getOrder :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError PrivateOrderWithTrades))
+getOrder = undefined

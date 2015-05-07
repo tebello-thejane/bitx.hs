@@ -34,12 +34,12 @@ module Network.Bitcoin.BitX.Types
     OrderType(..),
     OrderStatus(..),
     OrderRequest,
-    StopOrderSuccess(..),
+    StopOrderSuccess,
     PublicTrades,
     BitXError,
     Tickers,
     PrivateOrders,
-    OrderIDResponse
+    PrivateOrderWithTrades
   ) where
 
 import Data.Aeson (ToJSON(..), FromJSON(..))
@@ -119,15 +119,27 @@ type PrivateOrder =
          state :: OrderStatus,
          orderType :: OrderType } |]
 
+type PrivateOrderWithTrades =
+    [record|
+        {base :: Decimal,
+         counter :: Decimal,
+         creationTimestamp :: UTCTime,
+         expirationTimestamp :: UTCTime,
+         feeBase :: Decimal,
+         feeCounter :: Decimal,
+         limitPrice :: Decimal,
+         limitVolume :: Decimal,
+         orderID :: OrderID,
+         pair :: CcyPair,
+         state :: OrderStatus,
+         orderType :: OrderType,
+         trades :: [Trade] } |]
+
 type PrivateOrders =
     [record|
         {orders :: [PrivateOrder]} |]
 
 type OrderID = Text
-
-type OrderIDResponse =
-    [record|
-        {orderID :: OrderID} |]
 
 data OrderType = ASK | BID deriving (Show, Read, Generic)
 
@@ -140,7 +152,7 @@ type OrderRequest =
          volume :: Decimal,
          price :: Decimal } |]
 
-data StopOrderSuccess = StopOrderSuccess deriving (Show, Read, Generic)
+type StopOrderSuccess = Bool
 
 instance ToJSON CcyPair
 instance FromJSON CcyPair
@@ -150,6 +162,3 @@ instance FromJSON OrderType
 
 instance ToJSON OrderStatus
 instance FromJSON OrderStatus
-
-instance ToJSON StopOrderSuccess
-instance FromJSON StopOrderSuccess
