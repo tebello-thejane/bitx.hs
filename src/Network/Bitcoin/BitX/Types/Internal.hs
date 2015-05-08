@@ -387,7 +387,7 @@ privateOrderWithTradesConverter_ (PrivateOrderWithTrades_ privateOrder''base pri
 instance BitXAesRecordConvert PrivateOrderWithTrades PrivateOrderWithTrades_ where
     aesToRec = privateOrderWithTradesConverter_
 
------------------------------------------- Balance type ---------------------------------------
+-------------------------------------------- Balance type ------------------------------------------
 
 data Balance_ = Balance_
         { balance'accountID :: AccountID
@@ -418,7 +418,7 @@ balanceConverter_ (Balance_ balance''accountID balance''asset balance''balance b
 instance BitXAesRecordConvert Balance Balance_ where
     aesToRec = balanceConverter_
 
------------------------------------------- Balances type ---------------------------------------
+-------------------------------------------- Balances type -----------------------------------------
 
 data Balances_ = Balances_
         {balances'balances :: [Balance_] }
