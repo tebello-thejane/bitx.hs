@@ -386,3 +386,52 @@ privateOrderWithTradesConverter_ (PrivateOrderWithTrades_ privateOrder''base pri
 
 instance BitXAesRecordConvert PrivateOrderWithTrades PrivateOrderWithTrades_ where
     aesToRec = privateOrderWithTradesConverter_
+
+------------------------------------------ Balance type ---------------------------------------
+
+data Balance_ = Balance_
+        { balance'accountID :: AccountID
+        , balance'asset :: Asset
+        , balance'balance :: Decimal
+        , balance'reserved :: Decimal
+        , balance'unconfirmed :: Decimal }
+
+instance FromJSON Balance_ where
+    parseJSON (Object v) =
+        Balance_ <$>
+        (v .: "account_id")
+        <*> (v .: "asset")
+        <*> liftM read (v .: "balance")
+        <*> liftM read (v .: "reserved")
+        <*> liftM read (v .: "unconfirmed")
+    parseJSON _ = mempty
+
+balanceConverter_ :: Balance_ -> Balance
+balanceConverter_ (Balance_ balance''accountID balance''asset balance''balance balance''reserved
+        balance''unconfirmed) =
+    [record| {accountID = balance''accountID,
+              asset = balance''asset,
+              balance = balance''balance,
+              reserved = balance''reserved,
+              unconfirmed = balance''unconfirmed} |]
+
+instance BitXAesRecordConvert Balance Balance_ where
+    aesToRec = balanceConverter_
+
+------------------------------------------ Balances type ---------------------------------------
+
+data Balances_ = Balances_
+        {balances'balances :: [Balance_] }
+
+instance FromJSON Balances_ where
+    parseJSON (Object v) =
+        Balances_ <$>
+        (v .: "account_id")
+    parseJSON _ = mempty
+
+balancesConverter_ :: Balances_ -> Balances
+balancesConverter_ (Balances_ balances''balances) =
+    [record| {balances = map balanceConverter_ balances''balances} |]
+
+instance BitXAesRecordConvert Balances Balances_ where
+    aesToRec = balancesConverter_

@@ -62,3 +62,8 @@ stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
 
 getOrder :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError PrivateOrderWithTrades))
 getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ Txt.unpack oid
+
+{- | Return account balances -}
+
+getBalances :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError Balances))
+getBalances auth oid = simpleBitXGetAuth_ auth $ "balance"

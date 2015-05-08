@@ -3,3 +3,6 @@
 *Generalise public and private methods.
 *Add PostEncodeable instances for all relevant records.
 *Generalise generalised methods and move them to Network.Bitcoin.BitX.Internal.
+*Perhaps create (orphaned) instances for ToJSON Decimal and FromJSON Decimal?
+*Investigate NOT writing JSON instances explicitely for simple lists of instances (where am I doing this?).
+*Seriously rethink design of Balance(s)...

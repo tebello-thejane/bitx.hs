@@ -39,7 +39,11 @@ module Network.Bitcoin.BitX.Types
     BitXError,
     Tickers,
     PrivateOrders,
-    PrivateOrderWithTrades
+    PrivateOrderWithTrades,
+    AccountID,
+    Asset(..),
+    Balance,
+    Balances
   ) where
 
 import Data.Aeson (ToJSON(..), FromJSON(..))
@@ -72,6 +76,9 @@ type Tickers =
         {tickers :: [Ticker]} |]
 
 data CcyPair = XBTZAR | XBTNAD | ZARXBT | NADXBT | XBTKES | KESXBT | XBTMYR | MYRXBT
+  deriving (Show, Read, Generic)
+
+data Asset = ZAR | NAD | XBT | KES | MYR
   deriving (Show, Read, Generic)
 
 type Orderbook =
@@ -152,10 +159,27 @@ type OrderRequest =
          volume :: Decimal,
          price :: Decimal } |]
 
+type AccountID = Text
+
+type Balance =
+    [record|
+        {accountID :: AccountID,
+         asset :: Asset,
+         balance :: Decimal,
+         reserved :: Decimal,
+         unconfirmed :: Decimal } |]
+
+type Balances =
+    [record|
+        {balances :: [Balance] } |]
+
 type StopOrderSuccess = Bool
 
 instance ToJSON CcyPair
 instance FromJSON CcyPair
+
+instance ToJSON Asset
+instance FromJSON Asset
 
 instance ToJSON OrderType
 instance FromJSON OrderType
