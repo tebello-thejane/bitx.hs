@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveGeneric, QuasiQuotes #-}
+
 module Network.Bitcoin.BitX.Private
   (
   getAllOrders,
@@ -9,6 +11,8 @@ module Network.Bitcoin.BitX.Private
 
 import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
+import Record (lens)
+import Record.Lens (view)
 
 {- | Returns a list of the most recently placed orders.
 
@@ -56,4 +60,4 @@ stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
 {- | Get an order by its ID -}
 
 getOrder :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError PrivateOrderWithTrades))
-getOrder = undefined
+getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ (view [lens| orderID |] oid)

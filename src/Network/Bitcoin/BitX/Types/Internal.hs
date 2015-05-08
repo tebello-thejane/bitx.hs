@@ -328,3 +328,61 @@ stopOrderSuccessConverter_ (StopOrderSuccess_ stopOrderSuccess''success) =
 instance BitXAesRecordConvert StopOrderSuccess StopOrderSuccess_ where
     aesToRec = stopOrderSuccessConverter_
 
+------------------------------------- PrivateOrderWithTrades type ----------------------------------
+
+data PrivateOrderWithTrades_ = PrivateOrderWithTrades_
+    { privateOrderWithTrades'base :: Decimal
+    , privateOrderWithTrades'counter :: Decimal
+    , privateOrderWithTrades'creation_timestamp :: UTCTime
+    , privateOrderWithTrades'expiration_timestamp :: UTCTime
+    , privateOrderWithTrades'fee_base :: Decimal
+    , privateOrderWithTrades'fee_counter :: Decimal
+    , privateOrderWithTrades'limit_price :: Decimal
+    , privateOrderWithTrades'limit_volume :: Decimal
+    , privateOrderWithTrades'order_id :: OrderID
+    , privateOrderWithTrades'pair :: CcyPair
+    , privateOrderWithTrades'state :: OrderStatus
+    , privateOrderWithTrades'type :: OrderType
+    , privateOrderWithTrades'trades :: [Trade_]
+    } deriving (Show, Read)
+
+instance FromJSON PrivateOrderWithTrades_ where
+    parseJSON (Object v) =
+        PrivateOrderWithTrades_ <$>
+        liftM read (v .: "base")
+        <*> liftM read (v .: "counter")
+        <*> liftM timestampParse_ (v .: "creation_timestamp")
+        <*> liftM timestampParse_ (v .: "expiration_timestamp")
+        <*> liftM read (v .: "fee_base")
+        <*> liftM read (v .: "fee_counter")
+        <*> liftM read (v .: "limit_price")
+        <*> liftM read (v .: "limit_volume")
+        <*> (v .: "order_id")
+        <*> (v .: "pair")
+        <*> (v .: "state")
+        <*> (v .: "type")
+        <*> (v .: "trades")
+    parseJSON _ = mempty
+
+privateOrderWithTradesConverter_ :: PrivateOrderWithTrades_ -> PrivateOrderWithTrades_
+privateOrderWithTradesConverter_ (PrivateOrderWithTrades_ privateOrder''base privateOrder''counter
+        privateOrder''creation_timestamp privateOrder''expiration_timestamp privateOrder''fee_base
+        privateOrder''fee_counter privateOrder''limit_price privateOrder''limit_volume
+        privateOrder''order_id privateOrder''pair privateOrder''state privateOrder''type
+        privateOrderWithTrades''trades) =
+    [record| {base = privateOrder''base,
+              counter = privateOrder''counter,
+              creationTimestamp = privateOrder''creation_timestamp,
+              expirationTimestamp = privateOrder''expiration_timestamp,
+              feeBase = privateOrder''fee_base,
+              feeCounter = privateOrder''fee_counter,
+              limitPrice = privateOrder''limit_price,
+              limitVolume = privateOrder''limit_volume,
+              orderID = privateOrder''order_id,
+              pair = privateOrder''pair,
+              state = privateOrder''state,
+              orderType = privateOrder''type
+              trades = privateOrderWithTrades'trades} |]
+
+instance BitXAesRecordConvert PrivateOrderWithTrades PrivateOrderWithTrades_ where
+    aesToRec = privateOrderWithTradesConverter_
