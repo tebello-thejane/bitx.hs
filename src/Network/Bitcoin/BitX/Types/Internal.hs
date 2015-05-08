@@ -10,14 +10,13 @@ module Network.Bitcoin.BitX.Types.Internal
     BitXError_(..),
     bitXErrorConverter_,
     Tickers_(..),
-    --BitXAuth_(..),
     Order_(..),
     POSTEncodeable(..)
     )
 where
 
 import Network.Bitcoin.BitX.Types
-import Data.Aeson (FromJSON(..), parseJSON, (.:), Value(..))
+import Data.Aeson (FromJSON(..), parseJSON, (.:), Value(..), ToJSON(..))
 import qualified Data.Aeson.TH as AesTH
 import qualified Data.Text as Txt
 import qualified Data.Text.Encoding as Txt
@@ -29,7 +28,7 @@ import Control.Monad (liftM)
 import Record
 import Record.Lens (view)
 import Data.Monoid (mempty)
-import Data.Decimal
+import Data.Decimal (Decimal)
 import Data.ByteString (ByteString)
 import Data.List.Split (splitOn)
 
@@ -50,6 +49,13 @@ class POSTEncodeable rec where
 showableToBytestring :: (Show a) => a -> ByteString
 showableToBytestring = Txt.encodeUtf8 . Txt.pack . show
 
+instance FromJSON Decimal where
+   parseJSON (String x) = return . read . Txt.unpack $ x
+   parseJSON _          = mempty
+
+instance ToJSON Decimal where
+    toJSON x = String . Txt.pack . show $ x
+
 -------------------------------------------- Ticker type -------------------------------------------
 
 data Ticker_ = Ticker_
@@ -59,7 +65,7 @@ data Ticker_ = Ticker_
     , ticker'last :: Decimal
     , ticker'rolling24HourVolume :: Decimal
     , ticker'pair :: CcyPair
-    } deriving (Show, Read)
+    }
 
 instance FromJSON Ticker_ where
     parseJSON (Object v) =
@@ -90,7 +96,7 @@ instance BitXAesRecordConvert Ticker Ticker_ where
 data BitXError_= BitXError_
     { bitXError'error :: Text,
       bitXError'error_code :: Text
-    } deriving (Show, Read)
+    }
 
 $(AesTH.deriveJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"} ''BitXError_)
 
@@ -107,14 +113,9 @@ instance BitXAesRecordConvert BitXError BitXError_ where
 data Order_ = Order_
     { order'volume :: Decimal,
       order'price :: Decimal
-    } deriving (Show, Read)
+    }
 
-instance FromJSON Order_ where
-    parseJSON (Object v) =
-        Order_ <$>
-        liftM read (v .: "volume")
-        <*> liftM read (v .: "price")
-    parseJSON _ = mempty
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"} ''Order_)
 
 orderConverter_ :: Order_ -> Order
 orderConverter_ (Order_ order''volume order''price) =
@@ -130,7 +131,7 @@ data Orderbook_ = Orderbook_
     { orderbook'timestamp :: UTCTime,
       orderbook'bids :: [Bid_],
       orderbook'asks :: [Ask_]
-    } deriving (Show, Read)
+    }
 
 type Bid_ = Order_
 type Ask_ = Order_
@@ -158,8 +159,7 @@ data Trade_ = Trade_
     { trade'volume :: Decimal
     , trade'timestamp :: UTCTime
     , trade'price :: Decimal
-    } deriving (Show, Read)
-
+    }
 
 instance FromJSON Trade_ where
     parseJSON (Object v) =
@@ -183,7 +183,7 @@ instance BitXAesRecordConvert Trade Trade_ where
 data PublicTrades_ = PublicTrades_
     { publicTrades'trades :: [Trade_]
     , publicTrades'currency :: Text
-    } deriving (Show, Read)
+    }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''PublicTrades_)
@@ -211,7 +211,7 @@ data PrivateOrder_ = PrivateOrder_
     , privateOrder'pair :: CcyPair
     , privateOrder'state :: OrderStatus
     , privateOrder'type :: OrderType
-    } deriving (Show, Read)
+    }
 
 instance FromJSON PrivateOrder_ where
     parseJSON (Object v) =
@@ -264,7 +264,7 @@ instance POSTEncodeable OrderRequest where
 
 data Tickers_ = Tickers_
     { tickers'tickers :: [Ticker_]
-    } deriving (Show, Read)
+    }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''Tickers_)
@@ -280,7 +280,7 @@ instance BitXAesRecordConvert Tickers Tickers_ where
 
 data PrivateOrders_ = PrivateOrders_
     {privateOrders'orders :: [PrivateOrder_]
-    } deriving (Read, Show)
+    }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''PrivateOrders_)
@@ -296,7 +296,7 @@ instance BitXAesRecordConvert PrivateOrders PrivateOrders_ where
 
 data OrderIDRec_ = OrderIDRec_
     { orderIDResponse'order_id :: OrderID
-    } deriving (Show, Read)
+    }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''OrderIDRec_)
@@ -316,7 +316,7 @@ instance POSTEncodeable OrderID where
 
 data StopOrderSuccess_ = StopOrderSuccess_
     { stopOrderSuccess'success :: Bool
-    } deriving (Show, Read)
+    }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''StopOrderSuccess_)
@@ -344,7 +344,7 @@ data PrivateOrderWithTrades_ = PrivateOrderWithTrades_
     , privateOrderWithTrades'state :: OrderStatus
     , privateOrderWithTrades'type :: OrderType
     , privateOrderWithTrades'trades :: [Trade_]
-    } deriving (Show, Read)
+    }
 
 instance FromJSON PrivateOrderWithTrades_ where
     parseJSON (Object v) =
@@ -390,21 +390,15 @@ instance BitXAesRecordConvert PrivateOrderWithTrades PrivateOrderWithTrades_ whe
 -------------------------------------------- Balance type ------------------------------------------
 
 data Balance_ = Balance_
-        { balance'accountID :: AccountID
-        , balance'asset :: Asset
-        , balance'balance :: Decimal
-        , balance'reserved :: Decimal
-        , balance'unconfirmed :: Decimal }
+    { balance'accountID :: AccountID
+    , balance'asset :: Asset
+    , balance'balance :: Decimal
+    , balance'reserved :: Decimal
+    , balance'unconfirmed :: Decimal
+    }
 
-instance FromJSON Balance_ where
-    parseJSON (Object v) =
-        Balance_ <$>
-        (v .: "account_id")
-        <*> (v .: "asset")
-        <*> liftM read (v .: "balance")
-        <*> liftM read (v .: "reserved")
-        <*> liftM read (v .: "unconfirmed")
-    parseJSON _ = mempty
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''Balance_)
 
 balanceConverter_ :: Balance_ -> Balance
 balanceConverter_ (Balance_ balance''accountID balance''asset balance''balance balance''reserved
@@ -421,13 +415,11 @@ instance BitXAesRecordConvert Balance Balance_ where
 -------------------------------------------- Balances type -----------------------------------------
 
 data Balances_ = Balances_
-        {balances'balances :: [Balance_] }
+    {balances'balances :: [Balance_]
+    }
 
-instance FromJSON Balances_ where
-    parseJSON (Object v) =
-        Balances_ <$>
-        (v .: "account_id")
-    parseJSON _ = mempty
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''Balances_)
 
 balancesConverter_ :: Balances_ -> Balances
 balancesConverter_ (Balances_ balances''balances) =
@@ -435,3 +427,15 @@ balancesConverter_ (Balances_ balances''balances) =
 
 instance BitXAesRecordConvert Balances Balances_ where
     aesToRec = balancesConverter_
+
+----------------------------------------- FundingAddress type --------------------------------------
+
+data FundingAddress_ = FundingAddress_
+    { fundingAdress'asset :: Asset
+    , fundingAdress'address :: Text
+    , fundingAdress'totalReceived :: Decimal
+    , fundingAdress'totalUnconfirmed :: Decimal
+    }
+
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''FundingAddress_)

@@ -43,7 +43,8 @@ module Network.Bitcoin.BitX.Types
     AccountID,
     Asset(..),
     Balance,
-    Balances
+    Balances,
+    FundingAddress
   ) where
 
 import Data.Aeson (ToJSON(..), FromJSON(..))
@@ -172,6 +173,13 @@ type Balance =
 type Balances =
     [record|
         {balances :: [Balance] } |]
+
+type FundingAddress =
+    [record|
+        {asset :: Asset,
+         address :: Text,
+         totalReceived :: Decimal,
+         totalUnconfirmed :: Decimal} |]
 
 type StopOrderSuccess = Bool
 

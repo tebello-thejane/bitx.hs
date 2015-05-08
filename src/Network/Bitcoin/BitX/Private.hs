@@ -6,7 +6,8 @@ module Network.Bitcoin.BitX.Private
   postOrder,
   stopOrder,
   getPendingOrders,
-  getOrder
+  getOrder,
+  getBalances
   ) where
 
 import Network.Bitcoin.BitX.Internal
@@ -65,5 +66,5 @@ getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ Txt.unpack oid
 
 {- | Return account balances -}
 
-getBalances :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError Balances))
-getBalances auth oid = simpleBitXGetAuth_ auth $ "balance"
+getBalances :: BitXAuth -> IO (Maybe (Either BitXError Balances))
+getBalances auth = simpleBitXGetAuth_ auth $ "balance"
