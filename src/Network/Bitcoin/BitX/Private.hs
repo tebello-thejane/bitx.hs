@@ -13,6 +13,7 @@ import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
 import Record (lens)
 import Record.Lens (view)
+import qualified Data.Text as Txt
 
 {- | Returns a list of the most recently placed orders.
 
@@ -60,4 +61,4 @@ stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
 {- | Get an order by its ID -}
 
 getOrder :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError PrivateOrderWithTrades))
-getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ (view [lens| orderID |] oid)
+getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ Txt.unpack oid

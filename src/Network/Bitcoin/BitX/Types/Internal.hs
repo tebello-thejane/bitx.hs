@@ -364,7 +364,7 @@ instance FromJSON PrivateOrderWithTrades_ where
         <*> (v .: "trades")
     parseJSON _ = mempty
 
-privateOrderWithTradesConverter_ :: PrivateOrderWithTrades_ -> PrivateOrderWithTrades_
+privateOrderWithTradesConverter_ :: PrivateOrderWithTrades_ -> PrivateOrderWithTrades
 privateOrderWithTradesConverter_ (PrivateOrderWithTrades_ privateOrder''base privateOrder''counter
         privateOrder''creation_timestamp privateOrder''expiration_timestamp privateOrder''fee_base
         privateOrder''fee_counter privateOrder''limit_price privateOrder''limit_volume
@@ -381,8 +381,8 @@ privateOrderWithTradesConverter_ (PrivateOrderWithTrades_ privateOrder''base pri
               orderID = privateOrder''order_id,
               pair = privateOrder''pair,
               state = privateOrder''state,
-              orderType = privateOrder''type
-              trades = privateOrderWithTrades'trades} |]
+              orderType = privateOrder''type,
+              trades = map tradeConverter_ privateOrderWithTrades''trades} |]
 
 instance BitXAesRecordConvert PrivateOrderWithTrades PrivateOrderWithTrades_ where
     aesToRec = privateOrderWithTradesConverter_
