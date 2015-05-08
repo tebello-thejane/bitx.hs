@@ -390,7 +390,7 @@ instance BitXAesRecordConvert PrivateOrderWithTrades PrivateOrderWithTrades_ whe
 -------------------------------------------- Balance type ------------------------------------------
 
 data Balance_ = Balance_
-    { balance'accountID :: AccountID
+    { balance'account_id :: AccountID
     , balance'asset :: Asset
     , balance'balance :: Decimal
     , balance'reserved :: Decimal
@@ -401,9 +401,9 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''Balance_)
 
 balanceConverter_ :: Balance_ -> Balance
-balanceConverter_ (Balance_ balance''accountID balance''asset balance''balance balance''reserved
+balanceConverter_ (Balance_ balance''account_id balance''asset balance''balance balance''reserved
         balance''unconfirmed) =
-    [record| {accountID = balance''accountID,
+    [record| {accountID = balance''account_id,
               asset = balance''asset,
               balance = balance''balance,
               reserved = balance''reserved,
@@ -433,9 +433,20 @@ instance BitXAesRecordConvert Balances Balances_ where
 data FundingAddress_ = FundingAddress_
     { fundingAdress'asset :: Asset
     , fundingAdress'address :: Text
-    , fundingAdress'totalReceived :: Decimal
-    , fundingAdress'totalUnconfirmed :: Decimal
+    , fundingAdress'total_received :: Decimal
+    , fundingAdress'total_unconfirmed :: Decimal
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''FundingAddress_)
+
+fundingAddressConverter_ :: FundingAddress_ -> FundingAddress
+fundingAddressConverter_ (FundingAddress_ fundingAdress''asset fundingAdress''address
+        fundingAdress''total_received fundingAdress''total_unconfirmed) =
+    [record| {asset = fundingAdress''asset,
+              address = fundingAdress''address,
+              totalReceived = fundingAdress''total_received,
+              totalUnconfirmed = fundingAdress''total_unconfirmed} |]
+
+instance BitXAesRecordConvert FundingAddress FundingAddress_ where
+    aesToRec = fundingAddressConverter_

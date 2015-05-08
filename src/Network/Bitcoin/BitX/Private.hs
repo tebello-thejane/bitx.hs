@@ -7,14 +7,14 @@ module Network.Bitcoin.BitX.Private
   stopOrder,
   getPendingOrders,
   getOrder,
-  getBalances
+  getBalances,
+  getFundingAddress
   ) where
 
 import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
-import Record (lens)
-import Record.Lens (view)
 import qualified Data.Text as Txt
+import Data.Text (Text)
 
 {- | Returns a list of the most recently placed orders.
 
@@ -26,9 +26,9 @@ This list is truncated after 100 items. -}
 getAllOrders :: BitXAuth -> Maybe CcyPair -> IO (Maybe (Either BitXError PrivateOrders))
 getAllOrders auth pair = simpleBitXGetAuth_ auth url
     where
-        url = case pair of
-            Nothing  -> "listorders"
-            Just st  -> "listorders?pair=" ++ show st
+        url = "listorders" ++ case pair of
+            Nothing  -> ""
+            Just st  -> "?pair=" ++ show st
 
 {- | Returns a list of the most recently placed orders which are still in 'PENDING' state.
 
@@ -40,9 +40,9 @@ This list is truncated after 100 items. -}
 getPendingOrders :: BitXAuth -> Maybe CcyPair -> IO (Maybe (Either BitXError PrivateOrders))
 getPendingOrders auth pair = simpleBitXGetAuth_ auth url
     where
-        url = case pair of
-            Nothing  -> "listorders?state=PENDING"
-            Just st  -> "listorders?state=PENDING&pair=" ++ show st
+        url = "listorders?state=PENDING" ++ case pair of
+            Nothing  -> ""
+            Just st  -> "&pair=" ++ show st
 
 {- | Create a new order.
 
@@ -68,3 +68,17 @@ getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ Txt.unpack oid
 
 getBalances :: BitXAuth -> IO (Maybe (Either BitXError Balances))
 getBalances auth = simpleBitXGetAuth_ auth $ "balance"
+
+{- | Returns the default receive address associated with your account and the amount received via
+the address.
+
+You can specify an optional address parameter to return information for a non-default receive
+address. In the response, total_received is the total confirmed Bitcoin amount received excluding
+unconfirmed transactions. total_unconfirmed is the total sum of unconfirmed receive transactions. -}
+
+getFundingAddress :: BitXAuth -> Asset -> Maybe Text -> IO (Maybe (Either BitXError FundingAddress))
+getFundingAddress auth asset addr = simpleBitXGetAuth_ auth url
+    where
+        url = "funding_address?asset=" ++ show asset ++ case addr of
+            Nothing  -> ""
+            Just ad  -> "&address=" ++ (show . Txt.unpack $ ad)
