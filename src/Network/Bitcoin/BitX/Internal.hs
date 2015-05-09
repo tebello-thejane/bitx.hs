@@ -73,7 +73,7 @@ bitXErrorOrPayload :: BitXAesRecordConvert rec aes => BL.ByteString -> IO (Maybe
 bitXErrorOrPayload body = do
             let respTE = (Aeson.decode $ body) -- is it a BitX error?
             case respTE of
-                Just e  -> return (Just (Left (bitXErrorConverter_ e)))
+                Just e  -> return (Just (Left (aesToRec e)))
                 Nothing -> do
                     let respTT = (Aeson.decode $ body)
                     case respTT of

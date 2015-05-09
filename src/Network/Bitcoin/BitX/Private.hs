@@ -8,7 +8,9 @@ module Network.Bitcoin.BitX.Private
   getPendingOrders,
   getOrder,
   getBalances,
-  getFundingAddress
+  getFundingAddress,
+  newFundingAddress,
+  getWithdrawalRequests
   ) where
 
 import Network.Bitcoin.BitX.Internal
@@ -70,7 +72,7 @@ getBalances :: BitXAuth -> IO (Maybe (Either BitXError Balances))
 getBalances auth = simpleBitXGetAuth_ auth $ "balance"
 
 {- | Returns the default receive address associated with your account and the amount received via
-the address.
+the address
 
 You can specify an optional address parameter to return information for a non-default receive
 address. In the response, total_received is the total confirmed Bitcoin amount received excluding
@@ -82,3 +84,19 @@ getFundingAddress auth asset addr = simpleBitXGetAuth_ auth url
         url = "funding_address?asset=" ++ show asset ++ case addr of
             Nothing  -> ""
             Just ad  -> "&address=" ++ (show . Txt.unpack $ ad)
+
+{- | Create receive address
+
+Allocates a new receive address to your account. There is a limit of 50 receive addresses per user.
+-}
+
+newFundingAddress :: BitXAuth -> Asset -> IO (Maybe (Either BitXError FundingAddress))
+newFundingAddress auth asset = simpleBitXPOSTAuth_ auth asset $ "funding_address"
+
+{- | List withdrawal requests
+
+Returns a list of withdrawal requests. -}
+
+getWithdrawalRequests :: BitXAuth -> IO (Maybe (Either BitXError Withdrawals))
+getWithdrawalRequests auth = simpleBitXGetAuth_ auth $ "withdrawals"
+

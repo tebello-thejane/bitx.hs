@@ -32,7 +32,7 @@ module Network.Bitcoin.BitX.Types
     PrivateOrder,
     OrderID,
     OrderType(..),
-    OrderStatus(..),
+    RequestStatus(..),
     OrderRequest,
     StopOrderSuccess,
     PublicTrades,
@@ -44,7 +44,9 @@ module Network.Bitcoin.BitX.Types
     Asset(..),
     Balance,
     Balances,
-    FundingAddress
+    FundingAddress,
+    Withdrawals,
+    Withdrawal
   ) where
 
 import Data.Aeson (ToJSON(..), FromJSON(..))
@@ -124,7 +126,7 @@ type PrivateOrder =
          limitVolume :: Decimal,
          orderID :: OrderID,
          pair :: CcyPair,
-         state :: OrderStatus,
+         state :: RequestStatus,
          orderType :: OrderType } |]
 
 type PrivateOrderWithTrades =
@@ -139,7 +141,7 @@ type PrivateOrderWithTrades =
          limitVolume :: Decimal,
          orderID :: OrderID,
          pair :: CcyPair,
-         state :: OrderStatus,
+         state :: RequestStatus,
          orderType :: OrderType,
          trades :: [Trade] } |]
 
@@ -151,7 +153,7 @@ type OrderID = Text
 
 data OrderType = ASK | BID deriving (Show, Read, Generic)
 
-data OrderStatus = PENDING | COMPLETE deriving (Show, Read, Generic)
+data RequestStatus = PENDING | COMPLETE deriving (Show, Read, Generic)
 
 type OrderRequest =
     [record|
@@ -181,6 +183,15 @@ type FundingAddress =
          totalReceived :: Decimal,
          totalUnconfirmed :: Decimal} |]
 
+type Withdrawals =
+    [record|
+        {withdrawals :: [Withdrawal]} |]
+
+type Withdrawal =
+    [record|
+        {status :: RequestStatus,
+         id :: Text} |]
+
 type StopOrderSuccess = Bool
 
 instance ToJSON CcyPair
@@ -192,5 +203,5 @@ instance FromJSON Asset
 instance ToJSON OrderType
 instance FromJSON OrderType
 
-instance ToJSON OrderStatus
-instance FromJSON OrderStatus
+instance ToJSON RequestStatus
+instance FromJSON RequestStatus
