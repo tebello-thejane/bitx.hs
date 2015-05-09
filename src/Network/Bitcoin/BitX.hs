@@ -9,4 +9,3 @@ module Network.Bitcoin.BitX
 import Network.Bitcoin.BitX.Types
 import Network.Bitcoin.BitX.Private
 import Network.Bitcoin.BitX.Public
-

@@ -155,7 +155,7 @@ type OrderID = Text
 
 data OrderType = ASK | BID deriving (Show, Read, Generic)
 
-data RequestStatus = PENDING | COMPLETE deriving (Show, Read, Generic)
+data RequestStatus = PENDING | COMPLETE | CANCELLED deriving (Show, Read, Generic)
 
 type OrderRequest =
     [record|

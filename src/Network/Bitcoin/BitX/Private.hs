@@ -1,5 +1,3 @@
-{-# LANGUAGE DeriveGeneric, QuasiQuotes #-}
-
 module Network.Bitcoin.BitX.Private
   (
   getAllOrders,
@@ -11,7 +9,8 @@ module Network.Bitcoin.BitX.Private
   getFundingAddress,
   newFundingAddress,
   getWithdrawalRequests,
-  newWithdrawalRequest
+  newWithdrawalRequest,
+  getWithdrawalRequest
   ) where
 
 import Network.Bitcoin.BitX.Internal
@@ -70,7 +69,7 @@ getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ Txt.unpack oid
 {- | Return account balances -}
 
 getBalances :: BitXAuth -> IO (Maybe (Either BitXError Balances))
-getBalances auth = simpleBitXGetAuth_ auth $ "balance"
+getBalances auth = simpleBitXGetAuth_ auth "balance"
 
 {- | Returns the default receive address associated with your account and the amount received via
 the address
@@ -92,14 +91,14 @@ Allocates a new receive address to your account. There is a limit of 50 receive 
 -}
 
 newFundingAddress :: BitXAuth -> Asset -> IO (Maybe (Either BitXError FundingAddress))
-newFundingAddress auth asset = simpleBitXPOSTAuth_ auth asset $ "funding_address"
+newFundingAddress auth asset = simpleBitXPOSTAuth_ auth asset "funding_address"
 
 {- | List withdrawal requests
 
 Returns a list of withdrawal requests. -}
 
 getWithdrawalRequests :: BitXAuth -> IO (Maybe (Either BitXError WithdrawalRequests))
-getWithdrawalRequests auth = simpleBitXGetAuth_ auth $ "withdrawals"
+getWithdrawalRequests auth = simpleBitXGetAuth_ auth "withdrawals"
 
 {- | Request a withdrawal
 
@@ -107,3 +106,14 @@ Creates a new withdrawal request. -}
 
 newWithdrawalRequest :: BitXAuth -> NewWithdrawal -> IO (Maybe (Either BitXError WithdrawalRequest))
 newWithdrawalRequest auth nwithd = simpleBitXPOSTAuth_ auth nwithd "withdrawals"
+
+{- | Get the status of a withdrawal request
+
+Returns the status of a particular withdrawal request. -}
+
+getWithdrawalRequest :: BitXAuth -> Text -> IO (Maybe (Either BitXError WithdrawalRequest))
+getWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" ++ (show . Txt.unpack $ wthid)
+
+--cancelWithdrawalRequest :: BitXAuth -> Text -> IO (Maybe (Either BitXError WithdrawalRequest))
+--cancelWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" ++ (show . Txt.unpack $ wthid)
+
