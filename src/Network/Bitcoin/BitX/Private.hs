@@ -10,7 +10,8 @@ module Network.Bitcoin.BitX.Private
   getBalances,
   getFundingAddress,
   newFundingAddress,
-  getWithdrawalRequests
+  getWithdrawalRequests,
+  newWithdrawalRequest
   ) where
 
 import Network.Bitcoin.BitX.Internal
@@ -97,6 +98,12 @@ newFundingAddress auth asset = simpleBitXPOSTAuth_ auth asset $ "funding_address
 
 Returns a list of withdrawal requests. -}
 
-getWithdrawalRequests :: BitXAuth -> IO (Maybe (Either BitXError Withdrawals))
+getWithdrawalRequests :: BitXAuth -> IO (Maybe (Either BitXError WithdrawalRequests))
 getWithdrawalRequests auth = simpleBitXGetAuth_ auth $ "withdrawals"
 
+{- | Request a withdrawal
+
+Creates a new withdrawal request. -}
+
+newWithdrawalRequest :: BitXAuth -> NewWithdrawal -> IO (Maybe (Either BitXError WithdrawalRequest))
+newWithdrawalRequest auth nwithd = simpleBitXPOSTAuth_ auth nwithd "withdrawals"

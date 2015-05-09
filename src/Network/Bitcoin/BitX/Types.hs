@@ -13,7 +13,7 @@
 -- The types used for the various BitX API calls.
 --
 -- Note that these are all `record` types, as provided by Nikita Volkov's
--- `record` library. The main motivation for using the `record` library was
+-- "record" library. The main motivation for using the @record@ library was
 -- to avoid using record field prefixes and other awkward hacks to get around
 -- the fact that Haskell does not yet have a real records' system.
 --
@@ -45,8 +45,10 @@ module Network.Bitcoin.BitX.Types
     Balance,
     Balances,
     FundingAddress,
-    Withdrawals,
-    Withdrawal
+    WithdrawalRequests,
+    WithdrawalRequest,
+    NewWithdrawal,
+    WithdrawalType(..)
   ) where
 
 import Data.Aeson (ToJSON(..), FromJSON(..))
@@ -183,14 +185,21 @@ type FundingAddress =
          totalReceived :: Decimal,
          totalUnconfirmed :: Decimal} |]
 
-type Withdrawals =
+type WithdrawalRequests =
     [record|
-        {withdrawals :: [Withdrawal]} |]
+        {withdrawalRequests :: [WithdrawalRequest]} |]
 
-type Withdrawal =
+type WithdrawalRequest =
     [record|
         {status :: RequestStatus,
-         id :: Text} |]
+         id :: Text } |]
+
+type NewWithdrawal =
+    [record|
+        {withdrawalType :: WithdrawalType,
+         amount :: Decimal } |]
+
+data WithdrawalType = ZAR_EFT | NAD_EFT | KES_MPESA | MYR_IBG | IDR_LLG deriving (Show, Read, Generic)
 
 type StopOrderSuccess = Bool
 
@@ -205,3 +214,6 @@ instance FromJSON OrderType
 
 instance ToJSON RequestStatus
 instance FromJSON RequestStatus
+
+instance ToJSON WithdrawalType
+instance FromJSON WithdrawalType

@@ -407,30 +407,45 @@ instance POSTEncodeable Asset where
     postEncode asset =
         [("asset", showableToBytestring asset)]
 
------------------------------------------- Withdrawal type -----------------------------------------
+-------------------------------------- WithdrawalRequest type --------------------------------------
 
-data Withdrawal_ = Withdrawal_
-    { withdrawal'status :: RequestStatus
-    , withdrawal'id :: Text
+data WithdrawalRequest_ = WithdrawalRequest_
+    { withdrawalRequest'status :: RequestStatus
+    , withdrawalRequest'id :: Text
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
-    ''Withdrawal_)
+    ''WithdrawalRequest_)
 
-instance BitXAesRecordConvert Withdrawal Withdrawal_ where
-    aesToRec (Withdrawal_ withdrawal''status withdrawal''id) =
-        [record| {status = withdrawal''status,
-              id = withdrawal''id} |]
+instance BitXAesRecordConvert WithdrawalRequest WithdrawalRequest_ where
+    aesToRec (WithdrawalRequest_ withdrawalRequest''status withdrawalRequest''id) =
+        [record| {status = withdrawalRequest''status,
+                  id = withdrawalRequest''id} |]
 
------------------------------------------ Withdrawals type -----------------------------------------
+-------------------------------------- WithdrawalRequests type -------------------------------------
 
-data Withdrawals_ = Withdrawals_
-    { withdrawals'withdrawals :: [Withdrawal_]
+data WithdrawalRequests_ = WithdrawalRequests_
+    { withdrawalRequests'withdrawals :: [WithdrawalRequest_]
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
-    ''Withdrawals_)
+    ''WithdrawalRequests_)
 
-instance BitXAesRecordConvert Withdrawals Withdrawals_ where
-    aesToRec (Withdrawals_ withdrawals''withdrawals) =
-        [record| {withdrawals = map aesToRec withdrawals''withdrawals} |]
+instance BitXAesRecordConvert WithdrawalRequests WithdrawalRequests_ where
+    aesToRec (WithdrawalRequests_ withdrawalRequests''withdrawals) =
+        [record| {withdrawalRequests = map aesToRec withdrawalRequests''withdrawals} |]
+
+----------------------------------------- NewWithdrawal type ---------------------------------------
+
+data NewWithdrawal_ = NewWithdrawal_
+    { newWithdrawal'type :: WithdrawalType
+    , newWithdrawal'amount :: Decimal
+    }
+
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''NewWithdrawal_)
+
+instance POSTEncodeable NewWithdrawal where
+    postEncode nwthd =
+        [("type", showableToBytestring (view [lens| withdrawalType |] nwthd)),
+         ("amount", showableToBytestring (view [lens| amount |] nwthd))]
