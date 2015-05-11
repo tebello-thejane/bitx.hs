@@ -6,10 +6,6 @@
 module Network.Bitcoin.BitX.Types.Internal
     (
     BitXAesRecordConvert(..),
-    Ticker_(..),
-    BitXError_(..),
-    Tickers_(..),
-    Order_(..),
     POSTEncodeable(..)
     )
 where
