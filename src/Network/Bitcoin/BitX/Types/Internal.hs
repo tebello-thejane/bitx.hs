@@ -1,5 +1,5 @@
 {-# LANGUAGE QuasiQuotes, OverloadedStrings, TemplateHaskell, MultiParamTypeClasses,
-    FunctionalDependencies, FlexibleInstances #-}
+    FunctionalDependencies, FlexibleInstances, DataKinds #-}
 
 {-# OPTIONS_GHC -fno-warn-unused-binds -fno-warn-unused-matches -fno-warn-orphans #-}
 
