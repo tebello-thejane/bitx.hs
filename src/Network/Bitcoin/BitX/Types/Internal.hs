@@ -51,6 +51,24 @@ instance FromJSON Decimal where
 instance ToJSON Decimal where
     toJSON x = String . Txt.pack . show $ x
 
+newtype QuotedDecimal = QuotedDecimal Decimal deriving (Read, Show)
+
+instance FromJSON QuotedDecimal where
+   parseJSON (String x) = return . read . Txt.unpack $ x
+   parseJSON _          = mempty
+
+qdToDecimal :: QuotedDecimal -> Decimal
+qdToDecimal (QuotedDecimal dec) = dec
+
+newtype TimestampMS = TimestampMS Integer deriving (Read, Show)
+
+instance FromJSON TimestampMS where
+   parseJSON (Number x) = return . TimestampMS . round $ x
+   parseJSON _          = mempty
+
+tsmsToUTCTime :: TimestampMS -> UTCTime
+tsmsToUTCTime (TimestampMS ms) = timestampParse_ ms
+
 -------------------------------------------- Ticker type -------------------------------------------
 
 data Ticker_ = Ticker_
