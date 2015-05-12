@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, QuasiQuotes, TemplateHaskell #-}
+{-# LANGUAGE OverloadedStrings, QuasiQuotes, TemplateHaskell, DataKinds #-}
 
 module Network.Bitcoin.BitX.Internal
     (
