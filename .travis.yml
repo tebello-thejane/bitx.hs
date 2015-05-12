@@ -1,15 +1,6 @@
 # stolen from https://github.com/hvr/multi-ghc-travis
 
 env:
- - CABALVER=1.16 GHCVER=6.12.3
- - CABALVER=1.16 GHCVER=7.0.1
- - CABALVER=1.16 GHCVER=7.0.2
- - CABALVER=1.16 GHCVER=7.0.3
- - CABALVER=1.16 GHCVER=7.0.4
- - CABALVER=1.16 GHCVER=7.2.1
- - CABALVER=1.16 GHCVER=7.2.2
- - CABALVER=1.16 GHCVER=7.4.1
- - CABALVER=1.16 GHCVER=7.4.2
  - CABALVER=1.16 GHCVER=7.6.1
  - CABALVER=1.16 GHCVER=7.6.2
  - CABALVER=1.18 GHCVER=7.6.3
@@ -37,6 +28,5 @@ script:
  - cabal configure --enable-tests --enable-benchmarks -v2
  - cabal build
  - cabal test
- - cabal check
  - cabal sdist
  - cabal install --force-reinstalls dist/*-*.tar.gz
