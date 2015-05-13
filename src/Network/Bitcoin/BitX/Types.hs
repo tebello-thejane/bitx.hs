@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric, DefaultSignatures, QuasiQuotes, OverloadedStrings, DataKinds #-}
+{-# LANGUAGE DeriveGeneric, DefaultSignatures, QuasiQuotes, OverloadedStrings #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -13,7 +13,7 @@
 -- The types used for the various BitX API calls.
 --
 -- Note that these are all `record` types, as provided by Nikita Volkov's
--- "record" library. The main motivation for using the @record@ library was
+-- "Record" library. The main motivation for using the @record@ library was
 -- to avoid using record field prefixes and other awkward hacks to get around
 -- the fact that Haskell does not yet have a real records' system.
 --
@@ -34,7 +34,7 @@ module Network.Bitcoin.BitX.Types
     OrderType(..),
     RequestStatus(..),
     OrderRequest,
-    StopOrderSuccess,
+    RequestSuccess,
     PublicTrades,
     BitXError,
     Tickers,
@@ -48,7 +48,8 @@ module Network.Bitcoin.BitX.Types
     WithdrawalRequests,
     WithdrawalRequest,
     NewWithdrawal,
-    WithdrawalType(..)
+    WithdrawalType(..),
+    BitcoinSendRequest
   ) where
 
 import Data.Aeson (ToJSON(..), FromJSON(..))
@@ -199,9 +200,18 @@ type NewWithdrawal =
         {withdrawalType :: WithdrawalType,
          amount :: Decimal } |]
 
+type BitcoinSendRequest =
+    [record|
+        {amount :: Decimal,
+         currency :: Asset,
+         address :: Text,
+         description :: Maybe Text,
+         message :: Maybe Text,
+         pin :: Text} |]
+
 data WithdrawalType = ZAR_EFT | NAD_EFT | KES_MPESA | MYR_IBG | IDR_LLG deriving (Show, Read, Generic)
 
-type StopOrderSuccess = Bool
+type RequestSuccess = Bool
 
 instance ToJSON CcyPair
 instance FromJSON CcyPair

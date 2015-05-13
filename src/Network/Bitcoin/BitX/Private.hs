@@ -58,7 +58,7 @@ postOrder auth oreq = simpleBitXPOSTAuth_ auth oreq "postorder"
 
 {- | Request to stop an order. -}
 
-stopOrder :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError StopOrderSuccess))
+stopOrder :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError RequestSuccess))
 stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
 
 {- | Get an order by its ID -}
@@ -117,3 +117,14 @@ getWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" ++ (s
 --cancelWithdrawalRequest :: BitXAuth -> Text -> IO (Maybe (Either BitXError WithdrawalRequest))
 --cancelWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" ++ (show . Txt.unpack $ wthid)
 
+
+{- | Send Bitcoin from your account to a Bitcoin address or email address.
+
+If the email address is not associated with an existing BitX account, an invitation to create an account
+and claim the funds will be sent.
+
+__Warning! Bitcoin transactions are irreversible. Please ensure your program has been thoroughly tested
+before using this call.__ -}
+
+sendToAddress :: BitXAuth -> BitcoinSendRequest -> IO (Maybe (Either BitXError RequestSuccess))
+sendToAddress auth sreq = simpleBitXPOSTAuth_ auth sreq "send"

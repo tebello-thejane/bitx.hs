@@ -261,18 +261,18 @@ instance POSTEncodeable OrderID where
     postEncode oid =
         [("order_id", showableToBytestring oid)]
 
------------------------------------------ StopOrderSuccess type ------------------------------------
+----------------------------------------- RequestSuccess type ------------------------------------
 
-data StopOrderSuccess_ = StopOrderSuccess_
-    { stopOrderSuccess'success :: Bool
+data RequestSuccess_ = RequestSuccess_
+    { requestSuccess'success :: Bool
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
-    ''StopOrderSuccess_)
+    ''RequestSuccess_)
 
-instance BitXAesRecordConvert StopOrderSuccess StopOrderSuccess_ where
-    aesToRec (StopOrderSuccess_ stopOrderSuccess''success) =
-        stopOrderSuccess''success
+instance BitXAesRecordConvert RequestSuccess RequestSuccess_ where
+    aesToRec (RequestSuccess_ requestSuccess''success) =
+        requestSuccess''success
 
 ------------------------------------- PrivateOrderWithTrades type ----------------------------------
 
@@ -418,3 +418,16 @@ instance POSTEncodeable NewWithdrawal where
     postEncode nwthd =
         [("type", showableToBytestring (view [lens| withdrawalType |] nwthd)),
          ("amount", showableToBytestring (view [lens| amount |] nwthd))]
+
+-------------------------------------- BitcoinSendRequest type -------------------------------------
+
+instance POSTEncodeable BitcoinSendRequest where
+    postEncode oreq =
+        [("amount", showableToBytestring (view [lens| amount |] oreq)),
+         ("currency", showableToBytestring (view [lens| currency |] oreq)),
+         ("address", showableToBytestring (view [lens| address |] oreq)),
+         ("description", showableToBytestring . unjust $ (view [lens| description |] oreq)),
+         ("message", showableToBytestring . unjust $ (view [lens| message |] oreq))]
+        where
+            unjust (Just a) = a
+            unjust Nothing  = ""
