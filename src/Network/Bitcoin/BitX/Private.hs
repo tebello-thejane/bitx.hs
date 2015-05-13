@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Network.Bitcoin.BitX.Private
   (
   getAllOrders,
@@ -114,9 +116,12 @@ Returns the status of a particular withdrawal request. -}
 getWithdrawalRequest :: BitXAuth -> Text -> IO (Maybe (Either BitXError WithdrawalRequest))
 getWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" ++ (show . Txt.unpack $ wthid)
 
---cancelWithdrawalRequest :: BitXAuth -> Text -> IO (Maybe (Either BitXError WithdrawalRequest))
---cancelWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" ++ (show . Txt.unpack $ wthid)
+{- | Cancel a withdrawal request
 
+Cancel a withdrawal request. This can only be done if the request is still in state PENDING. -}
+
+cancelWithdrawalRequest :: BitXAuth -> Text -> IO (Maybe (Either BitXError WithdrawalRequest))
+cancelWithdrawalRequest auth wthid = simpleBitXMETHAuth_ auth "DELETE" $ "withdrawals/" ++ (show . Txt.unpack $ wthid)
 
 {- | Send Bitcoin from your account to a Bitcoin address or email address.
 

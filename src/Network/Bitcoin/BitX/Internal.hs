@@ -4,17 +4,19 @@ module Network.Bitcoin.BitX.Internal
     (
     simpleBitXGetAuth_,
     simpleBitXGet_,
-    simpleBitXPOSTAuth_
+    simpleBitXPOSTAuth_,
+    simpleBitXMETHAuth_
     )
 where
 
 import Network.Bitcoin.BitX.Types
 import Network.Bitcoin.BitX.Types.Internal
 import qualified Network.HTTP.Conduit as NetCon
-import Network.HTTP.Conduit (Response(..))
+import Network.HTTP.Conduit (Response(..), Request(..))
 import Control.Exception (try, SomeException)
 import qualified Data.Aeson as Aeson (decode)
 import qualified Data.ByteString.Lazy as BL
+import qualified Data.ByteString as BS
 import Data.Maybe (fromJust)
 import Network (withSocketsDo)
 import Record (lens)
@@ -44,6 +46,19 @@ simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $ do
           userSecret
         . NetCon.urlEncodedBody (postEncode encrec)
         . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb)
+        :: IO (Either SomeException (Response BL.ByteString))
+    consumeResponseBody response
+    where
+        userID = Txt.encodeUtf8 $ (view [lens| id |] auth)
+        userSecret = Txt.encodeUtf8 $ (view [lens| secret |] auth)
+
+simpleBitXMETHAuth_ :: BitXAesRecordConvert rec aes => BitXAuth -> BS.ByteString
+    -> String -> IO (Maybe (Either BitXError rec))
+simpleBitXMETHAuth_ auth meth verb = withSocketsDo $ do
+    let initReq = (fromJust (NetCon.parseUrl $ (bitXAPIRoot ++ verb))) { method = meth }
+    response <- try . NetCon.withManager . NetCon.httpLbs . NetCon.applyBasicAuth
+          userID
+          userSecret $ initReq
         :: IO (Either SomeException (Response BL.ByteString))
     consumeResponseBody response
     where
