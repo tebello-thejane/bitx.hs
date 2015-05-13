@@ -31,6 +31,7 @@ library
     Network.Bitcoin.BitX.Public
     Network.Bitcoin.BitX.Private
     Network.Bitcoin.BitX.Types
+    Network.Bitcoin.BitX.Private.Quote
 
   ghc-options: -Wall -O2
   if impl(ghc >= 6.8)
