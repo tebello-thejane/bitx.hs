@@ -16,7 +16,7 @@ import qualified Data.Aeson.TH as AesTH
 import qualified Data.Text as Txt
 import qualified Data.Text.Encoding as Txt
 import Data.Text (Text)
-import Data.Time.Clock
+import Data.Time.Clock (UTCTime)
 import Data.Time.Clock.POSIX (posixSecondsToUTCTime)
 import Record
 import Record.Lens (view)
@@ -34,8 +34,6 @@ timestampParse_ = posixSecondsToUTCTime
         . fromRational . toRational
         . ( / 1000)
         . (fromIntegral :: Integer -> Decimal)
-     where
-         div100Rev st = (take 3 st) ++ "." ++ (drop 3 st)
 
 class (FromJSON aes) => BitXAesRecordConvert rec aes | rec -> aes where
     aesToRec :: aes -> rec
@@ -47,16 +45,18 @@ class POSTEncodeable rec where
 showableToBytestring :: (Show a) => a -> ByteString
 showableToBytestring = Txt.encodeUtf8 . Txt.pack . show
 
+-- | Wrapper around Decimal and FromJSON instance, to facilitate automatic JSON instances
 
 newtype QuotedDecimal = QuotedDecimal Decimal deriving (Read, Show)
 
 instance FromJSON QuotedDecimal where
-   parseJSON (String x) = return . QuotedDecimal . (read :: String -> Decimal) . Txt.unpack $ x
+   parseJSON (String x) = return . QuotedDecimal . read . Txt.unpack $ x
    parseJSON _          = mempty
 
 qdToDecimal :: QuotedDecimal -> Decimal
 qdToDecimal (QuotedDecimal dec) = dec
 
+-- | Wrapper around UTCTime and FromJSON instance, to facilitate automatic JSON instances
 
 newtype TimestampMS = TimestampMS Integer deriving (Read, Show)
 
@@ -118,6 +118,7 @@ instance BitXAesRecordConvert Order Order_ where
     aesToRec (Order_ order''volume order''price) =
         [record| {volume =  qdToDecimal order''volume,
               price = qdToDecimal order''price} |]
+
 -------------------------------------------- Orderbook type ----------------------------------------
 
 data Orderbook_ = Orderbook_
@@ -207,6 +208,7 @@ instance BitXAesRecordConvert PrivateOrder PrivateOrder_ where
                   pair = privateOrder''pair,
                   state = privateOrder''state,
                   orderType = privateOrder''type} |]
+
 ------------------------------------------ OrderRequest type ---------------------------------------
 
 instance POSTEncodeable OrderRequest where
@@ -334,6 +336,7 @@ instance BitXAesRecordConvert Balance Balance_ where
                   balance = qdToDecimal balance''balance,
                   reserved = qdToDecimal balance''reserved,
                   unconfirmed = qdToDecimal balance''unconfirmed} |]
+
 -------------------------------------------- Balances type -----------------------------------------
 
 data Balances_ = Balances_
@@ -346,6 +349,7 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 instance BitXAesRecordConvert Balances Balances_ where
     aesToRec (Balances_ balances''balances) =
         [record| {balances = map aesToRec balances''balances} |]
+
 ----------------------------------------- FundingAddress type --------------------------------------
 
 data FundingAddress_ = FundingAddress_
