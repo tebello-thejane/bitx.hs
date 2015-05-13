@@ -45,8 +45,8 @@ getPendingOrders :: BitXAuth -> Maybe CcyPair -> IO (Maybe (Either BitXError Pri
 getPendingOrders auth pair = simpleBitXGetAuth_ auth url
     where
         url = "listorders?state=PENDING" ++ case pair of
-            Nothing  -> ""
-            Just st  -> "&pair=" ++ show st
+            Nothing -> ""
+            Just st -> "&pair=" ++ show st
 
 {- | Create a new order.
 
@@ -84,8 +84,8 @@ getFundingAddress :: BitXAuth -> Asset -> Maybe Text -> IO (Maybe (Either BitXEr
 getFundingAddress auth asset addr = simpleBitXGetAuth_ auth url
     where
         url = "funding_address?asset=" ++ show asset ++ case addr of
-            Nothing  -> ""
-            Just ad  -> "&address=" ++ (show . Txt.unpack $ ad)
+            Nothing -> ""
+            Just ad -> "&address=" ++ (show . Txt.unpack $ ad)
 
 {- | Create receive address
 
