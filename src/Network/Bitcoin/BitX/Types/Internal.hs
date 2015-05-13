@@ -1,5 +1,5 @@
 {-# LANGUAGE QuasiQuotes, OverloadedStrings, TemplateHaskell, MultiParamTypeClasses,
-    FunctionalDependencies, FlexibleInstances, DataKinds, FlexibleContexts #-}
+    FunctionalDependencies, FlexibleInstances, DataKinds, FlexibleContexts, CPP #-}
 
 {-# OPTIONS_GHC -fno-warn-unused-binds -fno-warn-unused-matches #-}
 
@@ -20,7 +20,11 @@ import Data.Time.Clock
 import Data.Time.Clock.POSIX (posixSecondsToUTCTime)
 import Record
 import Record.Lens (view)
+#if MIN_VERSION_base(4,8,0)
+-- base 4.8 re-exports Monoid and its functions/constants
+#else
 import Data.Monoid (mempty)
+#endif
 import Data.Decimal (Decimal)
 import Data.ByteString (ByteString)
 import Data.List.Split (splitOn)
