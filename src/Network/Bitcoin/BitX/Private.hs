@@ -12,7 +12,9 @@ module Network.Bitcoin.BitX.Private
   newFundingAddress,
   getWithdrawalRequests,
   newWithdrawalRequest,
-  getWithdrawalRequest
+  getWithdrawalRequest,
+  sendToAddress,
+  cancelWithdrawalRequest
   ) where
 
 import Network.Bitcoin.BitX.Internal

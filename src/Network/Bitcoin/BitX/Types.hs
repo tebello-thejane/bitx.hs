@@ -49,7 +49,10 @@ module Network.Bitcoin.BitX.Types
     WithdrawalRequest,
     NewWithdrawal,
     WithdrawalType(..),
-    BitcoinSendRequest
+    BitcoinSendRequest,
+    QuoteRequest,
+    OrderQuote,
+    QuoteType(..)
   ) where
 
 import Data.Aeson (ToJSON(..), FromJSON(..))
@@ -209,7 +212,27 @@ type BitcoinSendRequest =
          message :: Maybe Text,
          pin :: Text} |]
 
+type QuoteRequest =
+    [record|
+        {type :: QuoteType,
+         pair :: CcyPair,
+         baseAmount :: Decimal} |]
+
+type OrderQuote =
+    [record|
+        {id :: Text,
+         type :: QuoteType,
+         pair :: CcyPair,
+         baseAmount :: Decimal,
+         counterAmount :: Decimal,
+         createdAt :: UTCTime,
+         expiresAt :: UTCTime,
+         discarded :: Bool,
+         exercised :: Bool} |]
+
 data WithdrawalType = ZAR_EFT | NAD_EFT | KES_MPESA | MYR_IBG | IDR_LLG deriving (Show, Read, Generic)
+
+data QuoteType = BUY | SELL deriving (Show, Read, Generic)
 
 type RequestSuccess = Bool
 
@@ -227,3 +250,6 @@ instance FromJSON RequestStatus
 
 instance ToJSON WithdrawalType
 instance FromJSON WithdrawalType
+
+instance ToJSON QuoteType
+instance FromJSON QuoteType

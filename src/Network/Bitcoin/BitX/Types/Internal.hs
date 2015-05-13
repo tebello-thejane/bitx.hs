@@ -406,14 +406,6 @@ instance BitXAesRecordConvert WithdrawalRequests WithdrawalRequests_ where
 
 ----------------------------------------- NewWithdrawal type ---------------------------------------
 
-data NewWithdrawal_ = NewWithdrawal_
-    { newWithdrawal'type :: WithdrawalType
-    , newWithdrawal'amount :: QuotedDecimal
-    }
-
-$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
-    ''NewWithdrawal_)
-
 instance POSTEncodeable NewWithdrawal where
     postEncode nwthd =
         [("type", showableToBytestring (view [lens| withdrawalType |] nwthd)),
@@ -431,3 +423,43 @@ instance POSTEncodeable BitcoinSendRequest where
         where
             unjust (Just a) = a
             unjust Nothing  = ""
+
+----------------------------------------- QuoteRequest type ----------------------------------------
+
+instance POSTEncodeable QuoteRequest where
+    postEncode oreq =
+        [("type", showableToBytestring (view [lens| type |] oreq)),
+         ("pair", showableToBytestring (view [lens| pair |] oreq)),
+         ("base_amount", showableToBytestring (view [lens| baseAmount |] oreq))]
+
+------------------------------------------ OrderQuote type -----------------------------------------
+
+data OrderQuote_ = OrderQuote_
+    { orderQuote'id :: Text
+    , orderQuote'type :: QuoteType
+    , orderQuote'pair :: CcyPair
+    , orderQuote'base_amount :: QuotedDecimal
+    , orderQuote'counter_amount :: QuotedDecimal
+    , orderQuote'created_at :: TimestampMS
+    , orderQuote'expires_at :: TimestampMS
+    , orderQuote'discarded :: Bool
+    , orderQuote'exercised :: Bool
+    }
+
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''OrderQuote_)
+
+instance BitXAesRecordConvert OrderQuote OrderQuote_ where
+    aesToRec (OrderQuote_ orderQuote''id orderQuote''type orderQuote''pair orderQuote''base_amount
+        orderQuote''counter_amount orderQuote''created_at orderQuote''expires_at orderQuote''discarded
+        orderQuote''exercised) =
+        [record| {id = orderQuote''id,
+                  type = orderQuote''type,
+                  pair = orderQuote''pair,
+                  baseAmount = qdToDecimal orderQuote''base_amount,
+                  counterAmount = qdToDecimal orderQuote''counter_amount,
+                  createdAt = tsmsToUTCTime orderQuote''created_at,
+                  expiresAt = tsmsToUTCTime orderQuote''expires_at,
+                  discarded = orderQuote''discarded,
+                  exercised = orderQuote''exercised} |]
+

@@ -2,8 +2,7 @@
 *Add all private method skeletons.
 *Generalise public and private methods.
 *Add PostEncodeable instances for all relevant records.
-*Generalise generalised methods and move them to Network.Bitcoin.BitX.Internal.
 *Investigate NOT writing JSON instances explicitely for simple lists of instances (where am I doing this?).
 *Seriously rethink design of Balance(s)...
-*JSON instances for UTCTime?
+*Divide into slightly smaller sub-modules.
 
