@@ -6,7 +6,8 @@
 module Network.Bitcoin.BitX.Types.Internal
     (
     BitXAesRecordConvert(..),
-    POSTEncodeable(..)
+    POSTEncodeable(..),
+    GrantRequest_(..)
     )
 where
 
@@ -463,3 +464,26 @@ instance BitXAesRecordConvert OrderQuote OrderQuote_ where
                   discarded = orderQuote''discarded,
                   exercised = orderQuote''exercised} |]
 
+-------------------------------------------- BitXAuth type -----------------------------------------
+
+data BitXAuth_ = BitXAuth_
+    { bitXAuth'api_key_id :: Text
+    , bitXAuth'api_key_secret :: Text
+    }
+
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''BitXAuth_)
+
+instance BitXAesRecordConvert BitXAuth BitXAuth_ where
+    aesToRec (BitXAuth_ bitXAuth''api_key_id bitXAuth''api_key_secret) =
+        [record| {id = bitXAuth''api_key_id,
+                  secret = bitXAuth''api_key_secret} |]
+
+------------------------------------------ GrantRequest_ type ---------------------------------------
+
+data GrantRequest_ = GrantRequest_ Text
+
+instance POSTEncodeable GrantRequest_ where
+    postEncode (GrantRequest_ authCode) =
+        [("grant_type", "authorization_code"),
+         ("code", showableToBytestring authCode)]
