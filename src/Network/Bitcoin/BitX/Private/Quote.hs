@@ -14,6 +14,7 @@ import qualified Data.Text as Txt
 import Data.Text (Text)
 
 {- | Create a quote
+
 Creates a new quote to buy or sell a particular amount.
 
 You can specify either the exact amount that you want to pay or the exact amount that you want to
@@ -34,12 +35,14 @@ newQuote :: BitXAuth -> QuoteRequest -> IO (Maybe (Either BitXError OrderQuote))
 newQuote auth qreq = simpleBitXPOSTAuth_ auth qreq "quotes"
 
 {- | Get a quote
+
 Get the latest status of a quote, retrieved by ID. -}
 
 getQuote :: BitXAuth -> Text -> IO (Maybe (Either BitXError OrderQuote))
 getQuote auth qid = simpleBitXGetAuth_ auth $ "quotes/" ++ Txt.unpack qid
 
 {- | Exercise a quote
+
 Exercise a quote to perform the trade. If there is sufficient balance available in your account,
 it will be debited and the counter amount credited.
 
@@ -49,6 +52,7 @@ exerciseQuote :: BitXAuth -> Text -> IO (Maybe (Either BitXError OrderQuote))
 exerciseQuote auth qid = simpleBitXMETHAuth_ auth "PUT" $ "quotes/" ++ Txt.unpack qid
 
 {- | Discard a quote
+
 Discard a quote. Once a quote has been discarded, it cannot be exercised even if it has not expired yet.
 -}
 

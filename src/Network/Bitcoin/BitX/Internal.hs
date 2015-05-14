@@ -5,7 +5,8 @@ module Network.Bitcoin.BitX.Internal
     simpleBitXGetAuth_,
     simpleBitXGet_,
     simpleBitXPOSTAuth_,
-    simpleBitXMETHAuth_
+    simpleBitXMETHAuth_,
+    consumeResponseBody_
     )
 where
 
@@ -33,7 +34,7 @@ simpleBitXGetAuth_ auth verb = withSocketsDo $ do
           userSecret
         . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb)
         :: IO (Either SomeException (Response BL.ByteString))
-    consumeResponseBody response
+    consumeResponseBody_ response
     where
         userID = Txt.encodeUtf8 $ (view [lens| id |] auth)
         userSecret = Txt.encodeUtf8 $ (view [lens| secret |] auth)
@@ -47,7 +48,7 @@ simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $ do
         . NetCon.urlEncodedBody (postEncode encrec)
         . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb)
         :: IO (Either SomeException (Response BL.ByteString))
-    consumeResponseBody response
+    consumeResponseBody_ response
     where
         userID = Txt.encodeUtf8 $ (view [lens| id |] auth)
         userSecret = Txt.encodeUtf8 $ (view [lens| secret |] auth)
@@ -60,7 +61,7 @@ simpleBitXMETHAuth_ auth meth verb = withSocketsDo $ do
           userID
           userSecret $ initReq
         :: IO (Either SomeException (Response BL.ByteString))
-    consumeResponseBody response
+    consumeResponseBody_ response
     where
         userID = Txt.encodeUtf8 $ (view [lens| id |] auth)
         userSecret = Txt.encodeUtf8 $ (view [lens| secret |] auth)
@@ -77,9 +78,9 @@ consumeResponse resp =
         Left _  -> return Nothing -- gobble up all exceptions and just return Nothing
         Right k -> bitXErrorOrPayload k
 
-consumeResponseBody :: BitXAesRecordConvert rec aes => Either SomeException (NetCon.Response BL.ByteString)
+consumeResponseBody_ :: BitXAesRecordConvert rec aes => Either SomeException (NetCon.Response BL.ByteString)
     -> IO (Maybe (Either BitXError rec))
-consumeResponseBody resp =
+consumeResponseBody_ resp =
     case resp of
         Left _  -> return Nothing -- gobble up all exceptions and just return Nothing
         Right k -> bitXErrorOrPayload $ NetCon.responseBody k

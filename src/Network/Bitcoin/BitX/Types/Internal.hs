@@ -7,7 +7,7 @@ module Network.Bitcoin.BitX.Types.Internal
     (
     BitXAesRecordConvert(..),
     POSTEncodeable(..),
-    GrantRequest_(..)
+    showableToBytestring_
     )
 where
 
@@ -43,8 +43,8 @@ class POSTEncodeable rec where
     postEncode :: rec -> [(ByteString, ByteString)]
 
 
-showableToBytestring :: (Show a) => a -> ByteString
-showableToBytestring = Txt.encodeUtf8 . Txt.pack . show
+showableToBytestring_ :: (Show a) => a -> ByteString
+showableToBytestring_ = Txt.encodeUtf8 . Txt.pack . show
 
 -- | Wrapper around Decimal and FromJSON instance, to facilitate automatic JSON instances
 
@@ -214,10 +214,10 @@ instance BitXAesRecordConvert PrivateOrder PrivateOrder_ where
 
 instance POSTEncodeable OrderRequest where
     postEncode oreq =
-        [("pair", showableToBytestring (view [lens| pair |] oreq)),
-         ("type", showableToBytestring (view [lens| requestType |] oreq)),
-         ("volume", showableToBytestring (view [lens| volume |] oreq)),
-         ("price", showableToBytestring (view [lens| price |] oreq))]
+        [("pair", showableToBytestring_ (view [lens| pair |] oreq)),
+         ("type", showableToBytestring_ (view [lens| requestType |] oreq)),
+         ("volume", showableToBytestring_ (view [lens| volume |] oreq)),
+         ("price", showableToBytestring_ (view [lens| price |] oreq))]
 
 --------------------------------------------- Tickers type -----------------------------------------
 
@@ -260,9 +260,9 @@ instance BitXAesRecordConvert OrderID OrderIDRec_ where
 
 instance POSTEncodeable OrderID where
     postEncode oid =
-        [("order_id", showableToBytestring oid)]
+        [("order_id", showableToBytestring_ oid)]
 
------------------------------------------ RequestSuccess type ------------------------------------
+----------------------------------------- RequestSuccess type --------------------------------------
 
 data RequestSuccess_ = RequestSuccess_
     { requestSuccess'success :: Bool
@@ -375,7 +375,7 @@ instance BitXAesRecordConvert FundingAddress FundingAddress_ where
 
 instance POSTEncodeable Asset where
     postEncode asset =
-        [("asset", showableToBytestring asset)]
+        [("asset", showableToBytestring_ asset)]
 
 -------------------------------------- WithdrawalRequest type --------------------------------------
 
@@ -409,18 +409,18 @@ instance BitXAesRecordConvert WithdrawalRequests WithdrawalRequests_ where
 
 instance POSTEncodeable NewWithdrawal where
     postEncode nwthd =
-        [("type", showableToBytestring (view [lens| withdrawalType |] nwthd)),
-         ("amount", showableToBytestring (view [lens| amount |] nwthd))]
+        [("type", showableToBytestring_ (view [lens| withdrawalType |] nwthd)),
+         ("amount", showableToBytestring_ (view [lens| amount |] nwthd))]
 
 -------------------------------------- BitcoinSendRequest type -------------------------------------
 
 instance POSTEncodeable BitcoinSendRequest where
     postEncode oreq =
-        [("amount", showableToBytestring (view [lens| amount |] oreq)),
-         ("currency", showableToBytestring (view [lens| currency |] oreq)),
-         ("address", showableToBytestring (view [lens| address |] oreq)),
-         ("description", showableToBytestring . unjust $ (view [lens| description |] oreq)),
-         ("message", showableToBytestring . unjust $ (view [lens| message |] oreq))]
+        [("amount", showableToBytestring_ (view [lens| amount |] oreq)),
+         ("currency", showableToBytestring_ (view [lens| currency |] oreq)),
+         ("address", showableToBytestring_ (view [lens| address |] oreq)),
+         ("description", showableToBytestring_ . unjust $ (view [lens| description |] oreq)),
+         ("message", showableToBytestring_ . unjust $ (view [lens| message |] oreq))]
         where
             unjust (Just a) = a
             unjust Nothing  = ""
@@ -429,9 +429,9 @@ instance POSTEncodeable BitcoinSendRequest where
 
 instance POSTEncodeable QuoteRequest where
     postEncode oreq =
-        [("type", showableToBytestring (view [lens| type |] oreq)),
-         ("pair", showableToBytestring (view [lens| pair |] oreq)),
-         ("base_amount", showableToBytestring (view [lens| baseAmount |] oreq))]
+        [("type", showableToBytestring_ (view [lens| type |] oreq)),
+         ("pair", showableToBytestring_ (view [lens| pair |] oreq)),
+         ("base_amount", showableToBytestring_ (view [lens| baseAmount |] oreq))]
 
 ------------------------------------------ OrderQuote type -----------------------------------------
 
@@ -478,12 +478,3 @@ instance BitXAesRecordConvert BitXAuth BitXAuth_ where
     aesToRec (BitXAuth_ bitXAuth''api_key_id bitXAuth''api_key_secret) =
         [record| {id = bitXAuth''api_key_id,
                   secret = bitXAuth''api_key_secret} |]
-
------------------------------------------- GrantRequest_ type ---------------------------------------
-
-data GrantRequest_ = GrantRequest_ Text
-
-instance POSTEncodeable GrantRequest_ where
-    postEncode (GrantRequest_ authCode) =
-        [("grant_type", "authorization_code"),
-         ("code", showableToBytestring authCode)]

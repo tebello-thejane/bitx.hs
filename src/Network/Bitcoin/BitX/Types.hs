@@ -52,7 +52,8 @@ module Network.Bitcoin.BitX.Types
     BitcoinSendRequest,
     QuoteRequest,
     OrderQuote,
-    QuoteType(..)
+    QuoteType(..),
+    BitXClientAuth
   ) where
 
 import Data.Aeson (ToJSON(..), FromJSON(..))
@@ -119,6 +120,8 @@ type BitXAuth =
     [record|
         {id :: Text,
          secret :: Text} |]
+
+type BitXClientAuth = BitXAuth
 
 type PrivateOrder =
     [record|
