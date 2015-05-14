@@ -4,7 +4,9 @@
 name:                bitx-bitcoin
 version:             0.0.1.0
 synopsis:            A Haskell library for working with the BitX bitcoin exchange.
--- description:
+
+description:
+    Haskell bindings to the BitX REST API, as described here: <https://bitx.co/api>
 
 license:             PublicDomain
 
