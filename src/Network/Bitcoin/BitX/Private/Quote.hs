@@ -10,8 +10,6 @@ module Network.Bitcoin.BitX.Private.Quote
 
 import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
-import qualified Data.Text as Txt
-import Data.Text (Text)
 
 {- | Create a quote
 
@@ -29,6 +27,8 @@ An error is returned if your account is not verified for the currency pair, or i
 would have insufficient balance to ever exercise the quote.
 
 The currency pair can also be flipped if you want to buy or sell the counter currency (e.g. ZARXBT).
+
+@Perm_W_Orders@ permission required.
 -}
 
 newQuote :: BitXAuth -> QuoteRequest -> IO (Maybe (Either BitXError OrderQuote))
@@ -36,26 +36,35 @@ newQuote auth qreq = simpleBitXPOSTAuth_ auth qreq "quotes"
 
 {- | Get a quote
 
-Get the latest status of a quote, retrieved by ID. -}
+Get the latest status of a quote, retrieved by ID.
 
-getQuote :: BitXAuth -> Text -> IO (Maybe (Either BitXError OrderQuote))
-getQuote auth qid = simpleBitXGetAuth_ auth $ "quotes/" ++ Txt.unpack qid
+@Perm_R_Orders@ permission required.
+-}
+
+getQuote :: BitXAuth -> String -> IO (Maybe (Either BitXError OrderQuote))
+getQuote auth qid = simpleBitXGetAuth_ auth $ "quotes/" ++ qid
 
 {- | Exercise a quote
 
 Exercise a quote to perform the trade. If there is sufficient balance available in your account,
 it will be debited and the counter amount credited.
 
-An error is returned if the quote has expired or if you have insufficient available balance. -}
+An error is returned if the quote has expired or if you have insufficient available balance.
 
-exerciseQuote :: BitXAuth -> Text -> IO (Maybe (Either BitXError OrderQuote))
-exerciseQuote auth qid = simpleBitXMETHAuth_ auth "PUT" $ "quotes/" ++ Txt.unpack qid
+@Perm_W_Orders@ permission required.
+-}
+
+exerciseQuote :: BitXAuth -> String -> IO (Maybe (Either BitXError OrderQuote))
+exerciseQuote auth qid = simpleBitXMETHAuth_ auth "PUT" $ "quotes/" ++ qid
 
 {- | Discard a quote
 
-Discard a quote. Once a quote has been discarded, it cannot be exercised even if it has not expired yet.
+Discard a quote. Once a quote has been discarded, it cannot be exercised even if it has not expired
+yet.
+
+@Perm_W_Orders@ permission required.
 -}
 
-discardQuote :: BitXAuth -> Text -> IO (Maybe (Either BitXError OrderQuote))
-discardQuote auth qid = simpleBitXMETHAuth_ auth "DELETE" $ "quotes/" ++ Txt.unpack qid
+discardQuote :: BitXAuth -> String -> IO (Maybe (Either BitXError OrderQuote))
+discardQuote auth qid = simpleBitXMETHAuth_ auth "DELETE" $ "quotes/" ++ qid
 

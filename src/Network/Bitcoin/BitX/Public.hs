@@ -1,3 +1,21 @@
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Network.Bitcoin.BitX.Public
+-- Copyright   :  No Rights Reserved
+-- License     :  Public Domain
+--
+-- Maintainer  :  Tebello Thejane <zyxoas+hackage@gmail.com>
+-- Stability   :  Experimental
+-- Portability :  non-portable (GHC Extensions)
+--
+-- The public BitX API.
+--
+-- Each one of the calls may either return a useful 'record', a 'BitXError' if BitX actually
+-- returned an error, or 'Nothing' if some exception occured (or if the data returned by BitX was
+-- unparseable).
+--
+-----------------------------------------------------------------------------
+
 module Network.Bitcoin.BitX.Public
   (
     getTicker,

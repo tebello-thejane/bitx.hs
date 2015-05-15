@@ -52,6 +52,7 @@ newtype QuotedDecimal = QuotedDecimal Decimal deriving (Read, Show)
 
 instance FromJSON QuotedDecimal where
    parseJSON (String x) = return . QuotedDecimal . read . Txt.unpack $ x
+   parseJSON (Number x) = return . QuotedDecimal . fromInteger . round $ x
    parseJSON _          = mempty
 
 qdToDecimal :: QuotedDecimal -> Decimal
@@ -91,6 +92,19 @@ instance BitXAesRecordConvert Ticker Ticker_ where
                   lastTrade = qdToDecimal ticker''lastTrade,
                   rolling24HourVolume = qdToDecimal ticker''rolling24HourVolume,
                   pair = ticker''pair} |]
+
+--------------------------------------------- Tickers type -----------------------------------------
+
+data Tickers_ = Tickers_
+    { tickers'tickers :: [Ticker_]
+    }
+
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''Tickers_)
+
+instance BitXAesRecordConvert Tickers Tickers_ where
+    aesToRec (Tickers_ tickers''tickers) =
+        [record| {tickers = map aesToRec tickers''tickers} |]
 
 -------------------------------------------- BitXError type ----------------------------------------
 
@@ -210,28 +224,6 @@ instance BitXAesRecordConvert PrivateOrder PrivateOrder_ where
                   state = privateOrder''state,
                   orderType = privateOrder''type} |]
 
------------------------------------------- OrderRequest type ---------------------------------------
-
-instance POSTEncodeable OrderRequest where
-    postEncode oreq =
-        [("pair", showableToBytestring_ (view [lens| pair |] oreq)),
-         ("type", showableToBytestring_ (view [lens| requestType |] oreq)),
-         ("volume", showableToBytestring_ (view [lens| volume |] oreq)),
-         ("price", showableToBytestring_ (view [lens| price |] oreq))]
-
---------------------------------------------- Tickers type -----------------------------------------
-
-data Tickers_ = Tickers_
-    { tickers'tickers :: [Ticker_]
-    }
-
-$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
-    ''Tickers_)
-
-instance BitXAesRecordConvert Tickers Tickers_ where
-    aesToRec (Tickers_ tickers''tickers) =
-        [record| {tickers = map aesToRec tickers''tickers} |]
-
 ------------------------------------------ PrivateOrders type --------------------------------------
 
 data PrivateOrders_ = PrivateOrders_
@@ -244,6 +236,15 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 instance BitXAesRecordConvert PrivateOrders PrivateOrders_ where
     aesToRec (PrivateOrders_ privateOrders''orders) =
         [record| {orders = map aesToRec privateOrders''orders} |]
+
+------------------------------------------ OrderRequest type ---------------------------------------
+
+instance POSTEncodeable OrderRequest where
+    postEncode oreq =
+        [("pair", showableToBytestring_ (view [lens| pair |] oreq)),
+         ("type", showableToBytestring_ (view [lens| requestType |] oreq)),
+         ("volume", showableToBytestring_ (view [lens| volume |] oreq)),
+         ("price", showableToBytestring_ (view [lens| price |] oreq))]
 
 -------------------------------------------- OrderIDRec type ---------------------------------------
 
@@ -478,3 +479,45 @@ instance BitXAesRecordConvert BitXAuth BitXAuth_ where
     aesToRec (BitXAuth_ bitXAuth''api_key_id bitXAuth''api_key_secret) =
         [record| {id = bitXAuth''api_key_id,
                   secret = bitXAuth''api_key_secret} |]
+
+------------------------------------------ Transaction type ----------------------------------------
+
+data Transaction_ = Transaction_
+    { transaction'row_index :: Int
+    , transaction'timestamp :: TimestampMS
+    , transaction'balance :: QuotedDecimal
+    , transaction'avalable :: QuotedDecimal
+    , transaction'balance_delta :: QuotedDecimal
+    , transaction'available_delta :: QuotedDecimal
+    , transaction'currency :: Asset
+    , transaction'description :: Text
+    }
+
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''Transaction_)
+
+instance BitXAesRecordConvert Transaction Transaction_ where
+    aesToRec (Transaction_ transaction''row_index transaction''timestamp transaction''balance
+        transaction''avalable transaction''balance_delta transaction''available_delta
+        transaction''currency transaction''description) =
+        [record| {rowIndex = transaction''row_index,
+                  timestamp = tsmsToUTCTime transaction''timestamp,
+                  balance = qdToDecimal transaction''balance,
+                  available = qdToDecimal transaction''avalable,
+                  balanceDelta = qdToDecimal transaction''balance_delta,
+                  availableDelta = qdToDecimal transaction''available_delta,
+                  currency = transaction''currency,
+                  description = transaction''description} |]
+
+---------------------------------------- Transactions type -----------------------------------------
+
+data Transactions_ = Transactions_
+    { transactions'transactions :: [Transaction_]
+    }
+
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''Transactions_)
+
+instance BitXAesRecordConvert Transactions Transactions_ where
+    aesToRec (Transactions_ transactions''transactions) =
+        [record| {transactions = map aesToRec transactions''transactions} |]

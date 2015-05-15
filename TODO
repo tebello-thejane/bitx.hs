@@ -2,7 +2,6 @@
 *Add all private method skeletons.
 *Generalise public and private methods.
 *Add PostEncodeable instances for all relevant records.
-*Investigate NOT writing JSON instances explicitely for simple lists of instances (where am I doing this?).
 *Seriously rethink design of Balance(s)...
 *Divide into slightly smaller sub-modules.
 *Verify whether I am allowed to use text from BitX in docs...

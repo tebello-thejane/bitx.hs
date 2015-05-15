@@ -38,5 +38,5 @@ authGrant cauth authCode = withSocketsDo $ do
         :: IO (Either SomeException (Response BL.ByteString))
     consumeResponseBody_ response
     where
-        userID = Txt.encodeUtf8 $ (view [lens| id |] cauth)
-        userSecret = Txt.encodeUtf8 $ (view [lens| secret |] cauth)
+        userID = Txt.encodeUtf8 $ view [lens| id |] cauth
+        userSecret = Txt.encodeUtf8 $ view [lens| secret |] cauth

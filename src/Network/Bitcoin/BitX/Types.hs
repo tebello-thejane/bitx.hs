@@ -53,7 +53,9 @@ module Network.Bitcoin.BitX.Types
     QuoteRequest,
     OrderQuote,
     QuoteType(..),
-    BitXClientAuth
+    BitXClientAuth,
+    Transaction,
+    Transactions
   ) where
 
 import Data.Aeson (ToJSON(..), FromJSON(..))
@@ -157,6 +159,21 @@ type PrivateOrderWithTrades =
 type PrivateOrders =
     [record|
         {orders :: [PrivateOrder]} |]
+
+type Transaction =
+    [record|
+        {rowIndex :: Int,
+         timestamp :: UTCTime,
+         balance :: Decimal,
+         available :: Decimal,
+         balanceDelta :: Decimal,
+         availableDelta :: Decimal,
+         currency :: Asset,
+         description :: Text}|]
+
+type Transactions =
+    [record|
+    {transactions :: [Transaction]}|]
 
 type OrderID = Text
 
