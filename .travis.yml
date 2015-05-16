@@ -27,14 +27,21 @@ install:
  - cabal --version
  - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
  - travis_retry cabal update
+ - cabal --version
  - cabal install --only-dependencies --enable-tests --enable-benchmarks
+ - cabal --version
  - cabal install happy alex
+ - cabal --version
  - cabal install packunused
+ - cabal --version
 
 script:
  - if [ -f configure.ac ]; then autoreconf -i; fi
+ - cabal --version
  - cabal configure --enable-tests --enable-benchmarks -O0 --disable-library-profiling -v2
+ - cabal --version
  - cabal build --ghc-option=-ddump-minimal-imports
+ - cabal --version
  - cabal test
  - cabal check
  - packunused
