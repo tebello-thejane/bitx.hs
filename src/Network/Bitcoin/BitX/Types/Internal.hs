@@ -7,9 +7,7 @@ module Network.Bitcoin.BitX.Types.Internal
     (
     BitXAesRecordConvert(..),
     POSTEncodeable(..),
-    showableToBytestring_,
-    BitXError_(..)
-
+    showableToBytestring_
     )
 where
 

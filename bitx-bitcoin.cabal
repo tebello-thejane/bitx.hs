@@ -86,4 +86,8 @@ test-suite spec
   build-depends:       base == 4.*,
                        bitx-bitcoin,
                        hspec == 2.*,
-                       aeson
+                       aeson,
+                       record,
+                       bytestring,
+                       time
+

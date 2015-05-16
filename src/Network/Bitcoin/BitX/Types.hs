@@ -88,10 +88,10 @@ type Tickers =
         {tickers :: [Ticker]} |]
 
 data CcyPair = XBTZAR | XBTNAD | ZARXBT | NADXBT | XBTKES | KESXBT | XBTMYR | MYRXBT
-  deriving (Show, Read, Generic)
+  deriving (Show, Read, Generic, Eq)
 
 data Asset = ZAR | NAD | XBT | KES | MYR
-  deriving (Show, Read, Generic)
+  deriving (Show, Read, Generic, Eq)
 
 type Orderbook =
     [record|
@@ -177,9 +177,9 @@ type Transactions =
 
 type OrderID = Text
 
-data OrderType = ASK | BID deriving (Show, Read, Generic)
+data OrderType = ASK | BID deriving (Show, Read, Generic, Eq)
 
-data RequestStatus = PENDING | COMPLETE | CANCELLED deriving (Show, Read, Generic)
+data RequestStatus = PENDING | COMPLETE | CANCELLED deriving (Show, Read, Generic, Eq)
 
 type OrderRequest =
     [record|
@@ -250,9 +250,9 @@ type OrderQuote =
          discarded :: Bool,
          exercised :: Bool} |]
 
-data WithdrawalType = ZAR_EFT | NAD_EFT | KES_MPESA | MYR_IBG | IDR_LLG deriving (Show, Read, Generic)
+data WithdrawalType = ZAR_EFT | NAD_EFT | KES_MPESA | MYR_IBG | IDR_LLG deriving (Show, Read, Generic, Eq)
 
-data QuoteType = BUY | SELL deriving (Show, Read, Generic)
+data QuoteType = BUY | SELL deriving (Show, Read, Generic, Eq)
 
 type RequestSuccess = Bool
 
