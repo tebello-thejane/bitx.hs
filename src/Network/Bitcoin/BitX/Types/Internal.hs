@@ -7,7 +7,9 @@ module Network.Bitcoin.BitX.Types.Internal
     (
     BitXAesRecordConvert(..),
     POSTEncodeable(..),
-    showableToBytestring_
+    showableToBytestring_,
+    BitXError_(..)
+
     )
 where
 
@@ -111,7 +113,7 @@ instance BitXAesRecordConvert Tickers Tickers_ where
 data BitXError_= BitXError_
     { bitXError'error :: Text,
       bitXError'error_code :: Text
-    }
+    } deriving (Show, Eq)
 
 $(AesTH.deriveJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"} ''BitXError_)
 
