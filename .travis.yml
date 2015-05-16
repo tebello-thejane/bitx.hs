@@ -30,9 +30,10 @@ install:
 
 script:
 # - if [ -f configure.ac ]; then autoreconf -i; fi
- - cabal configure -O0 --disable-library-profiling -v2
- - cabal build --ghc-option=-ddump-minimal-imports
+ - cabal configure --enable-tests -O0 --disable-library-profiling -v2
+ - cabal build
  - cabal configure --enable-tests --enable-benchmarks -O0 --disable-library-profiling -v2
+ - cabal install hspec
  - cabal test
  - cabal check
  - cabal sdist
