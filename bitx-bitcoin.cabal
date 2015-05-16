@@ -37,7 +37,7 @@ library
     Network.Bitcoin.BitX.Private.Auth
     Network.Bitcoin.BitX.Types.Internal
     Network.Bitcoin.BitX.Internal
-  ghc-options: -Wall -O2
+--  ghc-options: -Wall -O2
   if impl(ghc >= 6.8)
     ghc-options: -fwarn-tabs
 

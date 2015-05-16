@@ -9,6 +9,7 @@ env:
  - CABALVER=1.18 GHCVER=7.8.3
  - CABALVER=1.18 GHCVER=7.8.4
  - CABALVER=1.22 GHCVER=7.10.1
+ - CABALVER=1.22 GHCVER=7.10.2
  - CABALVER=head GHCVER=head
 
 matrix:
@@ -32,5 +33,6 @@ script:
  - cabal configure --enable-tests --enable-benchmarks -v2
  - cabal build
  - cabal test
+ - cabal check
  - cabal sdist
  - cabal install --force-reinstalls dist/*-*.tar.gz
