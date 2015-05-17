@@ -52,7 +52,7 @@ newtype QuotedDecimal = QuotedDecimal Decimal deriving (Read, Show)
 
 instance FromJSON QuotedDecimal where
    parseJSON (String x) = return . QuotedDecimal . read . Txt.unpack $ x
-   parseJSON (Number x) = return . QuotedDecimal . fromInteger . round $ x
+   parseJSON (Number x) = return . QuotedDecimal . read . show $ x
    parseJSON _          = mempty
 
 qdToDecimal :: QuotedDecimal -> Decimal

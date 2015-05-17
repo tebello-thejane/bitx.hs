@@ -11,25 +11,23 @@ import Network.Bitcoin.BitX.Types.Internal
 import Network.Bitcoin.BitX.Types
 import Record
 import Data.ByteString.Lazy (ByteString)
-import Data.Time.Clock.POSIX
+--import Data.Time.Clock.POSIX
 
 spec :: Spec
 spec = do
-  describe "FromJSON to Record" $ do
-    it "BitXError is parsed properly" $ do
+  describe "FromJSON intances" $ do
+    it "QuotedDecimal is parsed whether quoted or not, for floating point numbers" $ do
       recordAesCheck
-        "{\"error\" : \"oops\", \"error_code\" : \"ABadError\"}"
-        ([record| {error = "oops", errorCode = "ABadError"} |] :: BitXError)
-    it "BitXError is parsed properly" $ do
-      recordAesCheck
-        "{\"timestamp\":1431811395699,\"bid\":\"3083.00\",\"ask\":\"3115.00\",\"last_trade\":\"3116.00\",\"rolling_24_hour_volume\":\"19.776608\",\"pair\":\"XBTZAR\"}"
+        "{\"volume\":314159.23,\"price\":\"4321.56\"}"
         ([record|
-            {ask = 3115.00,
-             timestamp = (posixSecondsToUTCTime 1431811395.699),
-             bid = 3083.0,
-             rolling24HourVolume = 19.776608,
-             lastTrade = 3116.00,
-             pair = XBTZAR} |] :: Ticker)
+            {volume = 314159.23,
+             price = 4321.56} |] :: Order)
+    it "QuotedDecimal is parsed whether quoted or not, for integral numbers" $ do
+      recordAesCheck
+        "{\"volume\":314159,\"price\":\"4321\"}"
+        ([record|
+            {volume = 314159,
+             price = 4321} |] :: Order)
 
 recordAesCheck :: (BitXAesRecordConvert rec aes, Show rec, Eq rec) => ByteString -> rec -> Expectation
 recordAesCheck aesTxt recd = (fmap aesToRec $ decode aesTxt) `shouldBe` Just recd
