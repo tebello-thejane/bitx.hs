@@ -116,7 +116,7 @@ type Trade =
 type PublicTrades =
     [record|
         {trades :: [Trade],
-         currency :: Text} |]
+         currency :: Asset} |]
 
 type BitXAuth =
     [record|
@@ -135,10 +135,10 @@ type PrivateOrder =
          feeCounter :: Decimal,
          limitPrice :: Decimal,
          limitVolume :: Decimal,
-         orderID :: OrderID,
+         id :: OrderID,
          pair :: CcyPair,
          state :: RequestStatus,
-         orderType :: OrderType } |]
+         type :: OrderType } |]
 
 type PrivateOrderWithTrades =
     [record|
@@ -150,10 +150,10 @@ type PrivateOrderWithTrades =
          feeCounter :: Decimal,
          limitPrice :: Decimal,
          limitVolume :: Decimal,
-         orderID :: OrderID,
+         id :: OrderID,
          pair :: CcyPair,
          state :: RequestStatus,
-         orderType :: OrderType,
+         type :: OrderType,
          trades :: [Trade] } |]
 
 type PrivateOrders =
@@ -184,7 +184,7 @@ data RequestStatus = PENDING | COMPLETE | CANCELLED deriving (Show, Read, Generi
 type OrderRequest =
     [record|
         {pair :: CcyPair,
-         requestType :: OrderType,
+         type :: OrderType,
          volume :: Decimal,
          price :: Decimal } |]
 
@@ -192,7 +192,7 @@ type AccountID = Text
 
 type Balance =
     [record|
-        {accountID :: AccountID,
+        {id :: AccountID,
          asset :: Asset,
          balance :: Decimal,
          reserved :: Decimal,
@@ -220,7 +220,7 @@ type WithdrawalRequest =
 
 type NewWithdrawal =
     [record|
-        {withdrawalType :: WithdrawalType,
+        {type :: WithdrawalType,
          amount :: Decimal } |]
 
 type BitcoinSendRequest =

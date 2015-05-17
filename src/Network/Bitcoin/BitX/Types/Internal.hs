@@ -175,7 +175,7 @@ instance BitXAesRecordConvert Trade Trade_ where
 
 data PublicTrades_ = PublicTrades_
     { publicTrades'trades :: [Trade_]
-    , publicTrades'currency :: Text
+    , publicTrades'currency :: Asset
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
@@ -219,10 +219,10 @@ instance BitXAesRecordConvert PrivateOrder PrivateOrder_ where
                   feeCounter = qdToDecimal privateOrder''fee_counter,
                   limitPrice = qdToDecimal privateOrder''limit_price,
                   limitVolume = qdToDecimal privateOrder''limit_volume,
-                  orderID = privateOrder''order_id,
+                  id = privateOrder''order_id,
                   pair = privateOrder''pair,
                   state = privateOrder''state,
-                  orderType = privateOrder''type} |]
+                  type = privateOrder''type} |]
 
 ------------------------------------------ PrivateOrders type --------------------------------------
 
@@ -242,7 +242,7 @@ instance BitXAesRecordConvert PrivateOrders PrivateOrders_ where
 instance POSTEncodeable OrderRequest where
     postEncode oreq =
         [("pair", showableToBytestring_ (view [lens| pair |] oreq)),
-         ("type", showableToBytestring_ (view [lens| requestType |] oreq)),
+         ("type", showableToBytestring_ (view [lens| type |] oreq)),
          ("volume", showableToBytestring_ (view [lens| volume |] oreq)),
          ("price", showableToBytestring_ (view [lens| price |] oreq))]
 
@@ -311,10 +311,10 @@ instance BitXAesRecordConvert PrivateOrderWithTrades PrivateOrderWithTrades_ whe
                   feeCounter = qdToDecimal privateOrder''fee_counter,
                   limitPrice = qdToDecimal privateOrder''limit_price,
                   limitVolume = qdToDecimal privateOrder''limit_volume,
-                  orderID = privateOrder''order_id,
+                  id = privateOrder''order_id,
                   pair = privateOrder''pair,
                   state = privateOrder''state,
-                  orderType = privateOrder''type,
+                  type = privateOrder''type,
                   trades = map aesToRec privateOrderWithTrades''trades} |]
 
 -------------------------------------------- Balance type ------------------------------------------
@@ -333,7 +333,7 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 instance BitXAesRecordConvert Balance Balance_ where
     aesToRec (Balance_ balance''account_id balance''asset balance''balance balance''reserved
             balance''unconfirmed) =
-        [record| {accountID = balance''account_id,
+        [record| {id = balance''account_id,
                   asset = balance''asset,
                   balance = qdToDecimal balance''balance,
                   reserved = qdToDecimal balance''reserved,
@@ -410,7 +410,7 @@ instance BitXAesRecordConvert WithdrawalRequests WithdrawalRequests_ where
 
 instance POSTEncodeable NewWithdrawal where
     postEncode nwthd =
-        [("type", showableToBytestring_ (view [lens| withdrawalType |] nwthd)),
+        [("type", showableToBytestring_ (view [lens| type |] nwthd)),
          ("amount", showableToBytestring_ (view [lens| amount |] nwthd))]
 
 -------------------------------------- BitcoinSendRequest type -------------------------------------
