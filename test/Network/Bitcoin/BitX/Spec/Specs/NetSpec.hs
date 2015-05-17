@@ -11,7 +11,6 @@ import Network.Bitcoin.BitX.Spec.Common
 import Network.Bitcoin.BitX.Public
 import System.IO.Unsafe (unsafePerformIO)
 import Data.Maybe (fromJust)
---import Data.Time.Clock.POSIX
 
 spec :: Spec
 spec = do
