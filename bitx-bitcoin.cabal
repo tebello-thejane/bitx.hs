@@ -35,15 +35,14 @@ library
     Network.Bitcoin.BitX.Types
     Network.Bitcoin.BitX.Private.Quote
     Network.Bitcoin.BitX.Private.Auth
-    Network.Bitcoin.BitX.Types.Internal
-    Network.Bitcoin.BitX.Internal
+
 --  ghc-options: -Wall -O2
   if impl(ghc >= 6.8)
     ghc-options: -fwarn-tabs
 
-
---  other-modules:
-
+  other-modules:
+    Network.Bitcoin.BitX.Types.Internal
+    Network.Bitcoin.BitX.Internal
 
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:
