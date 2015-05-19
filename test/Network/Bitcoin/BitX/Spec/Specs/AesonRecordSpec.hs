@@ -107,6 +107,11 @@ spec = do
             \\"state\":\"COMPLETE\",\"type\":\"BID\"}]}"
         ([record|
             {orders = [privateOrderInner] } |] :: PrivateOrders)
+    it "OrderID is parsed properly" $ do
+      recordAesCheck
+        "{\"order_id\":\"57983\"}"
+        ("57983" :: OrderID)
+
 
 tickerInner :: Ticker
 tickerInner =
