@@ -22,7 +22,7 @@ spec = do
     it "getOrderBook connects to BitX and works" $ do
       connectsAndParsesOkay $ getOrderBook XBTZAR
     it "getTrades connects to BitX and works" $ do
-      connectsAndParsesOkay $ getTrades XBTZAR
+      connectsAndParsesOkay $ getTrades XBTKES
 
 connectsAndParsesOkay :: IO (Maybe (Either a b)) -> Bool
 connectsAndParsesOkay = isRight . fromJust . unsafePerformIO

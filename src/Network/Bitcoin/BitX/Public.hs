@@ -34,7 +34,7 @@ getTicker cyp = simpleBitXGet_ $ "ticker?pair=" ++ show cyp
 
 {- | Returns the latest ticker indicators from all active BitX exchanges. -}
 
-getTickers :: IO (Maybe (Either BitXError Tickers))
+getTickers :: IO (Maybe (Either BitXError [Ticker]))
 getTickers = simpleBitXGet_ "tickers"
 
 {- | Returns a list of bids and asks in the order book.
@@ -47,6 +47,6 @@ getOrderBook cyp = simpleBitXGet_ $ "orderbook?pair=" ++ show cyp
 
 {- | Returns a list of the most recent trades -}
 
-getTrades :: CcyPair -> IO (Maybe (Either BitXError PublicTrades))
+getTrades :: CcyPair -> IO (Maybe (Either BitXError [Trade]))
 getTrades cyp = simpleBitXGet_ $ "trades?pair=" ++ show cyp
 

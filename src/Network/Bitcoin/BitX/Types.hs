@@ -18,14 +18,16 @@
 -- the fact that Haskell does not yet have a real records' system.
 --
 -- For example, the declaration of `BitXError` is
+--
 -- @
 -- type BitXAuth =
---     [record|
---         {id :: Text,
---          secret :: Text} |]
+--     ['record'|
+--         {id :: 'Text',
+--          secret :: 'Text'} |]
 -- @
 --
 -- To declare a BitXAuth, one might use
+--
 -- @
 -- myAuth :: BitXAuth
 -- myAuth =
@@ -35,10 +37,11 @@
 -- @
 --
 -- and to read the fields you would use
+--
 -- @
--- theID = view [lens| id |] myAuth
+-- theID = 'view' ['lens'| id |] myAuth
 -- @
--- 
+--
 -- Note that all uses of Volkov's `record`s requires importing "Record" and
 -- enabling the 'DataKinds' and 'QuasiQuotes' extensions.
 --
@@ -62,17 +65,17 @@ module Network.Bitcoin.BitX.Types
     RequestStatus(..),
     OrderRequest,
     RequestSuccess,
-    PublicTrades,
+    -- PublicTrades,
     BitXError,
-    Tickers,
-    PrivateOrders,
+    -- Tickers,
+    -- PrivateOrders,
     PrivateOrderWithTrades,
     AccountID,
     Asset(..),
     Balance,
-    Balances,
+    -- Balances,
     FundingAddress,
-    WithdrawalRequests,
+    -- WithdrawalRequests,
     WithdrawalRequest,
     NewWithdrawal,
     WithdrawalType(..),
@@ -82,7 +85,7 @@ module Network.Bitcoin.BitX.Types
     QuoteType(..),
     BitXClientAuth,
     Transaction,
-    Transactions
+    -- Transactions
   ) where
 
 import Data.Aeson (ToJSON(..), FromJSON(..))
@@ -92,14 +95,37 @@ import Record
 import GHC.Generics (Generic)
 import Data.Decimal
 
--- | A record representing a possible error which the BitX API might return,
+-- | A possible error which the BitX API might return,
 -- instead of returning the requested data. Note that as yet there is no
 -- exhaustive list of error codes available, so comparisons will have to be
 -- done via Text comparisons (as opposed to typed pattern matching). Sorry...
+--
+-- @
+--type BitXError =
+--    [record|
+--        {error :: 'Text',
+--         errorCode :: 'Text'} |]
+-- @
+
 type BitXError =
     [record|
         {error :: Text,
          errorCode :: Text} |]
+
+-- | The state of a single market, identified by the currency pair.
+-- As usual, the ask\/sell price is the price of the last filled ask order, and the bid\/buy price is
+-- the price of the last filled bid order. Necessarily @bid <= ask.@
+--
+-- @
+--type Ticker =
+--    [record|
+--        {ask :: 'Decimal',
+--         timestamp :: 'UTCTime',
+--         bid :: 'Decimal',
+--         rolling24HourVolume :: 'Decimal',
+--         lastTrade :: 'Decimal',
+--         pair :: 'CcyPair'} |]
+-- @
 
 type Ticker =
     [record|
@@ -110,16 +136,41 @@ type Ticker =
          lastTrade :: Decimal,
          pair :: CcyPair} |]
 
-type Tickers =
-    [record|
-        {tickers :: [Ticker]} |]
+--type Tickers =
+--    [record|
+--        {tickers :: ['Ticker']} |]
 
 -- | A currency pair
-data CcyPair = XBTZAR | XBTNAD | ZARXBT | NADXBT | XBTKES | KESXBT | XBTMYR | MYRXBT
+data CcyPair =
+    XBTZAR -- ^ Bitcoin vs. ZAR
+    | XBTNAD -- ^  Bitcoin vs. Namibian Dollar
+    | ZARXBT -- ^ ZAR vs. Namibian Dollar
+    | NADXBT -- ^ Namibian Dollar vs. Bitcoin
+    | XBTKES -- ^ Bitcoin vs. Kenyan Shilling
+    | KESXBT -- ^ Kenyan Shilling vs Bitcoin
+    | XBTMYR -- ^ Bitcoin vs. Malaysian Ringgit
+    | MYRXBT -- ^ Malaysian Ringgit vs. Bitcoin
   deriving (Show, Read, Generic, Eq)
 
-data Asset = ZAR | NAD | XBT | KES | MYR
+-- | A trade-able asset. Essentially, a currency.
+data Asset =
+    ZAR -- ^ South African Rand
+    | NAD -- ^ Namibian Dollar
+    | XBT -- ^ Bitcoin
+    | KES -- ^ Kenyan Shilling
+    | MYR -- ^ Malaysian Ringgit
   deriving (Show, Read, Generic, Eq)
+
+-- | The current state of the publically accessible orderbook.
+-- Bid orders are requests to buy, ask orders are requests to sell.
+--
+-- @
+--type Orderbook =
+--    [record|
+--        {timestamp :: 'UTCTime',
+--         bids :: ['Bid'],
+--         asks :: ['Ask']} |]
+-- @
 
 type Orderbook =
     [record|
@@ -127,12 +178,24 @@ type Orderbook =
          bids :: [Bid],
          asks :: [Ask]} |]
 
+-- | A single placed order in the orderbook
+--
+-- @
+--type Order =
+--    [record|
+--        {volume :: 'Decimal',
+--         price :: 'Decimal'} |]
+-- @
+
 type Order =
     [record|
         {volume :: Decimal,
          price :: Decimal} |]
 
+-- | Convenient type alias for a bid order
 type Bid = Order
+
+-- | Convenient type alias for an ask order
 type Ask = Order
 
 type Trade =
@@ -141,10 +204,10 @@ type Trade =
          timestamp :: UTCTime,
          price :: Decimal} |]
 
-type PublicTrades =
-    [record|
-        {trades :: [Trade],
-         currency :: Asset} |]
+--type PublicTrades =
+--    [record|
+--        {trades :: [Trade],
+--         currency :: Asset} |]
 
 type BitXAuth =
     [record|
@@ -184,9 +247,9 @@ type PrivateOrderWithTrades =
          type :: OrderType,
          trades :: [Trade] } |]
 
-type PrivateOrders =
-    [record|
-        {orders :: [PrivateOrder]} |]
+--type PrivateOrders =
+--    [record|
+--        {orders :: [PrivateOrder]} |]
 
 type Transaction =
     [record|
@@ -199,9 +262,9 @@ type Transaction =
          currency :: Asset,
          description :: Text}|]
 
-type Transactions =
-    [record|
-    {transactions :: [Transaction]}|]
+--type Transactions =
+--    [record|
+--    {transactions :: [Transaction]}|]
 
 type OrderID = Text
 
@@ -226,9 +289,9 @@ type Balance =
          reserved :: Decimal,
          unconfirmed :: Decimal } |]
 
-type Balances =
-    [record|
-        {balances :: [Balance] } |]
+--type Balances =
+--    [record|
+--        {balances :: [Balance] } |]
 
 type FundingAddress =
     [record|
@@ -237,9 +300,9 @@ type FundingAddress =
          totalReceived :: Decimal,
          totalUnconfirmed :: Decimal} |]
 
-type WithdrawalRequests =
-    [record|
-        {withdrawalRequests :: [WithdrawalRequest]} |]
+--type WithdrawalRequests =
+--    [record|
+--        {withdrawalRequests :: [WithdrawalRequest]} |]
 
 type WithdrawalRequest =
     [record|

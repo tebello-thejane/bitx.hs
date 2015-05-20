@@ -75,7 +75,7 @@ This list is truncated after 100 items.
 @Perm_R_Orders@ permission is required.
  -}
 
-getAllOrders :: BitXAuth -> Maybe CcyPair -> IO (Maybe (Either BitXError PrivateOrders))
+getAllOrders :: BitXAuth -> Maybe CcyPair -> IO (Maybe (Either BitXError [PrivateOrder]))
 getAllOrders auth pair = simpleBitXGetAuth_ auth url
     where
         url = "listorders" ++ case pair of
@@ -92,7 +92,7 @@ This list is truncated after 100 items.
 @Perm_R_Orders@ permission is required.
  -}
 
-getPendingOrders :: BitXAuth -> Maybe CcyPair -> IO (Maybe (Either BitXError PrivateOrders))
+getPendingOrders :: BitXAuth -> Maybe CcyPair -> IO (Maybe (Either BitXError [PrivateOrder]))
 getPendingOrders auth pair = simpleBitXGetAuth_ auth url
     where
         url = "listorders?state=PENDING" ++ case pair of
@@ -130,7 +130,7 @@ getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ Txt.unpack oid
 
 @Perm_R_Balance@ permission required. -}
 
-getBalances :: BitXAuth -> IO (Maybe (Either BitXError Balances))
+getBalances :: BitXAuth -> IO (Maybe (Either BitXError [Balance]))
 getBalances auth = simpleBitXGetAuth_ auth "balance"
 
 {- | Returns the default receive address associated with your account and the amount received via
@@ -166,7 +166,7 @@ Returns a list of withdrawal requests.
 
 @Perm_R_Withdrawals@ permission required.-}
 
-getWithdrawalRequests :: BitXAuth -> IO (Maybe (Either BitXError WithdrawalRequests))
+getWithdrawalRequests :: BitXAuth -> IO (Maybe (Either BitXError [WithdrawalRequest]))
 getWithdrawalRequests auth = simpleBitXGetAuth_ auth "withdrawals"
 
 {- | Request a withdrawal
@@ -222,7 +222,7 @@ fetch the 100 most recent rows, use min_row=-100 and max_row=0.
 @Perm_R_Transactions@ permission required.
 -}
 
-getTransactions :: BitXAuth -> Int -> Int -> Int -> IO (Maybe (Either BitXError Transactions))
+getTransactions :: BitXAuth -> Int -> Int -> Int -> IO (Maybe (Either BitXError [Transaction]))
 getTransactions auth accid minr maxr = simpleBitXGetAuth_ auth $
     "accounts/" ++ show accid ++ "/transactions?min_row=" ++ show minr ++ "&max_row=" ++ show maxr
 
@@ -236,7 +236,7 @@ updated at any time.
 @Perm_R_Transactions@ permission required.
 -}
 
-getPendingTransactions :: BitXAuth -> Int -> IO (Maybe (Either BitXError Transactions))
+getPendingTransactions :: BitXAuth -> Int -> IO (Maybe (Either BitXError [Transaction]))
 getPendingTransactions auth accid = simpleBitXGetAuth_ auth $
     "accounts/" ++ show accid ++ "/pending"
 

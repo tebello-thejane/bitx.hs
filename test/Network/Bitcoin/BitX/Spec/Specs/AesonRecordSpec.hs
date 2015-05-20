@@ -56,8 +56,7 @@ spec = do
         "{\"tickers\":[{\"timestamp\":1431811395699,\"bid\":\"3083.00\",\"ask\":\"3115.00\",\
             \\"last_trade\":\"3116.00\",\"rolling_24_hour_volume\":\"19.776608\",\
             \\"pair\":\"XBTZAR\"}]}"
-        ([record|
-            {tickers = [tickerInner] } |] :: Tickers)
+        [tickerInner]
     it "Orderbook is parsed properly" $ do
       recordAesCheck
         "{\"timestamp\":1431811395699,\"bids\":[{\"volume\":\"654.98\",\"price\":\"3789.66\"}],\
@@ -77,9 +76,7 @@ spec = do
       recordAesCheck
         "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\
             \\"price\":\"5327.765\"}],\"currency\":\"ZAR\"}"
-        ([record|
-            {trades = [tradeInner],
-             currency = ZAR } |] :: PublicTrades)
+        [tradeInner]
     it "PrivateOrder is parsed properly" $ do
       recordAesCheck
         "{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
@@ -105,8 +102,7 @@ spec = do
             \\"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
             \\"limit_price\":765,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
             \\"state\":\"COMPLETE\",\"type\":\"BID\"}]}"
-        ([record|
-            {orders = [privateOrderInner] } |] :: PrivateOrders)
+        [privateOrderInner]
     it "OrderID is parsed properly" $ do
       recordAesCheck
         "{\"order_id\":\"57983\"}"

@@ -102,9 +102,9 @@ data Tickers_ = Tickers_
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''Tickers_)
 
-instance BitXAesRecordConvert Tickers Tickers_ where
+instance BitXAesRecordConvert [Ticker] Tickers_ where
     aesToRec (Tickers_ tickers''tickers) =
-        [record| {tickers = map aesToRec tickers''tickers} |]
+        map aesToRec tickers''tickers
 
 -------------------------------------------- BitXError type ----------------------------------------
 
@@ -181,10 +181,9 @@ data PublicTrades_ = PublicTrades_
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''PublicTrades_)
 
-instance BitXAesRecordConvert PublicTrades PublicTrades_ where
+instance BitXAesRecordConvert [Trade] PublicTrades_ where
     aesToRec (PublicTrades_ publicTrades''trades publicTrades''currency) =
-        [record| {trades = map aesToRec publicTrades''trades,
-              currency = publicTrades''currency} |]
+        map aesToRec publicTrades''trades
 
 ------------------------------------------ PrivateOrder type ---------------------------------------
 
@@ -233,9 +232,9 @@ data PrivateOrders_ = PrivateOrders_
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''PrivateOrders_)
 
-instance BitXAesRecordConvert PrivateOrders PrivateOrders_ where
+instance BitXAesRecordConvert [PrivateOrder] PrivateOrders_ where
     aesToRec (PrivateOrders_ privateOrders''orders) =
-        [record| {orders = map aesToRec privateOrders''orders} |]
+        map aesToRec privateOrders''orders
 
 ------------------------------------------ OrderRequest type ---------------------------------------
 
@@ -348,9 +347,9 @@ data Balances_ = Balances_
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''Balances_)
 
-instance BitXAesRecordConvert Balances Balances_ where
+instance BitXAesRecordConvert [Balance] Balances_ where
     aesToRec (Balances_ balances''balances) =
-        [record| {balances = map aesToRec balances''balances} |]
+        map aesToRec balances''balances
 
 ----------------------------------------- FundingAddress type --------------------------------------
 
@@ -402,9 +401,9 @@ data WithdrawalRequests_ = WithdrawalRequests_
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''WithdrawalRequests_)
 
-instance BitXAesRecordConvert WithdrawalRequests WithdrawalRequests_ where
+instance BitXAesRecordConvert [WithdrawalRequest] WithdrawalRequests_ where
     aesToRec (WithdrawalRequests_ withdrawalRequests''withdrawals) =
-        [record| {withdrawalRequests = map aesToRec withdrawalRequests''withdrawals} |]
+        map aesToRec withdrawalRequests''withdrawals
 
 ----------------------------------------- NewWithdrawal type ---------------------------------------
 
@@ -518,6 +517,6 @@ data Transactions_ = Transactions_
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''Transactions_)
 
-instance BitXAesRecordConvert Transactions Transactions_ where
+instance BitXAesRecordConvert [Transaction] Transactions_ where
     aesToRec (Transactions_ transactions''transactions) =
-        [record| {transactions = map aesToRec transactions''transactions} |]
+        map aesToRec transactions''transactions
