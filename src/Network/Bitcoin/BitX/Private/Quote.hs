@@ -1,5 +1,30 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Network.Bitcoin.BitX.Private.Quote
+-- Copyright   :  No Rights Reserved
+-- License     :  Public Domain
+--
+-- Maintainer  :  Tebello Thejane <zyxoas+hackage@gmail.com>
+-- Stability   :  Experimental
+-- Portability :  non-portable (GHC Extensions)
+--
+-- The API for dealing with quotes.
+--
+-- Quotes allow you to lock in an exchange rate for a short time with the
+-- option of either accepting or rejecting the quote.
+--
+-- Quotes can be useful for various customer-facing applications where
+-- price fluctuations would be confusing.
+--
+-- The API is used as follows: First create a quote for the transaction that
+-- you want to perform. If you decide to accept the quote before it expires,
+-- you will exercise the quote. If you decide not to accept it, you will
+-- discard the quote. You can also retrieve the status of a quote at any time.
+--
+-----------------------------------------------------------------------------
+
 module Network.Bitcoin.BitX.Private.Quote
     (
     newQuote,

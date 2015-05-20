@@ -65,17 +65,12 @@ module Network.Bitcoin.BitX.Types
     RequestStatus(..),
     OrderRequest,
     RequestSuccess,
-    -- PublicTrades,
     BitXError,
-    -- Tickers,
-    -- PrivateOrders,
     PrivateOrderWithTrades,
     AccountID,
     Asset(..),
     Balance,
-    -- Balances,
     FundingAddress,
-    -- WithdrawalRequests,
     WithdrawalRequest,
     NewWithdrawal,
     WithdrawalType(..),
@@ -84,8 +79,7 @@ module Network.Bitcoin.BitX.Types
     OrderQuote,
     QuoteType(..),
     BitXClientAuth,
-    Transaction,
-    -- Transactions
+    Transaction
   ) where
 
 import Data.Aeson (ToJSON(..), FromJSON(..))
@@ -135,10 +129,6 @@ type Ticker =
          rolling24HourVolume :: Decimal,
          lastTrade :: Decimal,
          pair :: CcyPair} |]
-
---type Tickers =
---    [record|
---        {tickers :: ['Ticker']} |]
 
 -- | A currency pair
 data CcyPair =
@@ -204,11 +194,6 @@ type Trade =
          timestamp :: UTCTime,
          price :: Decimal} |]
 
---type PublicTrades =
---    [record|
---        {trades :: [Trade],
---         currency :: Asset} |]
-
 -- | An auth type used by all private API calls, after authorisation.
 --
 -- @
@@ -224,6 +209,25 @@ type BitXAuth =
 
 type BitXClientAuth = BitXAuth
 
+-- | A recently placed (private) order, containing a lot more information than is available on the
+-- public order book.
+--
+-- @
+--type PrivateOrder =
+--    [record|
+--        {base :: 'Decimal',
+--         counter :: 'Decimal',
+--         creationTimestamp :: 'UTCTime',
+--         expirationTimestamp :: 'UTCTime',
+--         feeBase :: 'Decimal',
+--         feeCounter :: 'Decimal',
+--         limitPrice :: 'Decimal',
+--         limitVolume :: 'Decimal',
+--         id :: 'OrderID',
+--         pair :: 'CcyPair',
+--         state :: 'RequestStatus',
+--         type :: 'OrderType' } |]
+-- @
 type PrivateOrder =
     [record|
         {base :: Decimal,
@@ -239,6 +243,26 @@ type PrivateOrder =
          state :: RequestStatus,
          type :: OrderType } |]
 
+-- | A recently placed (private) order, containing a lot more information than is available on the
+-- public order book, together with details of any trades which have (partially) filled it.
+--
+-- @
+--type PrivateOrderWithTrades =
+--    [record|
+--        {base :: 'Decimal',
+--         counter :: 'Decimal',
+--         creationTimestamp :: 'UTCTime',
+--         expirationTimestamp :: 'UTCTime',
+--         feeBase :: 'Decimal',
+--         feeCounter :: 'Decimal',
+--         limitPrice :: 'Decimal',
+--         limitVolume :: 'Decimal',
+--         id :: 'OrderID',
+--         pair :: 'CcyPair',
+--         state :: 'RequestStatus',
+--         type :: 'OrderType',
+--         trades :: ['Trade'] } |]
+-- @
 type PrivateOrderWithTrades =
     [record|
         {base :: Decimal,
@@ -255,10 +279,20 @@ type PrivateOrderWithTrades =
          type :: OrderType,
          trades :: [Trade] } |]
 
---type PrivateOrders =
+-- | A transaction on a private user account.
+--
+-- @
+--type Transaction =
 --    [record|
---        {orders :: [PrivateOrder]} |]
-
+--        {rowIndex :: 'Int',
+--         timestamp :: 'UTCTime',
+--         balance :: 'Decimal',
+--         available :: 'Decimal',
+--         balanceDelta :: 'Decimal',
+--         availableDelta :: 'Decimal',
+--         currency :: 'Asset',
+--         description :: 'Text'}|]
+-- @
 type Transaction =
     [record|
         {rowIndex :: Int,
@@ -270,16 +304,33 @@ type Transaction =
          currency :: Asset,
          description :: Text}|]
 
---type Transactions =
---    [record|
---    {transactions :: [Transaction]}|]
-
 type OrderID = Text
 
-data OrderType = ASK | BID deriving (Show, Read, Generic, Eq)
+-- | The type of a placed order.
+data OrderType =
+    ASK -- ^ A request to sell
+    | BID -- ^ A request to buy
+    deriving (Show, Read, Generic, Eq)
 
-data RequestStatus = PENDING | COMPLETE | CANCELLED deriving (Show, Read, Generic, Eq)
+-- | The state of a (private) placed request -- either an order or a withdrawal request.
+data RequestStatus =
+    PENDING -- ^ Not yet completed. An order will stay in 'PENDING' state even as it is partially
+    -- filled, and will move to 'COMPLETE' once it has been completely filled.
+    | COMPLETE -- ^ Completed.
+    | CANCELLED -- ^ Cancelled. Note that an order cannot be in  'CANCELLED' state, since cancelling
+    -- an order removes it from the orderbook.
+    deriving (Show, Read, Generic, Eq)
 
+-- | A request to place an order.
+--
+-- @
+--type OrderRequest =
+--    [record|
+--        {pair :: 'CcyPair',
+--         type :: 'OrderType',
+--         volume :: 'Decimal',
+--         price :: 'Decimal' } |]
+-- @
 type OrderRequest =
     [record|
         {pair :: CcyPair,
@@ -289,6 +340,17 @@ type OrderRequest =
 
 type AccountID = Text
 
+-- | The current balance of a private account.
+--
+-- @
+--type Balance =
+--    [record|
+--        {id :: 'AccountID',
+--         asset :: 'Asset',
+--         balance :: 'Decimal',
+--         reserved :: 'Decimal',
+--         unconfirmed :: 'Decimal' } |]
+-- @
 type Balance =
     [record|
         {id :: AccountID,
@@ -297,10 +359,16 @@ type Balance =
          reserved :: Decimal,
          unconfirmed :: Decimal } |]
 
---type Balances =
+-- | A registered address for an acocunt.
+--
+-- @
+--type FundingAddress =
 --    [record|
---        {balances :: [Balance] } |]
-
+--        {asset :: 'Asset',
+--         address :: 'Text',
+--         totalReceived :: 'Decimal',
+--         totalUnconfirmed :: 'Decimal'} |]
+-- @
 type FundingAddress =
     [record|
         {asset :: Asset,
@@ -308,20 +376,44 @@ type FundingAddress =
          totalReceived :: Decimal,
          totalUnconfirmed :: Decimal} |]
 
---type WithdrawalRequests =
+-- | The state of a request to withdraw from an account.
+--
+-- @
+--type WithdrawalRequest =
 --    [record|
---        {withdrawalRequests :: [WithdrawalRequest]} |]
-
+--        {status :: 'RequestStatus',
+--         id :: 'Text' } |]
+-- @
 type WithdrawalRequest =
     [record|
         {status :: RequestStatus,
          id :: Text } |]
 
+-- | A request to withdraw from an account.
+--
+-- @
+--type NewWithdrawal =
+--    [record|
+--        {type :: 'WithdrawalType',
+--         amount :: 'Decimal' } |]
+-- @
 type NewWithdrawal =
     [record|
         {type :: WithdrawalType,
          amount :: Decimal } |]
 
+-- | A request to send bitcoin to a bitcoin address or email address.
+--
+-- @
+--type BitcoinSendRequest =
+--    [record|
+--        {amount :: 'Decimal',
+--         currency :: 'Asset',
+--         address :: 'Text',
+--         description :: 'Maybe' 'Text',
+--         message :: 'Maybe' 'Text',
+--         pin :: 'Text'} |]
+-- @
 type BitcoinSendRequest =
     [record|
         {amount :: Decimal,
@@ -331,12 +423,36 @@ type BitcoinSendRequest =
          message :: Maybe Text,
          pin :: Text} |]
 
+-- | A request to lock in a quote.
+--
+-- @
+--type QuoteRequest =
+--    [record|
+--        {type :: 'QuoteType',
+--         pair :: 'CcyPair',
+--         baseAmount :: 'Decimal'} |]
+-- @
 type QuoteRequest =
     [record|
         {type :: QuoteType,
          pair :: CcyPair,
          baseAmount :: Decimal} |]
 
+-- | A temporarily locked in quote.
+--
+-- @
+--type OrderQuote =
+--    [record|
+--        {id :: 'Text',
+--         type :: 'QuoteType',
+--         pair :: 'CcyPair',
+--         baseAmount :: 'Decimal',
+--         counterAmount :: 'Decimal',
+--         createdAt :: 'UTCTime',
+--         expiresAt :: 'UTCTime',
+--         discarded :: 'Bool',
+--         exercised :: 'Bool'} |]
+-- @
 type OrderQuote =
     [record|
         {id :: Text,
@@ -349,7 +465,14 @@ type OrderQuote =
          discarded :: Bool,
          exercised :: Bool} |]
 
-data WithdrawalType = ZAR_EFT | NAD_EFT | KES_MPESA | MYR_IBG | IDR_LLG deriving (Show, Read, Generic, Eq)
+-- | The type of a withdrawal request.
+data WithdrawalType =
+    ZAR_EFT -- ^ ZAR by Electronic Funds Transfer
+    | NAD_EFT -- ^ Namibian Dollar by EFT
+    | KES_MPESA -- ^ Kenyan Shilling by Vodafone MPESA
+    | MYR_IBG -- ^ Malaysian Ringgit by Interbank GIRO (?)
+    | IDR_LLG -- ^ Indonesian Rupiah by Lalu Lintas Giro (??)
+    deriving (Show, Read, Generic, Eq)
 
 data QuoteType = BUY | SELL deriving (Show, Read, Generic, Eq)
 

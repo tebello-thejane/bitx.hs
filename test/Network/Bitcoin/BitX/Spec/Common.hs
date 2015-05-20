@@ -7,7 +7,7 @@ module Network.Bitcoin.BitX.Spec.Common
 
 import Test.Hspec
 import Data.Aeson
-import Network.Bitcoin.BitX.Types.Internal
+import Network.Bitcoin.BitX
 import Data.ByteString.Lazy (ByteString)
 
 recordAesCheck :: (BitXAesRecordConvert rec aes, Show rec, Eq rec) => ByteString -> rec -> Expectation

@@ -6,7 +6,16 @@ version:             0.0.1.0
 synopsis:            A Haskell library for working with the BitX bitcoin exchange.
 
 description:
-    Haskell bindings to the BitX REST API, as described here: <https://bitx.co/api>
+    Haskell bindings to the BitX REST API, as described here: <https://bitx.co/api>.
+    .
+    Note that since this library interfaces directly with a financial API, great care
+    must be taken in its use. In particular, the author cannot be held account for any
+    financial losses as a result of programming error, whether that error is in your code,
+    the code of the author of this library, or BitX's code. This is just common sense.
+    .
+    If you need to make sure that nothing funny happens in the code, apart from reading
+    the source yourself, you should also perform a few test transations with very small
+    denominations, as I will strive to do every time before releasing a new version.
 
 license:             PublicDomain
 
@@ -35,7 +44,6 @@ library
     Network.Bitcoin.BitX.Types
     Network.Bitcoin.BitX.Private.Quote
     Network.Bitcoin.BitX.Private.Auth
-    Network.Bitcoin.BitX.Types.Internal
 
 --  ghc-options: -Wall -O2
   if impl(ghc >= 6.8)
@@ -43,6 +51,7 @@ library
 
   other-modules:
     Network.Bitcoin.BitX.Internal
+    Network.Bitcoin.BitX.Types.Internal
 
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:

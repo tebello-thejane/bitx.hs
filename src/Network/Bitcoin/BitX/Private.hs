@@ -13,7 +13,8 @@
 -- =The private BitX API.
 --
 -- Each one of the calls takes at least a 'BitXAuth' containing a previously-created API id and
--- secret (created by 'Network.Bitcoin.BitX.Private.Auth.authGrant'), and may either return a
+-- secret (created by 'Network.Bitcoin.BitX.Private.Auth.authGrant', or created by visiting
+-- <https://bitx.co/settings#/api_keys>), and may either return a
 -- useful 'record', a 'BitXError' if BitX actually returned an error, or 'Nothing' if some exception
 -- occured (or if the data returned by BitX was unparseable).
 --

@@ -1,5 +1,36 @@
 {-# LANGUAGE OverloadedStrings, QuasiQuotes, DataKinds #-}
 
+-----------------------------------------------------------------------------
+-- |
+-- Module      :  Network.Bitcoin.BitX.Private.Auth
+-- Copyright   :  No Rights Reserved
+-- License     :  Public Domain
+--
+-- Maintainer  :  Tebello Thejane <zyxoas+hackage@gmail.com>
+-- Stability   :  Experimental
+-- Portability :  non-portable (GHC Extensions)
+--
+-- The single function in this module, allows your application to use the
+-- private BitX API via OAuth2.
+--
+-- To use OAuth2, you first need to contact the BitX team <support@bitx.co>,
+-- and provide them with
+--  *  Application name
+--  *  Application description
+--  *  Website URL
+--  *  Permissions required
+--  *  Redirect URL
+--  *  Your BitX account username
+--
+-- Next, the user needs to be sent to <https://bitx.co/oauth2/authorize?client_id=your_client_id&scope=your_requested_permissions&state=your_unique_state>,
+-- where they can confirm the request. If they do confirm the request, they
+-- will be sent to your redirect URL, with an authorisation code as one of
+-- the GET parameter: <https://example.com/callback?code=authorization_code&state=your_unique_state>
+--
+-- The permissions are explained in the "Network.Bitcoin.BitX.Private" module.
+--
+-----------------------------------------------------------------------------
+
 module Network.Bitcoin.BitX.Private.Auth
     (
     authGrant

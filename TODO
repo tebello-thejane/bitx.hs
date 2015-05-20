@@ -1,9 +1,4 @@
 *Add haddocks everywhere possible.
-*Add all private method skeletons.
-*Generalise public and private methods.
-*Add PostEncodeable instances for all relevant records.
-*Seriously rethink design of Balance(s)...
 *Divide into slightly smaller sub-modules.
 *Verify whether I am allowed to use text from BitX in docs...
 *Test all conversions.
-*Rather than have records with a single list, I should decode to list (similar to OrderID).
