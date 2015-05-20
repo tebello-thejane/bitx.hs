@@ -209,6 +209,14 @@ type Trade =
 --        {trades :: [Trade],
 --         currency :: Asset} |]
 
+-- | An auth type used by all private API calls, after authorisation.
+--
+-- @
+--type BitXAuth =
+--    [record|
+--        {id :: 'Text',
+--         secret :: 'Text'} |]
+-- @
 type BitXAuth =
     [record|
         {id :: Text,

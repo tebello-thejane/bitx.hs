@@ -175,14 +175,14 @@ instance BitXAesRecordConvert Trade Trade_ where
 
 data PublicTrades_ = PublicTrades_
     { publicTrades'trades :: [Trade_]
-    , publicTrades'currency :: Asset
+    --, publicTrades'currency :: Asset
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''PublicTrades_)
 
 instance BitXAesRecordConvert [Trade] PublicTrades_ where
-    aesToRec (PublicTrades_ publicTrades''trades publicTrades''currency) =
+    aesToRec (PublicTrades_ publicTrades''trades {-publicTrades''currency-}) =
         map aesToRec publicTrades''trades
 
 ------------------------------------------ PrivateOrder type ---------------------------------------
