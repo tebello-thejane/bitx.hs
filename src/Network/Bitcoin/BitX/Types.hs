@@ -17,6 +17,33 @@
 -- to avoid using record field prefixes and other awkward hacks to get around
 -- the fact that Haskell does not yet have a real records' system.
 --
+-- For example, the declaration of `BitXError` is
+-- @
+-- type BitXAuth =
+--     [record|
+--         {id :: Text,
+--          secret :: Text} |]
+-- @
+--
+-- To declare a BitXAuth, one might use
+-- @
+-- myAuth :: BitXAuth
+-- myAuth =
+--     [record|
+--         {id = "46793",
+--          secret = "387ffBd56eEAA7C59"} |]
+-- @
+--
+-- and to read the fields you would use
+-- @
+-- theID = view [lens| id |] myAuth
+-- @
+-- 
+-- Note that all uses of Volkov's `record`s requires importing "Record" and
+-- enabling the 'DataKinds' and 'QuasiQuotes' extensions.
+--
+-- See <http://nikita-volkov.github.io/record/>
+--
 -----------------------------------------------------------------------------
 
 module Network.Bitcoin.BitX.Types
@@ -87,6 +114,7 @@ type Tickers =
     [record|
         {tickers :: [Ticker]} |]
 
+-- | A currency pair
 data CcyPair = XBTZAR | XBTNAD | ZARXBT | NADXBT | XBTKES | KESXBT | XBTMYR | MYRXBT
   deriving (Show, Read, Generic, Eq)
 
