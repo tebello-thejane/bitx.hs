@@ -6,7 +6,8 @@ module Network.Bitcoin.BitX.Internal
     simpleBitXGet_,
     simpleBitXPOSTAuth_,
     simpleBitXMETHAuth_,
-    consumeResponseBody_
+    consumeResponseBody_,
+    bitXAPIPrefix
     )
 where
 
@@ -24,8 +25,11 @@ import Record (lens)
 import Record.Lens (view)
 import qualified Data.Text.Encoding as Txt
 
+bitXAPIPrefix :: String
+bitXAPIPrefix = "https://api.mybitx.com/api/"
+
 bitXAPIRoot :: String
-bitXAPIRoot = "https://api.mybitx.com/api/1/"
+bitXAPIRoot = bitXAPIPrefix ++ "1/"
 
 simpleBitXGetAuth_ :: BitXAesRecordConvert rec aes => BitXAuth -> String -> IO (Maybe (Either BitXError rec))
 simpleBitXGetAuth_ auth verb = withSocketsDo $ do

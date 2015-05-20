@@ -2,3 +2,4 @@
 *Divide into slightly smaller sub-modules.
 *Verify whether I am allowed to use text from BitX in docs...
 *Test all conversions.
+*Verify whether AuthGrant could return a BitXError.

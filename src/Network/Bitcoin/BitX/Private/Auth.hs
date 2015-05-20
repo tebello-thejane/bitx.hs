@@ -49,6 +49,7 @@ import Record (lens)
 import Record.Lens (view)
 import qualified Data.Text.Encoding as Txt
 import Data.Text (Text)
+import Network.Bitcoin.BitX.Internal
 
 {- | Grant
 
@@ -65,7 +66,7 @@ authGrant cauth authCode = withSocketsDo $ do
         . NetCon.urlEncodedBody
             [("grant_type", "authorization_code"),
              ("code", showableToBytestring_ authCode)]
-        . fromJust . NetCon.parseUrl $ "https://api.mybitx.com/api/oauth2/grant"
+        . fromJust . NetCon.parseUrl $ bitXAPIPrefix ++ "oauth2/grant"
         :: IO (Either SomeException (Response BL.ByteString))
     consumeResponseBody_ response
     where
