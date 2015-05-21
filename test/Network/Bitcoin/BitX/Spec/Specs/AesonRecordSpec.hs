@@ -192,4 +192,3 @@ privateOrderInner =
         state = COMPLETE,
         type = BID } |]
 
-
