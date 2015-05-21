@@ -64,6 +64,7 @@ module Network.Bitcoin.BitX.Private
 import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
 import qualified Data.Text as Txt
+import Data.Text (Text)
 
 {- | Returns a list of the most recently placed orders.
 
@@ -150,7 +151,7 @@ newFundingAddress auth asset = simpleBitXPOSTAuth_ auth asset "funding_address"
 Returns a list of withdrawal requests.
 
 @Perm_R_Withdrawals@ permission required.-}
-
+-- *
 getWithdrawalRequests :: BitXAuth -> IO (Maybe (Either BitXError [WithdrawalRequest]))
 getWithdrawalRequests auth = simpleBitXGetAuth_ auth "withdrawals/"
 
@@ -168,7 +169,7 @@ newWithdrawalRequest auth nwithd = simpleBitXPOSTAuth_ auth nwithd "withdrawals"
 Returns the status of a particular withdrawal request.
 
 @Perm_R_Withdrawals@ permission required.-}
-
+-- *
 getWithdrawalRequest :: BitXAuth -> String -> IO (Maybe (Either BitXError WithdrawalRequest))
 getWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" ++ wthid
 
@@ -207,9 +208,9 @@ fetch the 100 most recent rows, use min_row=-100 and max_row=0.
 @Perm_R_Transactions@ permission required.
 -}
 
-getTransactions :: BitXAuth -> Int -> Int -> Int -> IO (Maybe (Either BitXError [Transaction]))
+getTransactions :: BitXAuth -> Text -> Int -> Int -> IO (Maybe (Either BitXError [Transaction]))
 getTransactions auth accid minr maxr = simpleBitXGetAuth_ auth $
-    "accounts/" ++ show accid ++ "/transactions?min_row=" ++ show minr ++ "&max_row=" ++ show maxr
+    "accounts/" ++ Txt.unpack accid ++ "/transactions?min_row=" ++ show minr ++ "&max_row=" ++ show maxr
 
 {- | Pending transactions
 
