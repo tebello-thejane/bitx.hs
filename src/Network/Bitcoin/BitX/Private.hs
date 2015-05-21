@@ -48,7 +48,6 @@ module Network.Bitcoin.BitX.Private
   getAllOrders,
   postOrder,
   stopOrder,
-  getPendingOrders,
   getOrder,
   getBalances,
   getFundingAddress,
@@ -76,29 +75,14 @@ This list is truncated after 100 items.
 @Perm_R_Orders@ permission is required.
  -}
 
-getAllOrders :: BitXAuth -> Maybe CcyPair -> IO (Maybe (Either BitXError [PrivateOrder]))
-getAllOrders auth pair = simpleBitXGetAuth_ auth url
+getAllOrders :: BitXAuth -> Maybe CcyPair -> Maybe RequestStatus -> IO (Maybe (Either BitXError [PrivateOrder]))
+getAllOrders auth pair status = simpleBitXGetAuth_ auth url
     where
-        url = "listorders" ++ case pair of
-            Nothing  -> ""
-            Just st  -> "?pair=" ++ show st
-
-{- | Returns a list of the most recently placed orders which are still in 'PENDING' state.
-
-If the second parameter is @Nothing@ then this will return orders for all markets, whereas if it is
-@Just cpy@ for some @CcyPair cpy@ then the results will be specific to that market.
-
-This list is truncated after 100 items.
-
-@Perm_R_Orders@ permission is required.
- -}
-
-getPendingOrders :: BitXAuth -> Maybe CcyPair -> IO (Maybe (Either BitXError [PrivateOrder]))
-getPendingOrders auth pair = simpleBitXGetAuth_ auth url
-    where
-        url = "listorders?state=PENDING" ++ case pair of
-            Nothing -> ""
-            Just st -> "&pair=" ++ show st
+        url = "listorders" ++ case (pair, status) of
+            (Nothing, Nothing)  -> ""
+            (Just pr, Nothing)  -> "?pair=" ++ show pr
+            (Nothing, Just st)  -> "?state=" ++ show st
+            (Just pr, Just st)  -> "?pair=" ++ show pr ++ "&pair=" ++ show pr
 
 {- | Create a new order.
 
