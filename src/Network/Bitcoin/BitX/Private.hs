@@ -74,7 +74,7 @@ This list is truncated after 100 items.
 
 @Perm_R_Orders@ permission is required.
  -}
-
+-- *
 getAllOrders :: BitXAuth -> Maybe CcyPair -> Maybe RequestStatus -> IO (Maybe (Either BitXError [PrivateOrder]))
 getAllOrders auth pair status = simpleBitXGetAuth_ auth url
     where
@@ -107,14 +107,14 @@ stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
 
 @Perm_R_Orders@ permission is required.
  -}
-
+-- *
 getOrder :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError PrivateOrderWithTrades))
 getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ Txt.unpack oid
 
 {- | Return account balances
 
 @Perm_R_Balance@ permission required. -}
-
+-- *
 getBalances :: BitXAuth -> IO (Maybe (Either BitXError [Balance]))
 getBalances auth = simpleBitXGetAuth_ auth "balance"
 
@@ -127,7 +127,7 @@ unconfirmed transactions. total_unconfirmed is the total sum of unconfirmed rece
 
 @Perm_R_Addresses@ permission is required.
 -}
-
+-- *
 getFundingAddress :: BitXAuth -> Asset -> Maybe String -> IO (Maybe (Either BitXError FundingAddress))
 getFundingAddress auth asset addr = simpleBitXGetAuth_ auth url
     where
@@ -141,7 +141,7 @@ Allocates a new receive address to your account. There is a limit of 50 receive 
 
 @Perm_R_Addresses@ permission is required.
 -}
-
+-- *
 newFundingAddress :: BitXAuth -> Asset -> IO (Maybe (Either BitXError FundingAddress))
 newFundingAddress auth asset = simpleBitXPOSTAuth_ auth asset "funding_address"
 
@@ -152,14 +152,14 @@ Returns a list of withdrawal requests.
 @Perm_R_Withdrawals@ permission required.-}
 
 getWithdrawalRequests :: BitXAuth -> IO (Maybe (Either BitXError [WithdrawalRequest]))
-getWithdrawalRequests auth = simpleBitXGetAuth_ auth "withdrawals"
+getWithdrawalRequests auth = simpleBitXGetAuth_ auth "withdrawals/"
 
 {- | Request a withdrawal
 
 Creates a new withdrawal request.
 
 @Perm_W_Withdrawals@ permission required.-}
-
+-- *
 newWithdrawalRequest :: BitXAuth -> NewWithdrawal -> IO (Maybe (Either BitXError WithdrawalRequest))
 newWithdrawalRequest auth nwithd = simpleBitXPOSTAuth_ auth nwithd "withdrawals"
 

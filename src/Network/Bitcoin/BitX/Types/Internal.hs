@@ -82,6 +82,19 @@ orderTypeParse (OrderType_ "BID") = BID
 orderTypeParse (OrderType_ "ASK") = ASK
 orderTypeParse (OrderType_ "SELL") = ASK
 
+
+newtype RequestStatus_ = RequestStatus_ Text deriving (Read, Show)
+
+instance FromJSON RequestStatus_ where
+   parseJSON (String x) = return . RequestStatus_ $ x
+   parseJSON _          = mempty
+
+requestStatusParse :: RequestStatus_ -> RequestStatus
+requestStatusParse (RequestStatus_ "PENDING") = PENDING
+requestStatusParse (RequestStatus_ "COMPLETE") = COMPLETE
+requestStatusParse (RequestStatus_ "COMPLETED") = COMPLETE
+requestStatusParse (RequestStatus_ "CANCELLED") = CANCELLED
+
 -------------------------------------------- Ticker type -------------------------------------------
 
 data Ticker_ = Ticker_
@@ -211,7 +224,7 @@ data PrivateOrder_ = PrivateOrder_
     , privateOrder'limit_volume :: QuotedDecimal
     , privateOrder'order_id :: OrderID
     , privateOrder'pair :: CcyPair
-    , privateOrder'state :: RequestStatus
+    , privateOrder'state :: RequestStatus_
     , privateOrder'type :: OrderType_
     }
 
@@ -233,7 +246,7 @@ instance BitXAesRecordConvert PrivateOrder PrivateOrder_ where
                   limitVolume = qdToDecimal privateOrder''limit_volume,
                   id = privateOrder''order_id,
                   pair = privateOrder''pair,
-                  state = privateOrder''state,
+                  state = requestStatusParse privateOrder''state,
                   type = orderTypeParse privateOrder''type} |]
 
 ------------------------------------------ PrivateOrders type --------------------------------------
@@ -301,7 +314,7 @@ data PrivateOrderWithTrades_ = PrivateOrderWithTrades_
     , privateOrderWithTrades'limit_volume :: QuotedDecimal
     , privateOrderWithTrades'order_id :: OrderID
     , privateOrderWithTrades'pair :: CcyPair
-    , privateOrderWithTrades'state :: RequestStatus
+    , privateOrderWithTrades'state :: RequestStatus_
     , privateOrderWithTrades'type :: OrderType_
     , privateOrderWithTrades'trades :: [Trade_]
     }
@@ -325,7 +338,7 @@ instance BitXAesRecordConvert PrivateOrderWithTrades PrivateOrderWithTrades_ whe
                   limitVolume = qdToDecimal privateOrder''limit_volume,
                   id = privateOrder''order_id,
                   pair = privateOrder''pair,
-                  state = privateOrder''state,
+                  state = requestStatusParse privateOrder''state,
                   type = orderTypeParse privateOrder''type,
                   trades = map aesToRec privateOrderWithTrades''trades} |]
 
@@ -393,7 +406,7 @@ instance POSTEncodeable Asset where
 -------------------------------------- WithdrawalRequest type --------------------------------------
 
 data WithdrawalRequest_ = WithdrawalRequest_
-    { withdrawalRequest'status :: RequestStatus
+    { withdrawalRequest'status :: RequestStatus_
     , withdrawalRequest'id :: Text
     }
 
@@ -402,7 +415,7 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 
 instance BitXAesRecordConvert WithdrawalRequest WithdrawalRequest_ where
     aesToRec (WithdrawalRequest_ withdrawalRequest''status withdrawalRequest''id) =
-        [record| {status = withdrawalRequest''status,
+        [record| {status = requestStatusParse withdrawalRequest''status,
                   id = withdrawalRequest''id} |]
 
 -------------------------------------- WithdrawalRequests type -------------------------------------

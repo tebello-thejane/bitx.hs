@@ -487,8 +487,8 @@ instance FromJSON Asset
 instance ToJSON OrderType
 instance FromJSON OrderType
 
-instance ToJSON RequestStatus
-instance FromJSON RequestStatus
+--instance ToJSON RequestStatus
+--instance FromJSON RequestStatus
 
 instance ToJSON WithdrawalType
 instance FromJSON WithdrawalType
