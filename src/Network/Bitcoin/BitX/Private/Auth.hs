@@ -49,7 +49,6 @@ import Record (lens)
 import Record.Lens (view)
 import qualified Data.Text.Encoding as Txt
 import Data.Text (Text)
-import Network.Bitcoin.BitX.Internal
 
 {- | Grant
 

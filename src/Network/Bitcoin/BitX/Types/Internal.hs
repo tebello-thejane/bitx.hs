@@ -69,6 +69,19 @@ instance FromJSON TimestampMS where
 tsmsToUTCTime :: TimestampMS -> UTCTime
 tsmsToUTCTime (TimestampMS ms) = timestampParse_ ms
 
+
+newtype OrderType_ = OrderType_ Text deriving (Read, Show)
+
+instance FromJSON OrderType_ where
+   parseJSON (String x) = return . OrderType_ $ x
+   parseJSON _          = mempty
+
+orderTypeParse :: OrderType_ -> OrderType
+orderTypeParse (OrderType_ "BUY") = BID
+orderTypeParse (OrderType_ "BID") = BID
+orderTypeParse (OrderType_ "ASK") = ASK
+orderTypeParse (OrderType_ "SELL") = ASK
+
 -------------------------------------------- Ticker type -------------------------------------------
 
 data Ticker_ = Ticker_
@@ -199,7 +212,7 @@ data PrivateOrder_ = PrivateOrder_
     , privateOrder'order_id :: OrderID
     , privateOrder'pair :: CcyPair
     , privateOrder'state :: RequestStatus
-    , privateOrder'type :: OrderType
+    , privateOrder'type :: OrderType_
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
@@ -221,7 +234,7 @@ instance BitXAesRecordConvert PrivateOrder PrivateOrder_ where
                   id = privateOrder''order_id,
                   pair = privateOrder''pair,
                   state = privateOrder''state,
-                  type = privateOrder''type} |]
+                  type = orderTypeParse privateOrder''type} |]
 
 ------------------------------------------ PrivateOrders type --------------------------------------
 
@@ -289,7 +302,7 @@ data PrivateOrderWithTrades_ = PrivateOrderWithTrades_
     , privateOrderWithTrades'order_id :: OrderID
     , privateOrderWithTrades'pair :: CcyPair
     , privateOrderWithTrades'state :: RequestStatus
-    , privateOrderWithTrades'type :: OrderType
+    , privateOrderWithTrades'type :: OrderType_
     , privateOrderWithTrades'trades :: [Trade_]
     }
 
@@ -313,7 +326,7 @@ instance BitXAesRecordConvert PrivateOrderWithTrades PrivateOrderWithTrades_ whe
                   id = privateOrder''order_id,
                   pair = privateOrder''pair,
                   state = privateOrder''state,
-                  type = privateOrder''type,
+                  type = orderTypeParse privateOrder''type,
                   trades = map aesToRec privateOrderWithTrades''trades} |]
 
 -------------------------------------------- Balance type ------------------------------------------
