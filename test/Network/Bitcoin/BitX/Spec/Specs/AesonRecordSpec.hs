@@ -107,7 +107,36 @@ spec = do
       recordAesCheck
         "{\"order_id\":\"57983\"}"
         ("57983" :: OrderID)
-
+    it "PublicTrades is parsed properly" $ do
+      recordAesCheck
+        "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327.765\"}]}, \
+            \\"currency\":\"ZAR\"}"
+         [tradeInner]
+    it "RequestSuccess is parsed properly" $ do
+      recordAesCheck
+        "{\"success\":true}"
+        (True :: RequestSuccess)
+    it "PrivateOrderWithTrades is parsed properly" $ do
+      recordAesCheck
+        "{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
+            \\"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
+            \\"limit_price\":765,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
+            \\"state\":\"COMPLETE\",\"type\":\"BID\"}, \"trades\":[{\"timestamp\":1431811395699, \
+            \\"volume\":\"6754.09\",\"price\":\"5327.765\"}]"
+        ([record|
+            {base = 568.7,
+             counter = 3764.2,
+             creationTimestamp = (posixSecondsToUTCTime 478873.467),
+             expirationTimestamp = (posixSecondsToUTCTime 8768834.222),
+             feeBase = 3687.3,
+             feeCounter = 12.9,
+             limitPrice = 765,
+             limitVolume = 55.2,
+             id = "83YG",
+             pair = NADXBT,
+             state = COMPLETE,
+             type = BID,
+             trades = [tradeInner]} |] :: PrivateOrderWithTrades)
 
 tickerInner :: Ticker
 tickerInner =

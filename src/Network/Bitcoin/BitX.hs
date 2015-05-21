@@ -2,7 +2,7 @@
 
 -----------------------------------------------------------------------------
 -- |
--- Module      :   Network.Bitcoin.BitX
+-- Module      :  Network.Bitcoin.BitX
 -- Copyright   :  No Rights Reserved
 -- License     :  Public Domain
 --
