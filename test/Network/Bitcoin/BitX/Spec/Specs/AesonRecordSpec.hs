@@ -109,7 +109,7 @@ spec = do
         ("57983" :: OrderID)
     it "PublicTrades is parsed properly" $ do
       recordAesCheck
-        "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327.765\"}]}, \
+        "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327.765\"}], \
             \\"currency\":\"ZAR\"}"
          [tradeInner]
     it "RequestSuccess is parsed properly" $ do
@@ -121,8 +121,8 @@ spec = do
         "{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
             \\"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
             \\"limit_price\":765,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
-            \\"state\":\"COMPLETE\",\"type\":\"BID\"}, \"trades\":[{\"timestamp\":1431811395699, \
-            \\"volume\":\"6754.09\",\"price\":\"5327.765\"}]"
+            \\"state\":\"COMPLETE\",\"type\":\"BID\", \"trades\":[{\"timestamp\":1431811395699, \
+            \\"volume\":\"6754.09\",\"price\":\"5327.765\"}]}"
         ([record|
             {base = 568.7,
              counter = 3764.2,
@@ -137,6 +137,21 @@ spec = do
              state = COMPLETE,
              type = BID,
              trades = [tradeInner]} |] :: PrivateOrderWithTrades)
+    it "WithdrawalRequest is parsed properly" $ do
+      recordAesCheck
+        "{\"status\":\"PENDING\", \"id\":\"7yrfU4987\"}"
+        ([record|
+            {status = PENDING,
+             id = "7yrfU4987" } |] :: WithdrawalRequest)
+    it "FundingAddress is parsed properly" $ do
+      recordAesCheck
+        "{\"asset\":\"ZAR\", \"address\":\"093gu959t894G\", \"total_received\":\"432.5\", \
+            \\"total_unconfirmed\":\"0.023\"}"
+        ([record|
+            {asset = ZAR,
+             address = "093gu959t894G",
+             totalReceived = 432.5,
+             totalUnconfirmed = 0.023} |] :: FundingAddress)
 
 tickerInner :: Ticker
 tickerInner =
