@@ -354,7 +354,7 @@ instance BitXAesRecordConvert Balance Balance_ where
 -------------------------------------------- Balances type -----------------------------------------
 
 data Balances_ = Balances_
-    {balances'balances :: [Balance_]
+    {balances'balance :: [Balance_]
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
