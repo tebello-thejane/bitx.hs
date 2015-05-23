@@ -80,6 +80,7 @@ module Network.Bitcoin.BitX.Types
     QuoteType(..),
     BitXClientAuth,
     Transaction
+    --, Transactions
   ) where
 
 import Data.Aeson (ToJSON(..), FromJSON(..))

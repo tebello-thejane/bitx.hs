@@ -7,12 +7,15 @@ module Network.Bitcoin.BitX.Types.Internal
     (
     BitXAesRecordConvert(..),
     POSTEncodeable(..),
-    showableToBytestring_
+    showableToBytestring_,
+    Transaction_(..)--,
+    --TimestampMS(..),
+    --QuotedDecimal(..)
     )
 where
 
 import Network.Bitcoin.BitX.Types
-import Data.Aeson (FromJSON(..), parseJSON, Value(..))
+import Data.Aeson (FromJSON(..), parseJSON, Value(..), toJSON, ToJSON(..))
 import qualified Data.Aeson.TH as AesTH
 import qualified Data.Text as Txt
 import qualified Data.Text.Encoding as Txt
@@ -55,6 +58,9 @@ instance FromJSON QuotedDecimal where
    parseJSON (Number x) = return . QuotedDecimal . read . show $ x
    parseJSON _          = mempty
 
+--instance ToJSON QuotedDecimal where
+--    toJSON (QuotedDecimal q) = Number . realToFrac $ q
+
 qdToDecimal :: QuotedDecimal -> Decimal
 qdToDecimal (QuotedDecimal dec) = dec
 
@@ -65,6 +71,9 @@ newtype TimestampMS = TimestampMS Integer deriving (Read, Show)
 instance FromJSON TimestampMS where
    parseJSON (Number x) = return . TimestampMS . round $ x
    parseJSON _          = mempty
+
+--instance ToJSON TimestampMS where
+--    toJSON (TimestampMS t) = Number . fromIntegral $ t
 
 tsmsToUTCTime :: TimestampMS -> UTCTime
 tsmsToUTCTime (TimestampMS ms) = timestampParse_ ms
@@ -511,7 +520,7 @@ data Transaction_ = Transaction_
     { transaction'row_index :: Int
     , transaction'timestamp :: TimestampMS
     , transaction'balance :: QuotedDecimal
-    , transaction'avalable :: QuotedDecimal
+    , transaction'available :: QuotedDecimal
     , transaction'balance_delta :: QuotedDecimal
     , transaction'available_delta :: QuotedDecimal
     , transaction'currency :: Asset
@@ -523,12 +532,12 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 
 instance BitXAesRecordConvert Transaction Transaction_ where
     aesToRec (Transaction_ transaction''row_index transaction''timestamp transaction''balance
-        transaction''avalable transaction''balance_delta transaction''available_delta
+        transaction''available transaction''balance_delta transaction''available_delta
         transaction''currency transaction''description) =
         [record| {rowIndex = transaction''row_index,
                   timestamp = tsmsToUTCTime transaction''timestamp,
                   balance = qdToDecimal transaction''balance,
-                  available = qdToDecimal transaction''avalable,
+                  available = qdToDecimal transaction''available,
                   balanceDelta = qdToDecimal transaction''balance_delta,
                   availableDelta = qdToDecimal transaction''available_delta,
                   currency = transaction''currency,

@@ -4,8 +4,6 @@
 *Test all conversions.
 *Verify whether AuthGrant could return a BitXError.
 *Investigate the issue with Aeson failing when the API returns a null instead of an array.
-*Why does stopOrder not work?
 *Ask BitX aupport about "withdrawals/" working but not "withdrawals", in getWithDrawalRequests.
 *Maybe rethink this whole RequestStatus_ mess...
 *Find out why calling cancelWithdrawalRequest only causes an internal server error during testing.
-*Find out why getTransactions fails.

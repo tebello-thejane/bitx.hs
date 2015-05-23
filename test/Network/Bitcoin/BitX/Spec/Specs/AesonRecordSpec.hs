@@ -21,7 +21,7 @@ spec = do
     it "Ticker is parsed properly" $ do
       recordAesCheck
         "{\"timestamp\":1431811395699,\"bid\":\"3083.00\",\"ask\":\"3115.00\",\
-            \\"last_trade\":\"3116.00\",\"rolling_24_hour_volume\":\"19.776608\",\"pair\":\"XBTZAR\"}"
+            \ \"last_trade\":\"3116.00\",\"rolling_24_hour_volume\":\"19.776608\",\"pair\":\"XBTZAR\"}"
         ([record|
             {ask = 3115.00,
              timestamp = (posixSecondsToUTCTime 1431811395.699),
@@ -32,7 +32,7 @@ spec = do
     it "Balance is parsed properly" $ do
       recordAesCheck
         "{\"account_id\":\"314159\",\"asset\":\"ZAR\",\"balance\":\"2159.15\",\"reserved\":\"320\",\
-            \\"unconfirmed\":\"175\"}"
+            \ \"unconfirmed\":\"175\"}"
         ([record|
             {id = "314159",
              asset = ZAR,
@@ -54,13 +54,13 @@ spec = do
     it "Tickers is parsed properly" $ do
       recordAesCheck
         "{\"tickers\":[{\"timestamp\":1431811395699,\"bid\":\"3083.00\",\"ask\":\"3115.00\",\
-            \\"last_trade\":\"3116.00\",\"rolling_24_hour_volume\":\"19.776608\",\
-            \\"pair\":\"XBTZAR\"}]}"
+            \ \"last_trade\":\"3116.00\",\"rolling_24_hour_volume\":\"19.776608\",\
+            \ \"pair\":\"XBTZAR\"}]}"
         [tickerInner]
     it "Orderbook is parsed properly" $ do
       recordAesCheck
         "{\"timestamp\":1431811395699,\"bids\":[{\"volume\":\"654.98\",\"price\":\"3789.66\"}],\
-            \\"asks\":[{\"volume\":\"654.98\",\"price\":\"3789.66\"}]}"
+            \ \"asks\":[{\"volume\":\"654.98\",\"price\":\"3789.66\"}]}"
         ([record|
             {timestamp = (posixSecondsToUTCTime 1431811395.699),
              bids = [orderInner],
@@ -75,14 +75,14 @@ spec = do
     it "PublicTrades is parsed properly" $ do
       recordAesCheck
         "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\
-            \\"price\":\"5327.765\"}],\"currency\":\"ZAR\"}"
+            \ \"price\":\"5327.765\"}],\"currency\":\"ZAR\"}"
         [tradeInner]
     it "PrivateOrder is parsed properly" $ do
       recordAesCheck
         "{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
-            \\"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
-            \\"limit_price\":765,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
-            \\"state\":\"COMPLETE\",\"type\":\"BID\"}"
+            \ \"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
+            \ \"limit_price\":765,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
+            \ \"state\":\"COMPLETE\",\"type\":\"BID\"}"
         ([record|
             {base = 568.7,
              counter = 3764.2,
@@ -99,9 +99,9 @@ spec = do
     it "PrivateOrders is parsed properly" $ do
       recordAesCheck
         "{\"orders\":[{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
-            \\"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
-            \\"limit_price\":765,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
-            \\"state\":\"COMPLETE\",\"type\":\"BID\"}]}"
+            \ \"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
+            \ \"limit_price\":765,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
+            \ \"state\":\"COMPLETE\",\"type\":\"BID\"}]}"
         [privateOrderInner]
     it "OrderID is parsed properly" $ do
       recordAesCheck
@@ -110,7 +110,7 @@ spec = do
     it "PublicTrades is parsed properly" $ do
       recordAesCheck
         "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327.765\"}], \
-            \\"currency\":\"ZAR\"}"
+            \ \"currency\":\"ZAR\"}"
          [tradeInner]
     it "RequestSuccess is parsed properly" $ do
       recordAesCheck
@@ -119,10 +119,10 @@ spec = do
     it "PrivateOrderWithTrades is parsed properly" $ do
       recordAesCheck
         "{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
-            \\"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
-            \\"limit_price\":765,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
-            \\"state\":\"COMPLETE\",\"type\":\"BID\", \"trades\":[{\"timestamp\":1431811395699, \
-            \\"volume\":\"6754.09\",\"price\":\"5327.765\"}]}"
+            \ \"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
+            \ \"limit_price\":765,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
+            \ \"state\":\"COMPLETE\",\"type\":\"BID\", \"trades\":[{\"timestamp\":1431811395699, \
+            \ \"volume\":\"6754.09\",\"price\":\"5327.765\"}]}"
         ([record|
             {base = 568.7,
              counter = 3764.2,
@@ -146,12 +146,26 @@ spec = do
     it "FundingAddress is parsed properly" $ do
       recordAesCheck
         "{\"asset\":\"ZAR\", \"address\":\"093gu959t894G\", \"total_received\":\"432.5\", \
-            \\"total_unconfirmed\":\"0.023\"}"
+            \ \"total_unconfirmed\":\"0.023\"}"
         ([record|
             {asset = ZAR,
              address = "093gu959t894G",
              totalReceived = 432.5,
              totalUnconfirmed = 0.023} |] :: FundingAddress)
+    it "Transaction is parsed properly" $ do
+      recordAesCheck
+        "{\"row_index\":1,\"timestamp\":1387527013000,\"balance\":0.0099, \"available\":0.0099, \
+            \ \"account_id\":\"3485527347968330182\", \"balance_delta\":0.0099, \
+            \ \"available_delta\":0.0099,  \"currency\":\"XBT\",\"description\":\"Bought BTC 0.01 for R 79.00\"}"
+        ([record|
+            {rowIndex = 1,
+             timestamp = (posixSecondsToUTCTime 1387527013),
+             balance = 0.0099,
+             available = 0.0099,
+             balanceDelta = 0.0099,
+             availableDelta = 0.0099,
+             currency = XBT,
+             description = "Bought BTC 0.01 for R 79.00"}|] :: Transaction)
 
 tickerInner :: Ticker
 tickerInner =
