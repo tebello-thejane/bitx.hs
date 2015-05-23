@@ -35,6 +35,8 @@ module Network.Bitcoin.BitX.Private.Quote
 
 import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
+import Data.Text (Text)
+import qualified Data.Text as Txt
 
 {- | Create a quote
 
@@ -66,8 +68,8 @@ Get the latest status of a quote, retrieved by ID.
 @Perm_R_Orders@ permission required.
 -}
 
-getQuote :: BitXAuth -> String -> IO (Maybe (Either BitXError OrderQuote))
-getQuote auth qid = simpleBitXGetAuth_ auth $ "quotes/" ++ qid
+getQuote :: BitXAuth -> Text -> IO (Maybe (Either BitXError OrderQuote))
+getQuote auth qid = simpleBitXGetAuth_ auth $ "quotes/" ++ Txt.unpack qid
 
 {- | Exercise a quote
 
@@ -79,8 +81,8 @@ An error is returned if the quote has expired or if you have insufficient availa
 @Perm_W_Orders@ permission required.
 -}
 
-exerciseQuote :: BitXAuth -> String -> IO (Maybe (Either BitXError OrderQuote))
-exerciseQuote auth qid = simpleBitXMETHAuth_ auth "PUT" $ "quotes/" ++ qid
+exerciseQuote :: BitXAuth -> Text -> IO (Maybe (Either BitXError OrderQuote))
+exerciseQuote auth qid = simpleBitXMETHAuth_ auth "PUT" $ "quotes/" ++ Txt.unpack qid
 
 {- | Discard a quote
 
@@ -90,6 +92,6 @@ yet.
 @Perm_W_Orders@ permission required.
 -}
 
-discardQuote :: BitXAuth -> String -> IO (Maybe (Either BitXError OrderQuote))
-discardQuote auth qid = simpleBitXMETHAuth_ auth "DELETE" $ "quotes/" ++ qid
+discardQuote :: BitXAuth -> Text -> IO (Maybe (Either BitXError OrderQuote))
+discardQuote auth qid = simpleBitXMETHAuth_ auth "DELETE" $ "quotes/" ++ Txt.unpack qid
 

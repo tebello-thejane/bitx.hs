@@ -454,11 +454,11 @@ instance POSTEncodeable BitcoinSendRequest where
         [("amount", showableToBytestring_ (view [lens| amount |] oreq)),
          ("currency", showableToBytestring_ (view [lens| currency |] oreq)),
          ("address", Txt.encodeUtf8 (view [lens| address |] oreq)),
-         ("description", Txt.encodeUtf8 . unjust $ (view [lens| description |] oreq)),
-         ("message", Txt.encodeUtf8 . unjust $ (view [lens| message |] oreq))]
+         ("description", Txt.encodeUtf8 . unjustText $ (view [lens| description |] oreq)),
+         ("message", Txt.encodeUtf8 . unjustText $ (view [lens| message |] oreq))]
         where
-            unjust (Just a) = a
-            unjust Nothing  = ""
+            unjustText (Just a) = a
+            unjustText Nothing  = ""
 
 ----------------------------------------- QuoteRequest type ----------------------------------------
 
