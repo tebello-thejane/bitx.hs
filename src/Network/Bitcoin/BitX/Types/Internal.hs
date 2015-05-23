@@ -7,7 +7,7 @@ module Network.Bitcoin.BitX.Types.Internal
     (
     BitXAesRecordConvert(..),
     POSTEncodeable(..),
-    showableToBytestring_,
+    --showableToBytestring_,
     Transaction_(..),
     pendingTransactionsToTransactions,
     PendingTransactions__(..)

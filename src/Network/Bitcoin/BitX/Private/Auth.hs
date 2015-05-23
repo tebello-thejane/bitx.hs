@@ -64,7 +64,7 @@ authGrant cauth authCode = withSocketsDo $ do
           userSecret
         . NetCon.urlEncodedBody
             [("grant_type", "authorization_code"),
-             ("code", showableToBytestring_ authCode)]
+             ("code", Txt.encodeUtf8 authCode)]
         . fromJust . NetCon.parseUrl $ bitXAPIPrefix ++ "oauth2/grant"
         :: IO (Either SomeException (Response BL.ByteString))
     consumeResponseBody_ response
