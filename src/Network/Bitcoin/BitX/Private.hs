@@ -71,6 +71,9 @@ import Data.Text (Text)
 If the second parameter is @Nothing@ then this will return orders for all markets, whereas if it is
 @Just cpy@ for some @CcyPair cpy@ then the results will be specific to that market.
 
+If the third parameter is @Nothing@ then this will return orders in all states, whereas if it is
+@Just COMPLETE@ or @Just PENDING@ then it will return only completed or pending orders, respectively.
+
 This list is truncated after 100 items.
 
 @Perm_R_Orders@ permission is required.
@@ -92,7 +95,7 @@ thoroughly tested before submitting orders.__
 
 @Perm_W_Orders@ permission is required.
  -}
-
+-- *
 postOrder :: BitXAuth -> OrderRequest -> IO (Maybe (Either BitXError OrderID))
 postOrder auth oreq = simpleBitXPOSTAuth_ auth oreq "postorder"
 
@@ -100,7 +103,7 @@ postOrder auth oreq = simpleBitXPOSTAuth_ auth oreq "postorder"
 
 @Perm_W_Orders@ permission is required.
  -}
-
+-- *
 stopOrder :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError RequestSuccess))
 stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
 

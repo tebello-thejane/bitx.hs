@@ -286,7 +286,7 @@ instance BitXAesRecordConvert OrderID OrderIDRec_ where
 
 instance POSTEncodeable OrderID where
     postEncode oid =
-        [("order_id", showableToBytestring_ oid)]
+        [("order_id", Txt.encodeUtf8 oid)]
 
 ----------------------------------------- RequestSuccess type --------------------------------------
 
@@ -445,8 +445,8 @@ instance POSTEncodeable BitcoinSendRequest where
         [("amount", showableToBytestring_ (view [lens| amount |] oreq)),
          ("currency", showableToBytestring_ (view [lens| currency |] oreq)),
          ("address", showableToBytestring_ (view [lens| address |] oreq)),
-         ("description", showableToBytestring_ . unjust $ (view [lens| description |] oreq)),
-         ("message", showableToBytestring_ . unjust $ (view [lens| message |] oreq))]
+         ("description", Txt.encodeUtf8 . unjust $ (view [lens| description |] oreq)),
+         ("message", Txt.encodeUtf8 . unjust $ (view [lens| message |] oreq))]
         where
             unjust (Just a) = a
             unjust Nothing  = ""
