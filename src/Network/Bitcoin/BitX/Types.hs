@@ -412,8 +412,7 @@ type NewWithdrawal =
 --         currency :: 'Asset',
 --         address :: 'Text',
 --         description :: 'Maybe' 'Text',
---         message :: 'Maybe' 'Text',
---         pin :: 'Text'} |]
+--         message :: 'Maybe' 'Text'} |]
 -- @
 type BitcoinSendRequest =
     [record|
@@ -421,8 +420,7 @@ type BitcoinSendRequest =
          currency :: Asset,
          address :: Text,
          description :: Maybe Text,
-         message :: Maybe Text,
-         pin :: Text} |]
+         message :: Maybe Text} |]
 
 -- | A request to lock in a quote.
 --

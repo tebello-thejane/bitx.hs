@@ -7,3 +7,4 @@
 *Ask BitX aupport about "withdrawals/" working but not "withdrawals", in getWithDrawalRequests.
 *Maybe rethink this whole RequestStatus_ mess...
 *Find out why calling cancelWithdrawalRequest only causes an internal server error during testing.
+*Ask BitX support about error wrt docs for pending transactions call.

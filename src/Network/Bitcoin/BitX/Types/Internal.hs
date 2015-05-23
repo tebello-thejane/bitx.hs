@@ -8,9 +8,9 @@ module Network.Bitcoin.BitX.Types.Internal
     BitXAesRecordConvert(..),
     POSTEncodeable(..),
     showableToBytestring_,
-    Transaction_(..)--,
-    --TimestampMS(..),
-    --QuotedDecimal(..)
+    Transaction_(..),
+    pendingTransactionsToTransactions,
+    PendingTransactions__(..)
     )
 where
 
@@ -453,7 +453,7 @@ instance POSTEncodeable BitcoinSendRequest where
     postEncode oreq =
         [("amount", showableToBytestring_ (view [lens| amount |] oreq)),
          ("currency", showableToBytestring_ (view [lens| currency |] oreq)),
-         ("address", showableToBytestring_ (view [lens| address |] oreq)),
+         ("address", Txt.encodeUtf8 (view [lens| address |] oreq)),
          ("description", Txt.encodeUtf8 . unjust $ (view [lens| description |] oreq)),
          ("message", Txt.encodeUtf8 . unjust $ (view [lens| message |] oreq))]
         where
@@ -555,3 +555,22 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 instance BitXAesRecordConvert [Transaction] Transactions_ where
     aesToRec (Transactions_ transactions''transactions) =
         map aesToRec transactions''transactions
+
+
+data PendingTransactions_ = PendingTransactions_
+    { transactions'pending :: [Transaction_]
+    }
+
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''PendingTransactions_)
+
+instance BitXAesRecordConvert PendingTransactions__ PendingTransactions_ where
+    aesToRec (PendingTransactions_ transactions''pending) =
+        [record| {transactions = map aesToRec transactions''pending}|]
+
+type PendingTransactions__ =
+    [record|
+        {transactions :: [Transaction]}|]
+
+pendingTransactionsToTransactions :: PendingTransactions__ -> [Transaction]
+pendingTransactionsToTransactions pts = (view [lens| transactions |] pts)

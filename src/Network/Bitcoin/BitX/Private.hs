@@ -56,15 +56,17 @@ module Network.Bitcoin.BitX.Private
   newWithdrawalRequest,
   getWithdrawalRequest,
   sendToAddress,
-  cancelWithdrawalRequest,
+  --cancelWithdrawalRequest,
   getTransactions,
   getPendingTransactions
   ) where
 
 import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
+import Network.Bitcoin.BitX.Types.Internal
 import qualified Data.Text as Txt
 import Data.Text (Text)
+import Control.Monad (liftM)
 
 {- | Returns a list of the most recently placed orders.
 
@@ -78,7 +80,6 @@ This list is truncated after 100 items.
 
 @Perm_R_Orders@ permission is required.
  -}
--- *
 
 getAllOrders :: BitXAuth -> Maybe CcyPair -> Maybe RequestStatus -> IO (Maybe (Either BitXError [PrivateOrder]))
 getAllOrders auth pair status = simpleBitXGetAuth_ auth url
@@ -96,7 +97,6 @@ __thoroughly tested before submitting orders.__
 
 @Perm_W_Orders@ permission is required.
  -}
--- *
 
 postOrder :: BitXAuth -> OrderRequest -> IO (Maybe (Either BitXError OrderID))
 postOrder auth oreq = simpleBitXPOSTAuth_ auth oreq "postorder"
@@ -105,7 +105,6 @@ postOrder auth oreq = simpleBitXPOSTAuth_ auth oreq "postorder"
 
 @Perm_W_Orders@ permission is required.
  -}
--- *
 
 stopOrder :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError RequestSuccess))
 stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
@@ -114,7 +113,6 @@ stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
 
 @Perm_R_Orders@ permission is required.
  -}
--- *
 
 getOrder :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError PrivateOrderWithTrades))
 getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ Txt.unpack oid
@@ -122,7 +120,6 @@ getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ Txt.unpack oid
 {- | Return account balances
 
 @Perm_R_Balance@ permission required. -}
--- *
 
 getBalances :: BitXAuth -> IO (Maybe (Either BitXError [Balance]))
 getBalances auth = simpleBitXGetAuth_ auth "balance"
@@ -136,7 +133,6 @@ unconfirmed transactions. total_unconfirmed is the total sum of unconfirmed rece
 
 @Perm_R_Addresses@ permission is required.
 -}
--- *
 
 getFundingAddress :: BitXAuth -> Asset -> Maybe String -> IO (Maybe (Either BitXError FundingAddress))
 getFundingAddress auth asset addr = simpleBitXGetAuth_ auth url
@@ -151,7 +147,6 @@ Allocates a new receive address to your account. There is a limit of 50 receive 
 
 @Perm_R_Addresses@ permission is required.
 -}
--- *
 
 newFundingAddress :: BitXAuth -> Asset -> IO (Maybe (Either BitXError FundingAddress))
 newFundingAddress auth asset = simpleBitXPOSTAuth_ auth asset "funding_address"
@@ -161,7 +156,6 @@ newFundingAddress auth asset = simpleBitXPOSTAuth_ auth asset "funding_address"
 Returns a list of withdrawal requests.
 
 @Perm_R_Withdrawals@ permission required.-}
--- *
 
 getWithdrawalRequests :: BitXAuth -> IO (Maybe (Either BitXError [WithdrawalRequest]))
 getWithdrawalRequests auth = simpleBitXGetAuth_ auth "withdrawals/"
@@ -171,7 +165,6 @@ getWithdrawalRequests auth = simpleBitXGetAuth_ auth "withdrawals/"
 Creates a new withdrawal request.
 
 @Perm_W_Withdrawals@ permission required.-}
--- *
 
 newWithdrawalRequest :: BitXAuth -> NewWithdrawal -> IO (Maybe (Either BitXError WithdrawalRequest))
 newWithdrawalRequest auth nwithd = simpleBitXPOSTAuth_ auth nwithd "withdrawals"
@@ -181,7 +174,6 @@ newWithdrawalRequest auth nwithd = simpleBitXPOSTAuth_ auth nwithd "withdrawals"
 Returns the status of a particular withdrawal request.
 
 @Perm_R_Withdrawals@ permission required.-}
--- *
 
 getWithdrawalRequest :: BitXAuth -> String -> IO (Maybe (Either BitXError WithdrawalRequest))
 getWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" ++ wthid
@@ -192,8 +184,8 @@ This can only be done if the request is still in state PENDING.
 
 @Perm_W_Withdrawals@ permission required.-}
 
-cancelWithdrawalRequest :: BitXAuth -> String -> IO (Maybe (Either BitXError WithdrawalRequest))
-cancelWithdrawalRequest auth wthid = simpleBitXMETHAuth_ auth "DELETE" $ "withdrawals/" ++ wthid
+--cancelWithdrawalRequest :: BitXAuth -> String -> IO (Maybe (Either BitXError WithdrawalRequest))
+--cancelWithdrawalRequest auth wthid = simpleBitXMETHAuth_ auth "DELETE" $ "withdrawals/" ++ wthid
 
 {- | Send Bitcoin from your account to a Bitcoin address or email address.
 
@@ -204,7 +196,9 @@ __Warning! Bitcoin transactions are irreversible. Please ensure your program has
 __tested before using this call.__
 
 
-@Perm_W_Send@ permission required.-}
+@Perm_W_Send@ permission required. Note that when creating an API key on the BitX site, selecting
+"Full access" is not sufficient to add the @Perm_W_Send@ permission. Instead, the permission needs
+to be enabled explicitely by selecting "Custom."-}
 
 sendToAddress :: BitXAuth -> BitcoinSendRequest -> IO (Maybe (Either BitXError RequestSuccess))
 sendToAddress auth sreq = simpleBitXPOSTAuth_ auth sreq "send"
@@ -220,7 +214,6 @@ fetch the 100 most recent rows, use min_row=-100 and max_row=0.
 
 @Perm_R_Transactions@ permission required.
 -}
--- *
 
 getTransactions
     :: BitXAuth
@@ -242,6 +235,11 @@ updated at any time.
 -}
 
 getPendingTransactions :: BitXAuth -> AccountID -> IO (Maybe (Either BitXError [Transaction]))
-getPendingTransactions auth accid = simpleBitXGetAuth_ auth $
+getPendingTransactions auth accid = liftM imebPendingTransactionsToimebTransactions $ simpleBitXGetAuth_ auth $
     "accounts/" ++ Txt.unpack accid ++ "/pending"
+    where
+        --imebPendingTransactionsToimebTransactions :: Maybe (Either BitXError PendingTransactions__) -> Maybe (Either BitXError [Transaction])
+        imebPendingTransactionsToimebTransactions (Just (Right pt)) = Just . Right $ pendingTransactionsToTransactions pt
+        imebPendingTransactionsToimebTransactions (Just (Left er)) = Just . Left $ er
+        imebPendingTransactionsToimebTransactions Nothing = Nothing
 
