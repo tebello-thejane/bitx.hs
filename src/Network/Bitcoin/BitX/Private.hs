@@ -88,7 +88,7 @@ getAllOrders auth pair status = simpleBitXGetAuth_ auth url
             (Nothing, Nothing)  -> ""
             (Just pr, Nothing)  -> "?pair=" ++ show pr
             (Nothing, Just st)  -> "?state=" ++ show st
-            (Just pr, Just st)  -> "?pair=" ++ show pr ++ "&pair=" ++ show pr
+            (Just pr, Just st)  -> "?pair=" ++ show pr ++ "&state=" ++ show st
 
 {- | Create a new order.
 
@@ -175,8 +175,9 @@ Returns the status of a particular withdrawal request.
 
 @Perm_R_Withdrawals@ permission required.-}
 
-getWithdrawalRequest :: BitXAuth -> String -> IO (Maybe (Either BitXError WithdrawalRequest))
-getWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" ++ wthid
+getWithdrawalRequest :: BitXAuth -> Text -- ^ The withdrawal ID
+    -> IO (Maybe (Either BitXError WithdrawalRequest))
+getWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" ++ Txt.unpack wthid
 
 {- | Cancel a withdrawal request
 

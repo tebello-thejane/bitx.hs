@@ -10,12 +10,12 @@ module Network.Bitcoin.BitX.Types.Internal
     --showableToBytestring_,
     Transaction_(..),
     pendingTransactionsToTransactions,
-    PendingTransactions__(..)
+    PendingTransactions__
     )
 where
 
 import Network.Bitcoin.BitX.Types
-import Data.Aeson (FromJSON(..), parseJSON, Value(..), toJSON, ToJSON(..))
+import Data.Aeson (FromJSON(..), parseJSON, Value(..))
 import qualified Data.Aeson.TH as AesTH
 import qualified Data.Text as Txt
 import qualified Data.Text.Encoding as Txt
@@ -86,10 +86,11 @@ instance FromJSON OrderType_ where
    parseJSON _          = mempty
 
 orderTypeParse :: OrderType_ -> OrderType
-orderTypeParse (OrderType_ "BUY") = BID
-orderTypeParse (OrderType_ "BID") = BID
-orderTypeParse (OrderType_ "ASK") = ASK
+orderTypeParse (OrderType_ "BUY")  = BID
+orderTypeParse (OrderType_ "BID")  = BID
+orderTypeParse (OrderType_ "ASK")  = ASK
 orderTypeParse (OrderType_ "SELL") = ASK
+orderTypeParse (OrderType_    _  ) = error "Yet another surprise from the BitX API..."
 
 
 newtype RequestStatus_ = RequestStatus_ Text deriving (Read, Show)
@@ -99,10 +100,11 @@ instance FromJSON RequestStatus_ where
    parseJSON _          = mempty
 
 requestStatusParse :: RequestStatus_ -> RequestStatus
-requestStatusParse (RequestStatus_ "PENDING") = PENDING
-requestStatusParse (RequestStatus_ "COMPLETE") = COMPLETE
+requestStatusParse (RequestStatus_ "PENDING")   = PENDING
+requestStatusParse (RequestStatus_ "COMPLETE")  = COMPLETE
 requestStatusParse (RequestStatus_ "COMPLETED") = COMPLETE
 requestStatusParse (RequestStatus_ "CANCELLED") = CANCELLED
+requestStatusParse (RequestStatus_      _     ) = error "Yet another surprise from the BitX API..."
 
 -------------------------------------------- Ticker type -------------------------------------------
 
@@ -574,3 +576,4 @@ type PendingTransactions__ =
 
 pendingTransactionsToTransactions :: PendingTransactions__ -> [Transaction]
 pendingTransactionsToTransactions pts = (view [lens| transactions |] pts)
+

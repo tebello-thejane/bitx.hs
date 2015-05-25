@@ -102,3 +102,15 @@ spec = do
              pair = NADXBT,
              state = COMPLETE,
              type = ASK } |] :: PrivateOrder)
+    it "RequestStatus COMPLETE is parsed properly" $ do
+      recordAesCheck
+        "{\"status\":\"COMPLETE\", \"id\":\"\"}"
+        ([record|
+            {status = COMPLETE,
+            id = "" } |] :: WithdrawalRequest)
+    it "RequestStatus COMPLETED is parsed properly" $ do
+      recordAesCheck
+        "{\"status\":\"COMPLETED\", \"id\":\"\"}"
+        ([record|
+            {status = COMPLETE,
+            id = "" } |] :: WithdrawalRequest)

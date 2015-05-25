@@ -9,4 +9,5 @@
 *Find out why calling cancelWithdrawalRequest causes an internal server error during testing.
 *Ask BitX support about error wrt docs for pending transactions call.
 *Test Auth by request app id from BitX as stipulated in docs.
-*Should i even bother including auth module?
+*Should I even bother including auth module?
+*Create wrapper type around functions' return types?

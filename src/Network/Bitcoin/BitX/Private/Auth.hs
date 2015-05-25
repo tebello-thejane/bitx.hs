@@ -37,7 +37,6 @@ module Network.Bitcoin.BitX.Private.Auth
     ) where
 
 import Network.Bitcoin.BitX.Types
-import Network.Bitcoin.BitX.Types.Internal
 import Network.Bitcoin.BitX.Internal
 import qualified Network.HTTP.Conduit as NetCon
 import Network.HTTP.Conduit (Response(..))

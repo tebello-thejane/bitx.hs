@@ -154,18 +154,22 @@ spec = do
              totalUnconfirmed = 0.023} |] :: FundingAddress)
     it "Transaction is parsed properly" $ do
       recordAesCheck
-        "{\"row_index\":1,\"timestamp\":1387527013000,\"balance\":0.0099, \"available\":0.0099, \
-            \ \"account_id\":\"3485527347968330182\", \"balance_delta\":0.0099, \
+        "{\"row_index\":1,\"timestamp\":1387527013000,\"balance\":0.0199, \"available\":0.0299, \
+            \ \"account_id\":\"3485527347968330182\", \"balance_delta\":0.0399, \
             \ \"available_delta\":0.0099,  \"currency\":\"XBT\",\"description\":\"Bought BTC 0.01 for R 79.00\"}"
         ([record|
             {rowIndex = 1,
              timestamp = (posixSecondsToUTCTime 1387527013),
-             balance = 0.0099,
-             available = 0.0099,
-             balanceDelta = 0.0099,
+             balance = 0.0199,
+             available = 0.0299,
+             balanceDelta = 0.0399,
              availableDelta = 0.0099,
              currency = XBT,
              description = "Bought BTC 0.01 for R 79.00"}|] :: Transaction)
+    it "Transactions is parsed properly" $ do
+      recordAesCheck
+        "{\"transactions\":[]}"
+        [transactionInner]
 
 tickerInner :: Ticker
 tickerInner =
@@ -206,3 +210,14 @@ privateOrderInner =
         state = COMPLETE,
         type = BID } |]
 
+transactionInner :: Transaction
+transactionInner =
+    [record|
+        {rowIndex = 1,
+         timestamp = (posixSecondsToUTCTime 1387527013),
+         balance = 0.0199,
+         available = 0.0299,
+         balanceDelta = 0.0399,
+         availableDelta = 0.0099,
+         currency = XBT,
+         description = "Bought BTC 0.01 for R 79.00"}|]
