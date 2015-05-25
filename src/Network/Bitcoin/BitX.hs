@@ -21,7 +21,8 @@ module Network.Bitcoin.BitX
     module Network.Bitcoin.BitX.Public,
     module Network.Bitcoin.BitX.Private.Quote,
     module Network.Bitcoin.BitX.Private.Auth,
-    BitXAesRecordConvert(..)
+    BitXAesRecordConvert(..),
+    POSTEncodeable(..)
     )
     where
 

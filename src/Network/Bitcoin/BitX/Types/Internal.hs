@@ -1,7 +1,7 @@
 {-# LANGUAGE QuasiQuotes, OverloadedStrings, TemplateHaskell, MultiParamTypeClasses,
     FunctionalDependencies, FlexibleInstances, DataKinds, FlexibleContexts, CPP #-}
 
-{-# OPTIONS_GHC -fno-warn-unused-binds -fno-warn-unused-matches #-}
+{-# OPTIONS_GHC -fno-warn-unused-binds #-}
 
 module Network.Bitcoin.BitX.Types.Internal
     (

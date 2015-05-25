@@ -168,7 +168,9 @@ spec = do
              description = "Bought BTC 0.01 for R 79.00"}|] :: Transaction)
     it "Transactions is parsed properly" $ do
       recordAesCheck
-        "{\"transactions\":[]}"
+        "{\"transactions\":[{\"row_index\":1,\"timestamp\":1387527013000,\"balance\":0.0199, \"available\":0.0299, \
+            \ \"account_id\":\"3485527347968330182\", \"balance_delta\":0.0399, \
+            \ \"available_delta\":0.0099,  \"currency\":\"XBT\",\"description\":\"Bought BTC 0.01 for R 79.00\"}]}"
         [transactionInner]
 
 tickerInner :: Ticker
