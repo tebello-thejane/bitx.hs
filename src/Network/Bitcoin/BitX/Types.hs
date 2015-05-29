@@ -1,4 +1,6 @@
-{-# LANGUAGE DeriveGeneric, DefaultSignatures, QuasiQuotes, OverloadedStrings, DataKinds #-}
+{-# LANGUAGE DeriveGeneric, DefaultSignatures, QuasiQuotes, OverloadedStrings, DataKinds,
+    MultiParamTypeClasses #-}
+
 
 -----------------------------------------------------------------------------
 -- |
@@ -80,10 +82,9 @@ module Network.Bitcoin.BitX.Types
     QuoteType(..),
     BitXClientAuth,
     Transaction
-    --, Transactions
   ) where
 
-import Data.Aeson (ToJSON(..), FromJSON(..))
+import Data.Aeson (FromJSON(..))
 import Data.Text (Text)
 import Data.Time.Clock
 import Record
@@ -141,7 +142,7 @@ data CcyPair =
     | KESXBT -- ^ Kenyan Shilling vs Bitcoin
     | XBTMYR -- ^ Bitcoin vs. Malaysian Ringgit
     | MYRXBT -- ^ Malaysian Ringgit vs. Bitcoin
-  deriving (Show, Read, Generic, Eq)
+  deriving (Show, Generic, Eq)
 
 -- | A trade-able asset. Essentially, a currency.
 data Asset =
@@ -150,7 +151,7 @@ data Asset =
     | XBT -- ^ Bitcoin
     | KES -- ^ Kenyan Shilling
     | MYR -- ^ Malaysian Ringgit
-  deriving (Show, Read, Generic, Eq)
+  deriving (Show, Generic, Eq)
 
 -- | The current state of the publically accessible orderbook.
 -- Bid orders are requests to buy, ask orders are requests to sell.
@@ -311,7 +312,7 @@ type OrderID = Text
 data OrderType =
     ASK -- ^ A request to sell
     | BID -- ^ A request to buy
-    deriving (Show, Read, Generic, Eq)
+    deriving (Show, Generic, Eq)
 
 -- | The state of a (private) placed request -- either an order or a withdrawal request.
 data RequestStatus =
@@ -320,7 +321,7 @@ data RequestStatus =
     | COMPLETE -- ^ Completed.
     | CANCELLED -- ^ Cancelled. Note that an order cannot be in  'CANCELLED' state, since cancelling
     -- an order removes it from the orderbook.
-    deriving (Show, Read, Generic, Eq)
+    deriving (Show, Generic, Eq)
 
 -- | A request to place an order.
 --
@@ -471,26 +472,18 @@ data WithdrawalType =
     | KES_MPESA -- ^ Kenyan Shilling by Vodafone MPESA
     | MYR_IBG -- ^ Malaysian Ringgit by Interbank GIRO (?)
     | IDR_LLG -- ^ Indonesian Rupiah by Lalu Lintas Giro (??)
-    deriving (Show, Read, Generic, Eq)
+    deriving (Show, Generic, Eq)
 
-data QuoteType = BUY | SELL deriving (Show, Read, Generic, Eq)
+data QuoteType = BUY | SELL deriving (Show, Generic, Eq)
 
 type RequestSuccess = Bool
 
-instance ToJSON CcyPair
 instance FromJSON CcyPair
 
-instance ToJSON Asset
 instance FromJSON Asset
 
-instance ToJSON OrderType
 instance FromJSON OrderType
 
---instance ToJSON RequestStatus
---instance FromJSON RequestStatus
-
-instance ToJSON WithdrawalType
 instance FromJSON WithdrawalType
 
-instance ToJSON QuoteType
 instance FromJSON QuoteType

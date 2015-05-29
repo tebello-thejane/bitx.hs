@@ -7,10 +7,9 @@ module Network.Bitcoin.BitX.Spec.Specs.NetSpec
 
 import Test.Hspec
 import Network.Bitcoin.BitX.Types
-import Network.Bitcoin.BitX.Spec.Common
 import Network.Bitcoin.BitX.Public
 import System.IO.Unsafe (unsafePerformIO)
-import Data.Maybe (fromJust)
+import Network.Bitcoin.BitX.Response
 
 spec :: Spec
 spec = do
@@ -24,5 +23,9 @@ spec = do
     it "getTrades connects to BitX and works" $ do
       connectsAndParsesOkay $ getTrades XBTKES
 
-connectsAndParsesOkay :: IO (Maybe (Either a b)) -> Bool
-connectsAndParsesOkay = isRight . fromJust . unsafePerformIO
+connectsAndParsesOkay :: IO (BitXAPIResponse rec) -> Bool
+connectsAndParsesOkay = isValidResponse . unsafePerformIO
+
+isValidResponse :: BitXAPIResponse rec -> Bool
+isValidResponse (ValidResponse _) = True
+isValidResponse        _          = False

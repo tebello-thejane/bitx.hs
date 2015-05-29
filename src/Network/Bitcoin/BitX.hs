@@ -21,6 +21,7 @@ module Network.Bitcoin.BitX
     module Network.Bitcoin.BitX.Public,
     module Network.Bitcoin.BitX.Private.Quote,
     module Network.Bitcoin.BitX.Private.Auth,
+    module Network.Bitcoin.BitX.Response,
     BitXAesRecordConvert(..),
     POSTEncodeable(..)
     )
@@ -32,3 +33,4 @@ import Network.Bitcoin.BitX.Public
 import Network.Bitcoin.BitX.Private.Quote
 import Network.Bitcoin.BitX.Private.Auth
 import Network.Bitcoin.BitX.Types.Internal
+import Network.Bitcoin.BitX.Response

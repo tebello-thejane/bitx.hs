@@ -37,6 +37,7 @@ import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
 import Data.Text (Text)
 import qualified Data.Text as Txt
+import Network.Bitcoin.BitX.Response
 
 {- | Create a quote
 
@@ -58,7 +59,7 @@ The currency pair can also be flipped if you want to buy or sell the counter cur
 @Perm_W_Orders@ permission required.
 -}
 
-newQuote :: BitXAuth -> QuoteRequest -> IO (Maybe (Either BitXError OrderQuote))
+newQuote :: BitXAuth -> QuoteRequest -> IO (BitXAPIResponse OrderQuote)
 newQuote auth qreq = simpleBitXPOSTAuth_ auth qreq "quotes"
 
 {- | Get a quote
@@ -68,7 +69,7 @@ Get the latest status of a quote, retrieved by ID.
 @Perm_R_Orders@ permission required.
 -}
 
-getQuote :: BitXAuth -> Text -> IO (Maybe (Either BitXError OrderQuote))
+getQuote :: BitXAuth -> Text -> IO (BitXAPIResponse OrderQuote)
 getQuote auth qid = simpleBitXGetAuth_ auth $ "quotes/" ++ Txt.unpack qid
 
 {- | Exercise a quote
@@ -81,7 +82,7 @@ An error is returned if the quote has expired or if you have insufficient availa
 @Perm_W_Orders@ permission required.
 -}
 
-exerciseQuote :: BitXAuth -> Text -> IO (Maybe (Either BitXError OrderQuote))
+exerciseQuote :: BitXAuth -> Text -> IO (BitXAPIResponse OrderQuote)
 exerciseQuote auth qid = simpleBitXMETHAuth_ auth "PUT" $ "quotes/" ++ Txt.unpack qid
 
 {- | Discard a quote
@@ -92,6 +93,6 @@ yet.
 @Perm_W_Orders@ permission required.
 -}
 
-discardQuote :: BitXAuth -> Text -> IO (Maybe (Either BitXError OrderQuote))
+discardQuote :: BitXAuth -> Text -> IO (BitXAPIResponse OrderQuote)
 discardQuote auth qid = simpleBitXMETHAuth_ auth "DELETE" $ "quotes/" ++ Txt.unpack qid
 

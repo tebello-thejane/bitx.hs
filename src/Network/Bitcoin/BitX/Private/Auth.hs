@@ -48,6 +48,7 @@ import Record (lens)
 import Record.Lens (view)
 import qualified Data.Text.Encoding as Txt
 import Data.Text (Text)
+import Network.Bitcoin.BitX.Response
 
 {- | Grant
 
@@ -56,7 +57,7 @@ done by calling the grant endpoint. The resulting API key can be used to access 
 for which it has the appropriate permissions.
 -}
 
-authGrant :: BitXClientAuth -> Text -> IO (Maybe (Either BitXError BitXAuth))
+authGrant :: BitXClientAuth -> Text -> IO (BitXAPIResponse BitXAuth)
 authGrant cauth authCode = withSocketsDo $ do
     response <- try . NetCon.withManager . NetCon.httpLbs . NetCon.applyBasicAuth
           userID

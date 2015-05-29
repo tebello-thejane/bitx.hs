@@ -24,6 +24,8 @@ import Network (withSocketsDo)
 import Record (lens)
 import Record.Lens (view)
 import qualified Data.Text.Encoding as Txt
+import qualified Data.Text as Txt
+import Network.Bitcoin.BitX.Response
 
 bitXAPIPrefix :: String
 bitXAPIPrefix = "https://api.mybitx.com/api/"
@@ -31,7 +33,7 @@ bitXAPIPrefix = "https://api.mybitx.com/api/"
 bitXAPIRoot :: String
 bitXAPIRoot = bitXAPIPrefix ++ "1/"
 
-simpleBitXGetAuth_ :: BitXAesRecordConvert rec aes => BitXAuth -> String -> IO (Maybe (Either BitXError rec))
+simpleBitXGetAuth_ :: BitXAesRecordConvert rec aes => BitXAuth -> String -> IO (BitXAPIResponse rec)
 simpleBitXGetAuth_ auth verb = withSocketsDo $ do
     response <- try . NetCon.withManager . NetCon.httpLbs . NetCon.applyBasicAuth
           userID
@@ -44,7 +46,7 @@ simpleBitXGetAuth_ auth verb = withSocketsDo $ do
         userSecret = Txt.encodeUtf8 $ (view [lens| secret |] auth)
 
 simpleBitXPOSTAuth_ :: (BitXAesRecordConvert rec aes, POSTEncodeable inprec) => BitXAuth -> inprec
-    -> String -> IO (Maybe (Either BitXError rec))
+    -> String -> IO (BitXAPIResponse rec)
 simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $ do
     response <- try . NetCon.withManager . NetCon.httpLbs . NetCon.applyBasicAuth
           userID
@@ -58,7 +60,7 @@ simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $ do
         userSecret = Txt.encodeUtf8 $ (view [lens| secret |] auth)
 
 simpleBitXMETHAuth_ :: BitXAesRecordConvert rec aes => BitXAuth -> BS.ByteString
-    -> String -> IO (Maybe (Either BitXError rec))
+    -> String -> IO (BitXAPIResponse rec)
 simpleBitXMETHAuth_ auth meth verb = withSocketsDo $ do
     let initReq = (fromJust (NetCon.parseUrl $ (bitXAPIRoot ++ verb))) { method = meth }
     response <- try . NetCon.withManager . NetCon.httpLbs . NetCon.applyBasicAuth
@@ -70,33 +72,37 @@ simpleBitXMETHAuth_ auth meth verb = withSocketsDo $ do
         userID = Txt.encodeUtf8 $ (view [lens| id |] auth)
         userSecret = Txt.encodeUtf8 $ (view [lens| secret |] auth)
 
-simpleBitXGet_ :: BitXAesRecordConvert rec aes => String -> IO (Maybe (Either BitXError rec))
+simpleBitXGet_ :: BitXAesRecordConvert rec aes => String -> IO (BitXAPIResponse rec)
 simpleBitXGet_ verb = withSocketsDo $ do
-    resp <- try $ NetCon.simpleHttp (bitXAPIRoot ++ verb)
-        :: IO (Either SomeException BL.ByteString)
+    resp <- try . NetCon.withManager . NetCon.httpLbs
+        . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb)
+        :: IO (Either SomeException (Response BL.ByteString))
     consumeResponse resp
 
-consumeResponse :: BitXAesRecordConvert rec aes => Either SomeException BL.ByteString -> IO (Maybe (Either BitXError rec))
+consumeResponse :: BitXAesRecordConvert rec aes => Either SomeException (NetCon.Response BL.ByteString)
+    -> IO (BitXAPIResponse rec)
 consumeResponse resp =
     case resp of
-        Left _  -> return Nothing -- gobble up all exceptions and just return Nothing
+        Left ex -> return $ ExceptionResponse . Txt.pack . show $ ex
         Right k -> bitXErrorOrPayload k
 
 consumeResponseBody_ :: BitXAesRecordConvert rec aes => Either SomeException (NetCon.Response BL.ByteString)
-    -> IO (Maybe (Either BitXError rec))
+    -> IO (BitXAPIResponse rec)
 consumeResponseBody_ resp =
     case resp of
-        Left _  -> return Nothing -- gobble up all exceptions and just return Nothing
-        Right k -> bitXErrorOrPayload $ NetCon.responseBody k
+        Left ex -> return $ ExceptionResponse . Txt.pack . show $ ex
+        Right k -> bitXErrorOrPayload k
 
-bitXErrorOrPayload :: BitXAesRecordConvert rec aes => BL.ByteString -> IO (Maybe (Either BitXError rec))
-bitXErrorOrPayload body = do
-            let respTE = (Aeson.decode $ body) -- is it a BitX error?
+bitXErrorOrPayload :: BitXAesRecordConvert rec aes => Response BL.ByteString -> IO (BitXAPIResponse rec)
+bitXErrorOrPayload resp = do
+            let respTE = Aeson.decode body -- is it a BitX error?
             case respTE of
-                Just e  -> return (Just (Left (aesToRec e)))
+                Just e  -> return . ErrorResponse . aesToRec $ e
                 Nothing -> do
-                    let respTT = (Aeson.decode $ body)
+                    let respTT = Aeson.decode body
                     case respTT of
-                        Just t  -> return (Just (Right (aesToRec t)))
-                        Nothing -> return Nothing
+                        Just t  -> return . ValidResponse . aesToRec $ t
+                        Nothing -> return . UnparseableResponse $ resp
+            where
+                body = NetCon.responseBody resp
 

@@ -67,6 +67,7 @@ import Network.Bitcoin.BitX.Types.Internal
 import qualified Data.Text as Txt
 import Data.Text (Text)
 import Control.Monad (liftM)
+import Network.Bitcoin.BitX.Response
 
 {- | Returns a list of the most recently placed orders.
 
@@ -81,7 +82,7 @@ This list is truncated after 100 items.
 @Perm_R_Orders@ permission is required.
  -}
 
-getAllOrders :: BitXAuth -> Maybe CcyPair -> Maybe RequestStatus -> IO (Maybe (Either BitXError [PrivateOrder]))
+getAllOrders :: BitXAuth -> Maybe CcyPair -> Maybe RequestStatus -> IO (BitXAPIResponse [PrivateOrder])
 getAllOrders auth pair status = simpleBitXGetAuth_ auth url
     where
         url = "listorders" ++ case (pair, status) of
@@ -98,7 +99,7 @@ __thoroughly tested before submitting orders.__
 @Perm_W_Orders@ permission is required.
  -}
 
-postOrder :: BitXAuth -> OrderRequest -> IO (Maybe (Either BitXError OrderID))
+postOrder :: BitXAuth -> OrderRequest -> IO (BitXAPIResponse OrderID)
 postOrder auth oreq = simpleBitXPOSTAuth_ auth oreq "postorder"
 
 {- | Request to stop an order.
@@ -106,7 +107,7 @@ postOrder auth oreq = simpleBitXPOSTAuth_ auth oreq "postorder"
 @Perm_W_Orders@ permission is required.
  -}
 
-stopOrder :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError RequestSuccess))
+stopOrder :: BitXAuth -> OrderID -> IO (BitXAPIResponse RequestSuccess)
 stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
 
 {- | Get an order by its ID
@@ -114,14 +115,14 @@ stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
 @Perm_R_Orders@ permission is required.
  -}
 
-getOrder :: BitXAuth -> OrderID -> IO (Maybe (Either BitXError PrivateOrderWithTrades))
+getOrder :: BitXAuth -> OrderID -> IO (BitXAPIResponse PrivateOrderWithTrades)
 getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ Txt.unpack oid
 
 {- | Return account balances
 
 @Perm_R_Balance@ permission required. -}
 
-getBalances :: BitXAuth -> IO (Maybe (Either BitXError [Balance]))
+getBalances :: BitXAuth -> IO (BitXAPIResponse [Balance])
 getBalances auth = simpleBitXGetAuth_ auth "balance"
 
 {- | Returns the default receive address associated with your account and the amount received via
@@ -134,7 +135,7 @@ unconfirmed transactions. total_unconfirmed is the total sum of unconfirmed rece
 @Perm_R_Addresses@ permission is required.
 -}
 
-getFundingAddress :: BitXAuth -> Asset -> Maybe String -> IO (Maybe (Either BitXError FundingAddress))
+getFundingAddress :: BitXAuth -> Asset -> Maybe String -> IO (BitXAPIResponse FundingAddress)
 getFundingAddress auth asset addr = simpleBitXGetAuth_ auth url
     where
         url = "funding_address?asset=" ++ show asset ++ case addr of
@@ -148,7 +149,7 @@ Allocates a new receive address to your account. There is a limit of 50 receive 
 @Perm_R_Addresses@ permission is required.
 -}
 
-newFundingAddress :: BitXAuth -> Asset -> IO (Maybe (Either BitXError FundingAddress))
+newFundingAddress :: BitXAuth -> Asset -> IO (BitXAPIResponse FundingAddress)
 newFundingAddress auth asset = simpleBitXPOSTAuth_ auth asset "funding_address"
 
 {- | List withdrawal requests
@@ -157,7 +158,7 @@ Returns a list of withdrawal requests.
 
 @Perm_R_Withdrawals@ permission required.-}
 
-getWithdrawalRequests :: BitXAuth -> IO (Maybe (Either BitXError [WithdrawalRequest]))
+getWithdrawalRequests :: BitXAuth -> IO (BitXAPIResponse [WithdrawalRequest])
 getWithdrawalRequests auth = simpleBitXGetAuth_ auth "withdrawals/"
 
 {- | Request a withdrawal
@@ -166,7 +167,7 @@ Creates a new withdrawal request.
 
 @Perm_W_Withdrawals@ permission required.-}
 
-newWithdrawalRequest :: BitXAuth -> NewWithdrawal -> IO (Maybe (Either BitXError WithdrawalRequest))
+newWithdrawalRequest :: BitXAuth -> NewWithdrawal -> IO (BitXAPIResponse WithdrawalRequest)
 newWithdrawalRequest auth nwithd = simpleBitXPOSTAuth_ auth nwithd "withdrawals"
 
 {- | Get the status of a withdrawal request
@@ -176,7 +177,7 @@ Returns the status of a particular withdrawal request.
 @Perm_R_Withdrawals@ permission required.-}
 
 getWithdrawalRequest :: BitXAuth -> Text -- ^ The withdrawal ID
-    -> IO (Maybe (Either BitXError WithdrawalRequest))
+    -> IO (BitXAPIResponse WithdrawalRequest)
 getWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" ++ Txt.unpack wthid
 
 {- | Cancel a withdrawal request
@@ -201,7 +202,7 @@ __tested before using this call.__
 "Full access" is not sufficient to add the @Perm_W_Send@ permission. Instead, the permission needs
 to be enabled explicitely by selecting "Custom."-}
 
-sendToAddress :: BitXAuth -> BitcoinSendRequest -> IO (Maybe (Either BitXError RequestSuccess))
+sendToAddress :: BitXAuth -> BitcoinSendRequest -> IO (BitXAPIResponse RequestSuccess)
 sendToAddress auth sreq = simpleBitXPOSTAuth_ auth sreq "send"
 
 {- | Return a list of transaction entries from an account.
@@ -221,7 +222,7 @@ getTransactions
     -> AccountID
     -> Int -- ^ First row returned, inclusive
     -> Int -- ^ Last row returned, exclusive
-    -> IO (Maybe (Either BitXError [Transaction]))
+    -> IO (BitXAPIResponse [Transaction])
 getTransactions auth accid minr maxr = simpleBitXGetAuth_ auth $
     "accounts/" ++ Txt.unpack accid ++ "/transactions?min_row=" ++ show minr ++ "&max_row=" ++ show maxr
 
@@ -235,12 +236,17 @@ updated at any time.
 @Perm_R_Transactions@ permission required.
 -}
 
-getPendingTransactions :: BitXAuth -> AccountID -> IO (Maybe (Either BitXError [Transaction]))
+getPendingTransactions :: BitXAuth -> AccountID -> IO (BitXAPIResponse [Transaction])
 getPendingTransactions auth accid = liftM imebPendingTransactionsToimebTransactions $ simpleBitXGetAuth_ auth $
     "accounts/" ++ Txt.unpack accid ++ "/pending"
     where
-        --imebPendingTransactionsToimebTransactions :: Maybe (Either BitXError PendingTransactions__) -> Maybe (Either BitXError [Transaction])
-        imebPendingTransactionsToimebTransactions (Just (Right pt)) = Just . Right $ pendingTransactionsToTransactions pt
-        imebPendingTransactionsToimebTransactions (Just (Left er)) = Just . Left $ er
-        imebPendingTransactionsToimebTransactions Nothing = Nothing
+        imebPendingTransactionsToimebTransactions (ValidResponse v)       = ValidResponse $ pendingTransactionsToTransactions v
+        imebPendingTransactionsToimebTransactions (ExceptionResponse x)   = ExceptionResponse x
+        imebPendingTransactionsToimebTransactions (ErrorResponse e)       = ErrorResponse e
+        imebPendingTransactionsToimebTransactions (UnparseableResponse u) = UnparseableResponse u
+
+--ExceptionResponse Text
+--    | ErrorResponse BitXError
+--    | ValidResponse rec
+--    | UnparseableResponse (Response ByteString)
 

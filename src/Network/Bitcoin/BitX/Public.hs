@@ -26,15 +26,16 @@ module Network.Bitcoin.BitX.Public
 
 import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
+import Network.Bitcoin.BitX.Response
 
 {- | Returns the latest ticker indicators. -}
 
-getTicker :: CcyPair -> IO (Maybe (Either BitXError Ticker))
+getTicker :: CcyPair -> IO (BitXAPIResponse Ticker)
 getTicker cyp = simpleBitXGet_ $ "ticker?pair=" ++ show cyp
 
 {- | Returns the latest ticker indicators from all active BitX exchanges. -}
 
-getTickers :: IO (Maybe (Either BitXError [Ticker]))
+getTickers :: IO (BitXAPIResponse [Ticker])
 getTickers = simpleBitXGet_ "tickers"
 
 {- | Returns a list of bids and asks in the order book.
@@ -42,11 +43,11 @@ getTickers = simpleBitXGet_ "tickers"
 Ask orders are sorted by price ascending. Bid orders are sorted by price descending.
 Note that multiple orders at the same price are not necessarily conflated. -}
 
-getOrderBook :: CcyPair -> IO (Maybe (Either BitXError Orderbook))
+getOrderBook :: CcyPair -> IO (BitXAPIResponse Orderbook)
 getOrderBook cyp = simpleBitXGet_ $ "orderbook?pair=" ++ show cyp
 
 {- | Returns a list of the most recent trades -}
 
-getTrades :: CcyPair -> IO (Maybe (Either BitXError [Trade]))
+getTrades :: CcyPair -> IO (BitXAPIResponse [Trade])
 getTrades cyp = simpleBitXGet_ $ "trades?pair=" ++ show cyp
 
