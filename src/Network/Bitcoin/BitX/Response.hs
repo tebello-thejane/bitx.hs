@@ -28,11 +28,13 @@ import Data.Text (Text)
 -- | This retun type enumerates all possible failure modes.
 
 data BitXAPIResponse rec =
-      ExceptionResponse Text -- ^ Some exception occured while making the call to BitX, and this was the exception text.
-    | ErrorResponse BitXError -- ^ BitX returned an error record instead of returning the data we were expecting.
+      ExceptionResponse Text -- ^ Some exception occured while making the call to BitX, and this was
+                             -- the exception text.
+    | ErrorResponse BitXError -- ^ BitX returned an error record instead of returning the data we
+                              -- were expecting.
     | ValidResponse rec -- ^ We received the data type we were expecting.
-    | UnparseableResponse (Response ByteString) -- ^ BitX retuned data which couldn't be parsed. Some text which was probably not JSON format.
---    deriving (Show, Eq)
+    | UnparseableResponse (Response ByteString) -- ^ BitX retuned data which couldn't be parsed,
+                                                -- such as some text which was probably not JSON format.
 
 deriving instance Show rec => Show (BitXAPIResponse rec)
 deriving instance Eq rec => Eq (BitXAPIResponse rec)

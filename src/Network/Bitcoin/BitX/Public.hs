@@ -8,11 +8,23 @@
 -- Stability   :  Experimental
 -- Portability :  non-portable (GHC Extensions)
 --
--- The public BitX API.
+-- =Usage example
 --
--- Each one of the calls may either return a useful 'record', a 'BitXError' if BitX actually
--- returned an error, or 'Nothing' if some exception occured (or if the data returned by BitX was
--- unparseable).
+-- As a small example, to get the current selling price of bitcoin on the BitX exchange, do the following:
+--
+-- @
+--{-\# LANGUAGE QuasiQuotes \#-}
+--
+--import Record.Lens
+--import Record
+--import Network.Bitcoin.BitX
+--
+--main = do
+--  bitXResponse <- 'getTicker' 'XBTZAR'
+--  case bitXResponse of
+--    'ValidResponse' tic -> print ('view' [lens| ask |] tic)
+--    _                 -> error "Ah well..."
+-- @
 --
 -----------------------------------------------------------------------------
 
