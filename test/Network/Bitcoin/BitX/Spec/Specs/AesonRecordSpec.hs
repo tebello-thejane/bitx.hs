@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, QuasiQuotes, DataKinds, TemplateHaskell #-}
+{-# LANGUAGE OverloadedStrings, QuasiQuotes, DataKinds #-}
 
 module Network.Bitcoin.BitX.Spec.Specs.AesonRecordSpec
     (

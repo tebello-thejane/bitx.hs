@@ -1,7 +1,6 @@
 {-# LANGUAGE DeriveGeneric, DefaultSignatures, QuasiQuotes, OverloadedStrings, DataKinds,
     MultiParamTypeClasses #-}
 
-
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Network.Bitcoin.BitX.Types

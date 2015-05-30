@@ -27,7 +27,7 @@ author:              Tebello Thejane
 
 maintainer:          Tebello Thejane <zyxoas+hackage@gmail.com>
 
-category:            Web
+category:            Web, Bitcoin, Finance
 
 build-type:          Custom
 
@@ -101,3 +101,10 @@ test-suite spec
                        record,
                        bytestring,
                        time
+  other-modules:
+    Network.Bitcoin.BitX.Spec.Common
+    Network.Bitcoin.BitX.Spec.Specs.AesonRecordSpec
+    Network.Bitcoin.BitX.Spec.Specs.NetSpec
+    Network.Bitcoin.BitX.Spec.Specs.PostSpec
+    Network.Bitcoin.BitX.Spec.Specs.JsonSpec
+
