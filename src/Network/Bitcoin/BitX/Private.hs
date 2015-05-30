@@ -244,9 +244,3 @@ getPendingTransactions auth accid = liftM imebPendingTransactionsToimebTransacti
         imebPendingTransactionsToimebTransactions (ExceptionResponse x)   = ExceptionResponse x
         imebPendingTransactionsToimebTransactions (ErrorResponse e)       = ErrorResponse e
         imebPendingTransactionsToimebTransactions (UnparseableResponse u) = UnparseableResponse u
-
---ExceptionResponse Text
---    | ErrorResponse BitXError
---    | ValidResponse rec
---    | UnparseableResponse (Response ByteString)
-
