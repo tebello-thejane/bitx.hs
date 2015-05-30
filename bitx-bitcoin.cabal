@@ -9,7 +9,7 @@ description:
     Haskell bindings to the BitX REST API, as described here: <https://bitx.co/api>.
     .
     Note that since this library interfaces directly with a financial API, great care
-    must be taken in its use. In particular, the author cannot be held account for any
+    must be taken in its use. In particular, the author cannot be held accountable for any
     financial losses as a result of programming error, whether that error is in your code,
     the code of the author of this library, or BitX's code. This is just common sense.
     .
@@ -35,6 +35,8 @@ extra-source-files:
   README.md
 
 cabal-version:       >=1.10
+
+homepage:            https://github.com/tebello-thejane/bitx-haskell
 
 --------------------------------------------------------------------------------
 
