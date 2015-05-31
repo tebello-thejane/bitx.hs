@@ -26,6 +26,7 @@ import Record.Lens (view)
 import qualified Data.Text.Encoding as Txt
 import qualified Data.Text as Txt
 import Network.Bitcoin.BitX.Response
+import Control.Applicative ((<$>), (<|>))
 
 bitXAPIPrefix :: String
 bitXAPIPrefix = "https://api.mybitx.com/api/"
@@ -94,15 +95,10 @@ consumeResponseBody_ resp =
         Right k -> bitXErrorOrPayload k
 
 bitXErrorOrPayload :: BitXAesRecordConvert rec aes => Response BL.ByteString -> BitXAPIResponse rec
-bitXErrorOrPayload resp = do
-    let respTE = Aeson.decode body -- is it a BitX error?
-    case respTE of
-        Just e  -> ErrorResponse . aesToRec $ e
-        Nothing -> do
-            let respTT = Aeson.decode body
-            case respTT of
-                Just t  -> ValidResponse . aesToRec $ t
-                Nothing -> UnparseableResponse $ resp
+bitXErrorOrPayload resp = fromJust $
+        ErrorResponse . aesToRec <$> Aeson.decode body -- is it a BitX error?
+    <|> ValidResponse . aesToRec <$> Aeson.decode body
+    <|> Just (UnparseableResponse  resp)
     where
         body = NetCon.responseBody resp
 
