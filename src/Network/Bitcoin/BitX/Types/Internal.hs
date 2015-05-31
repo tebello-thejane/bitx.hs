@@ -1,7 +1,7 @@
 {-# LANGUAGE QuasiQuotes, OverloadedStrings, TemplateHaskell, MultiParamTypeClasses,
-    FunctionalDependencies, FlexibleInstances, DataKinds, CPP #-}
+    FunctionalDependencies, FlexibleInstances, DataKinds, CPP, RecordWildCards #-}
 
-{-# OPTIONS_GHC -fno-warn-unused-binds #-}
+--{-# OPTIONS_GHC -fno-warn-unused-binds #-}
 
 module Network.Bitcoin.BitX.Types.Internal
     (
@@ -36,7 +36,7 @@ import Data.Coerce
 
 timestampParse_ :: Integer -> UTCTime
 timestampParse_ = posixSecondsToUTCTime
-    . fromRational . toRational
+    . realToFrac
     . ( / 1000)
     . (fromIntegral :: Integer -> Decimal)
 
@@ -91,7 +91,8 @@ orderTypeParse (OrderType_ "BUY")  = BID
 orderTypeParse (OrderType_ "BID")  = BID
 orderTypeParse (OrderType_ "ASK")  = ASK
 orderTypeParse (OrderType_ "SELL") = ASK
-orderTypeParse (OrderType_    _  ) = error "Yet another surprise from the BitX API..."
+orderTypeParse (OrderType_    x  ) =
+    error $ "Yet another surprise from the BitX API: unexpected OrderType " ++ Txt.unpack x
 
 
 newtype RequestStatus_ = RequestStatus_ Text deriving (Read, Show)
@@ -105,7 +106,8 @@ requestStatusParse (RequestStatus_ "PENDING")   = PENDING
 requestStatusParse (RequestStatus_ "COMPLETE")  = COMPLETE
 requestStatusParse (RequestStatus_ "COMPLETED") = COMPLETE
 requestStatusParse (RequestStatus_ "CANCELLED") = CANCELLED
-requestStatusParse (RequestStatus_      _     ) = error "Yet another surprise from the BitX API..."
+requestStatusParse (RequestStatus_      x     ) =
+    error $ "Yet another surprise from the BitX API: unexpected RequestStatus " ++ Txt.unpack x
 
 -------------------------------------------- Ticker type -------------------------------------------
 
@@ -122,14 +124,13 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''Ticker_)
 
 instance BitXAesRecordConvert Ticker Ticker_ where
-    aesToRec (Ticker_ ticker''timestamp ticker''bid ticker''ask ticker''lastTrade
-            ticker''rolling24HourVolume ticker''pair) =
-        [record| {timestamp = tsmsToUTCTime ticker''timestamp,
-                  bid = coerce ticker''bid,
-                  ask = coerce ticker''ask,
-                  lastTrade = coerce ticker''lastTrade,
-                  rolling24HourVolume = coerce ticker''rolling24HourVolume,
-                  pair = ticker''pair} |]
+    aesToRec (Ticker_ {..}) =
+        [record| {timestamp = tsmsToUTCTime ticker'timestamp,
+                  bid = coerce ticker'bid,
+                  ask = coerce ticker'ask,
+                  lastTrade = coerce ticker'last_trade,
+                  rolling24HourVolume = coerce ticker'rolling_24_hour_volume,
+                  pair = ticker'pair} |]
 
 --------------------------------------------- Tickers type -----------------------------------------
 
@@ -141,8 +142,8 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''Tickers_)
 
 instance BitXAesRecordConvert [Ticker] Tickers_ where
-    aesToRec (Tickers_ tickers''tickers) =
-        map aesToRec tickers''tickers
+    aesToRec (Tickers_ {..}) =
+        map aesToRec tickers'tickers
 
 -------------------------------------------- BitXError type ----------------------------------------
 
@@ -154,9 +155,9 @@ data BitXError_= BitXError_
 $(AesTH.deriveJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"} ''BitXError_)
 
 instance BitXAesRecordConvert BitXError BitXError_ where
-    aesToRec (BitXError_ bitXError''error bitXError''error_code) =
-        [record| {error = bitXError''error,
-              errorCode = bitXError''error_code} |]
+    aesToRec (BitXError_ {..}) =
+        [record| {error = bitXError'error,
+              errorCode = bitXError'error_code} |]
 
 -------------------------------------------- Order type --------------------------------------------
 
@@ -168,9 +169,9 @@ data Order_ = Order_
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"} ''Order_)
 
 instance BitXAesRecordConvert Order Order_ where
-    aesToRec (Order_ order''volume order''price) =
-        [record| {volume =  coerce order''volume,
-              price = coerce order''price} |]
+    aesToRec (Order_ {..}) =
+        [record| {volume = coerce order'volume,
+              price = coerce order'price} |]
 
 -------------------------------------------- Orderbook type ----------------------------------------
 
@@ -187,10 +188,10 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''Orderbook_)
 
 instance BitXAesRecordConvert Orderbook Orderbook_ where
-    aesToRec (Orderbook_ orderbook''timestamp orderbook''bids orderbook''asks) =
-        [record| {timestamp = tsmsToUTCTime orderbook''timestamp,
-                  bids = map aesToRec orderbook''bids,
-                  asks = map aesToRec orderbook''asks} |]
+    aesToRec (Orderbook_ {..}) =
+        [record| {timestamp = tsmsToUTCTime orderbook'timestamp,
+                  bids = map aesToRec orderbook'bids,
+                  asks = map aesToRec orderbook'asks} |]
 
 -------------------------------------------- Trade type --------------------------------------------
 
@@ -204,24 +205,23 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''Trade_)
 
 instance BitXAesRecordConvert Trade Trade_ where
-    aesToRec (Trade_ trade''volume trade''timestamp trade''price) =
-        [record| {volume = coerce trade''volume,
-              timestamp = tsmsToUTCTime trade''timestamp,
-              price = coerce trade''price} |]
+    aesToRec (Trade_ {..}) =
+        [record| {volume = coerce trade'volume,
+              timestamp = tsmsToUTCTime trade'timestamp,
+              price = coerce trade'price} |]
 
 ----------------------------------------- PublicTrades type ----------------------------------------
 
 data PublicTrades_ = PublicTrades_
     { publicTrades'trades :: [Trade_]
-    --, publicTrades'currency :: Asset
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''PublicTrades_)
 
 instance BitXAesRecordConvert [Trade] PublicTrades_ where
-    aesToRec (PublicTrades_ publicTrades''trades {-publicTrades''currency-}) =
-        map aesToRec publicTrades''trades
+    aesToRec (PublicTrades_ {..}) =
+        map aesToRec publicTrades'trades
 
 ------------------------------------------ PrivateOrder type ---------------------------------------
 
@@ -244,22 +244,19 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''PrivateOrder_)
 
 instance BitXAesRecordConvert PrivateOrder PrivateOrder_ where
-    aesToRec (PrivateOrder_ privateOrder''base privateOrder''counter
-          privateOrder''creation_timestamp privateOrder''expiration_timestamp privateOrder''fee_base
-          privateOrder''fee_counter privateOrder''limit_price privateOrder''limit_volume
-          privateOrder''order_id privateOrder''pair privateOrder''state privateOrder''type) =
-        [record| {base = coerce privateOrder''base,
-                  counter = coerce privateOrder''counter,
-                  creationTimestamp = tsmsToUTCTime privateOrder''creation_timestamp,
-                  expirationTimestamp = tsmsToUTCTime privateOrder''expiration_timestamp,
-                  feeBase = coerce privateOrder''fee_base,
-                  feeCounter = coerce privateOrder''fee_counter,
-                  limitPrice = coerce privateOrder''limit_price,
-                  limitVolume = coerce privateOrder''limit_volume,
-                  id = privateOrder''order_id,
-                  pair = privateOrder''pair,
-                  state = requestStatusParse privateOrder''state,
-                  type = orderTypeParse privateOrder''type} |]
+    aesToRec (PrivateOrder_ {..}) =
+        [record| {base = coerce privateOrder'base,
+                  counter = coerce privateOrder'counter,
+                  creationTimestamp = tsmsToUTCTime privateOrder'creation_timestamp,
+                  expirationTimestamp = tsmsToUTCTime privateOrder'expiration_timestamp,
+                  feeBase = coerce privateOrder'fee_base,
+                  feeCounter = coerce privateOrder'fee_counter,
+                  limitPrice = coerce privateOrder'limit_price,
+                  limitVolume = coerce privateOrder'limit_volume,
+                  id = privateOrder'order_id,
+                  pair = privateOrder'pair,
+                  state = requestStatusParse privateOrder'state,
+                  type = orderTypeParse privateOrder'type} |]
 
 ------------------------------------------ PrivateOrders type --------------------------------------
 
@@ -271,8 +268,8 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''PrivateOrders_)
 
 instance BitXAesRecordConvert [PrivateOrder] PrivateOrders_ where
-    aesToRec (PrivateOrders_ privateOrders''orders) =
-        map aesToRec privateOrders''orders
+    aesToRec (PrivateOrders_ {..}) =
+        map aesToRec privateOrders'orders
 
 ------------------------------------------ OrderRequest type ---------------------------------------
 
@@ -293,8 +290,8 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''OrderIDRec_)
 
 instance BitXAesRecordConvert OrderID OrderIDRec_ where
-    aesToRec (OrderIDRec_ orderIDResponse''order_id) =
-        orderIDResponse''order_id
+    aesToRec (OrderIDRec_ {..}) =
+        orderIDResponse'order_id
 
 instance POSTEncodeable OrderID where
     postEncode oid =
@@ -310,8 +307,8 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''RequestSuccess_)
 
 instance BitXAesRecordConvert RequestSuccess RequestSuccess_ where
-    aesToRec (RequestSuccess_ requestSuccess''success) =
-        requestSuccess''success
+    aesToRec (RequestSuccess_ {..}) =
+        requestSuccess'success
 
 ------------------------------------- PrivateOrderWithTrades type ----------------------------------
 
@@ -335,24 +332,20 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''PrivateOrderWithTrades_)
 
 instance BitXAesRecordConvert PrivateOrderWithTrades PrivateOrderWithTrades_ where
-    aesToRec (PrivateOrderWithTrades_ privateOrder''base privateOrder''counter
-            privateOrder''creation_timestamp privateOrder''expiration_timestamp privateOrder''fee_base
-            privateOrder''fee_counter privateOrder''limit_price privateOrder''limit_volume
-            privateOrder''order_id privateOrder''pair privateOrder''state privateOrder''type
-            privateOrderWithTrades''trades) =
-        [record| {base = coerce privateOrder''base,
-                  counter = coerce privateOrder''counter,
-                  creationTimestamp = tsmsToUTCTime privateOrder''creation_timestamp,
-                  expirationTimestamp = tsmsToUTCTime privateOrder''expiration_timestamp,
-                  feeBase = coerce privateOrder''fee_base,
-                  feeCounter = coerce privateOrder''fee_counter,
-                  limitPrice = coerce privateOrder''limit_price,
-                  limitVolume = coerce privateOrder''limit_volume,
-                  id = privateOrder''order_id,
-                  pair = privateOrder''pair,
-                  state = requestStatusParse privateOrder''state,
-                  type = orderTypeParse privateOrder''type,
-                  trades = map aesToRec privateOrderWithTrades''trades} |]
+    aesToRec (PrivateOrderWithTrades_ {..}) =
+        [record| {base = coerce privateOrderWithTrades'base,
+                  counter = coerce privateOrderWithTrades'counter,
+                  creationTimestamp = tsmsToUTCTime privateOrderWithTrades'creation_timestamp,
+                  expirationTimestamp = tsmsToUTCTime privateOrderWithTrades'expiration_timestamp,
+                  feeBase = coerce privateOrderWithTrades'fee_base,
+                  feeCounter = coerce privateOrderWithTrades'fee_counter,
+                  limitPrice = coerce privateOrderWithTrades'limit_price,
+                  limitVolume = coerce privateOrderWithTrades'limit_volume,
+                  id = privateOrderWithTrades'order_id,
+                  pair = privateOrderWithTrades'pair,
+                  state = requestStatusParse privateOrderWithTrades'state,
+                  type = orderTypeParse privateOrderWithTrades'type,
+                  trades = map aesToRec privateOrderWithTrades'trades} |]
 
 -------------------------------------------- Balance type ------------------------------------------
 
@@ -368,26 +361,25 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''Balance_)
 
 instance BitXAesRecordConvert Balance Balance_ where
-    aesToRec (Balance_ balance''account_id balance''asset balance''balance balance''reserved
-            balance''unconfirmed) =
-        [record| {id = balance''account_id,
-                  asset = balance''asset,
-                  balance = coerce balance''balance,
-                  reserved = coerce balance''reserved,
-                  unconfirmed = coerce balance''unconfirmed} |]
+    aesToRec (Balance_ {..}) =
+        [record| {id = balance'account_id,
+                  asset = balance'asset,
+                  balance = coerce balance'balance,
+                  reserved = coerce balance'reserved,
+                  unconfirmed = coerce balance'unconfirmed} |]
 
 -------------------------------------------- Balances type -----------------------------------------
 
 data Balances_ = Balances_
-    {balances'balance :: [Balance_]
+    { balances'balance :: [Balance_]
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''Balances_)
 
 instance BitXAesRecordConvert [Balance] Balances_ where
-    aesToRec (Balances_ balances''balances) =
-        map aesToRec balances''balances
+    aesToRec (Balances_ {..}) =
+        map aesToRec balances'balance
 
 ----------------------------------------- FundingAddress type --------------------------------------
 
@@ -402,12 +394,11 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''FundingAddress_)
 
 instance BitXAesRecordConvert FundingAddress FundingAddress_ where
-    aesToRec (FundingAddress_ fundingAdress''asset fundingAdress''address
-            fundingAdress''total_received fundingAdress''total_unconfirmed) =
-        [record| {asset = fundingAdress''asset,
-                  address = fundingAdress''address,
-                  totalReceived = coerce fundingAdress''total_received,
-                  totalUnconfirmed = coerce fundingAdress''total_unconfirmed} |]
+    aesToRec (FundingAddress_ {..}) =
+        [record| {asset = fundingAdress'asset,
+                  address = fundingAdress'address,
+                  totalReceived = coerce fundingAdress'total_received,
+                  totalUnconfirmed = coerce fundingAdress'total_unconfirmed} |]
 
 --------------------------------------------- Asset type -------------------------------------------
 
@@ -426,9 +417,9 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''WithdrawalRequest_)
 
 instance BitXAesRecordConvert WithdrawalRequest WithdrawalRequest_ where
-    aesToRec (WithdrawalRequest_ withdrawalRequest''status withdrawalRequest''id) =
-        [record| {status = requestStatusParse withdrawalRequest''status,
-                  id = withdrawalRequest''id} |]
+    aesToRec (WithdrawalRequest_ {..}) =
+        [record| {status = requestStatusParse withdrawalRequest'status,
+                  id = withdrawalRequest'id} |]
 
 -------------------------------------- WithdrawalRequests type -------------------------------------
 
@@ -440,8 +431,8 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''WithdrawalRequests_)
 
 instance BitXAesRecordConvert [WithdrawalRequest] WithdrawalRequests_ where
-    aesToRec (WithdrawalRequests_ withdrawalRequests''withdrawals) =
-        map aesToRec withdrawalRequests''withdrawals
+    aesToRec (WithdrawalRequests_ {..}) =
+        map aesToRec withdrawalRequests'withdrawals
 
 ----------------------------------------- NewWithdrawal type ---------------------------------------
 
@@ -489,18 +480,16 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''OrderQuote_)
 
 instance BitXAesRecordConvert OrderQuote OrderQuote_ where
-    aesToRec (OrderQuote_ orderQuote''id orderQuote''type orderQuote''pair orderQuote''base_amount
-        orderQuote''counter_amount orderQuote''created_at orderQuote''expires_at orderQuote''discarded
-        orderQuote''exercised) =
-        [record| {id = orderQuote''id,
-                  type = orderQuote''type,
-                  pair = orderQuote''pair,
-                  baseAmount = coerce orderQuote''base_amount,
-                  counterAmount = coerce orderQuote''counter_amount,
-                  createdAt = tsmsToUTCTime orderQuote''created_at,
-                  expiresAt = tsmsToUTCTime orderQuote''expires_at,
-                  discarded = orderQuote''discarded,
-                  exercised = orderQuote''exercised} |]
+    aesToRec (OrderQuote_ {..}) =
+        [record| {id = orderQuote'id,
+                  type = orderQuote'type,
+                  pair = orderQuote'pair,
+                  baseAmount = coerce orderQuote'base_amount,
+                  counterAmount = coerce orderQuote'counter_amount,
+                  createdAt = tsmsToUTCTime orderQuote'created_at,
+                  expiresAt = tsmsToUTCTime orderQuote'expires_at,
+                  discarded = orderQuote'discarded,
+                  exercised = orderQuote'exercised} |]
 
 -------------------------------------------- BitXAuth type -----------------------------------------
 
@@ -513,9 +502,9 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''BitXAuth_)
 
 instance BitXAesRecordConvert BitXAuth BitXAuth_ where
-    aesToRec (BitXAuth_ bitXAuth''api_key_id bitXAuth''api_key_secret) =
-        [record| {id = bitXAuth''api_key_id,
-                  secret = bitXAuth''api_key_secret} |]
+    aesToRec (BitXAuth_ {..}) =
+        [record| {id = bitXAuth'api_key_id,
+                  secret = bitXAuth'api_key_secret} |]
 
 ------------------------------------------ Transaction type ----------------------------------------
 
@@ -534,17 +523,15 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''Transaction_)
 
 instance BitXAesRecordConvert Transaction Transaction_ where
-    aesToRec (Transaction_ transaction''row_index transaction''timestamp transaction''balance
-        transaction''available transaction''balance_delta transaction''available_delta
-        transaction''currency transaction''description) =
-        [record| {rowIndex = transaction''row_index,
-                  timestamp = tsmsToUTCTime transaction''timestamp,
-                  balance = coerce transaction''balance,
-                  available = coerce transaction''available,
-                  balanceDelta = coerce transaction''balance_delta,
-                  availableDelta = coerce transaction''available_delta,
-                  currency = transaction''currency,
-                  description = transaction''description} |]
+    aesToRec (Transaction_ {..}) =
+        [record| {rowIndex = transaction'row_index,
+                  timestamp = tsmsToUTCTime transaction'timestamp,
+                  balance = coerce transaction'balance,
+                  available = coerce transaction'available,
+                  balanceDelta = coerce transaction'balance_delta,
+                  availableDelta = coerce transaction'available_delta,
+                  currency = transaction'currency,
+                  description = transaction'description} |]
 
 ---------------------------------------- Transactions type -----------------------------------------
 
@@ -556,8 +543,8 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''Transactions_)
 
 instance BitXAesRecordConvert [Transaction] Transactions_ where
-    aesToRec (Transactions_ transactions''transactions) =
-        map aesToRec transactions''transactions
+    aesToRec (Transactions_ {..}) =
+        map aesToRec transactions'transactions
 
 
 data PendingTransactions_ = PendingTransactions_
@@ -568,8 +555,8 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
     ''PendingTransactions_)
 
 instance BitXAesRecordConvert PendingTransactions__ PendingTransactions_ where
-    aesToRec (PendingTransactions_ transactions''pending) =
-        [record| {transactions = map aesToRec transactions''pending}|]
+    aesToRec (PendingTransactions_ {..}) =
+        [record| {transactions = map aesToRec transactions'pending}|]
 
 type PendingTransactions__ =
     [record|
