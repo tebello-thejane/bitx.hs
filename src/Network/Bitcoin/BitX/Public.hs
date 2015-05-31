@@ -23,7 +23,7 @@
 --  bitXResponse <- 'getTicker' 'XBTZAR'
 --  case bitXResponse of
 --    'ValidResponse' tic -> print ('view' [lens| ask |] tic)
---    _                 -> error "Ah well..."
+--    _                   -> error "Ah well..."
 -- @
 --
 -----------------------------------------------------------------------------

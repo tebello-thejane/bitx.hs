@@ -95,14 +95,14 @@ consumeResponseBody_ resp =
 
 bitXErrorOrPayload :: BitXAesRecordConvert rec aes => Response BL.ByteString -> IO (BitXAPIResponse rec)
 bitXErrorOrPayload resp = do
-            let respTE = Aeson.decode body -- is it a BitX error?
-            case respTE of
-                Just e  -> return . ErrorResponse . aesToRec $ e
-                Nothing -> do
-                    let respTT = Aeson.decode body
-                    case respTT of
-                        Just t  -> return . ValidResponse . aesToRec $ t
-                        Nothing -> return . UnparseableResponse $ resp
-            where
-                body = NetCon.responseBody resp
+    let respTE = Aeson.decode body -- is it a BitX error?
+    case respTE of
+        Just e  -> return . ErrorResponse . aesToRec $ e
+        Nothing -> do
+            let respTT = Aeson.decode body
+            case respTT of
+                Just t  -> return . ValidResponse . aesToRec $ t
+                Nothing -> return . UnparseableResponse $ resp
+    where
+        body = NetCon.responseBody resp
 

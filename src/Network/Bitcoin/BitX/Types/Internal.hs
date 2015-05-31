@@ -32,12 +32,13 @@ import Data.Monoid (mempty)
 import Data.Decimal (Decimal)
 import Data.ByteString (ByteString)
 import Data.List.Split (splitOn)
+import Data.Coerce
 
 timestampParse_ :: Integer -> UTCTime
 timestampParse_ = posixSecondsToUTCTime
-        . fromRational . toRational
-        . ( / 1000)
-        . (fromIntegral :: Integer -> Decimal)
+    . fromRational . toRational
+    . ( / 1000)
+    . (fromIntegral :: Integer -> Decimal)
 
 class (FromJSON aes) => BitXAesRecordConvert rec aes | rec -> aes where
     aesToRec :: aes -> rec
@@ -61,8 +62,8 @@ instance FromJSON QuotedDecimal where
 --instance ToJSON QuotedDecimal where
 --    toJSON (QuotedDecimal q) = Number . realToFrac $ q
 
-qdToDecimal :: QuotedDecimal -> Decimal
-qdToDecimal (QuotedDecimal dec) = dec
+--qdToDecimal :: QuotedDecimal -> Decimal
+--qdToDecimal (QuotedDecimal dec) = dec
 
 -- | Wrapper around UTCTime and FromJSON instance, to facilitate automatic JSON instances
 
@@ -124,10 +125,10 @@ instance BitXAesRecordConvert Ticker Ticker_ where
     aesToRec (Ticker_ ticker''timestamp ticker''bid ticker''ask ticker''lastTrade
             ticker''rolling24HourVolume ticker''pair) =
         [record| {timestamp = tsmsToUTCTime ticker''timestamp,
-                  bid = qdToDecimal ticker''bid,
-                  ask = qdToDecimal ticker''ask,
-                  lastTrade = qdToDecimal ticker''lastTrade,
-                  rolling24HourVolume = qdToDecimal ticker''rolling24HourVolume,
+                  bid = coerce ticker''bid,
+                  ask = coerce ticker''ask,
+                  lastTrade = coerce ticker''lastTrade,
+                  rolling24HourVolume = coerce ticker''rolling24HourVolume,
                   pair = ticker''pair} |]
 
 --------------------------------------------- Tickers type -----------------------------------------
@@ -168,8 +169,8 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 
 instance BitXAesRecordConvert Order Order_ where
     aesToRec (Order_ order''volume order''price) =
-        [record| {volume =  qdToDecimal order''volume,
-              price = qdToDecimal order''price} |]
+        [record| {volume =  coerce order''volume,
+              price = coerce order''price} |]
 
 -------------------------------------------- Orderbook type ----------------------------------------
 
@@ -204,9 +205,9 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 
 instance BitXAesRecordConvert Trade Trade_ where
     aesToRec (Trade_ trade''volume trade''timestamp trade''price) =
-        [record| {volume = qdToDecimal trade''volume,
+        [record| {volume = coerce trade''volume,
               timestamp = tsmsToUTCTime trade''timestamp,
-              price = qdToDecimal trade''price} |]
+              price = coerce trade''price} |]
 
 ----------------------------------------- PublicTrades type ----------------------------------------
 
@@ -247,14 +248,14 @@ instance BitXAesRecordConvert PrivateOrder PrivateOrder_ where
           privateOrder''creation_timestamp privateOrder''expiration_timestamp privateOrder''fee_base
           privateOrder''fee_counter privateOrder''limit_price privateOrder''limit_volume
           privateOrder''order_id privateOrder''pair privateOrder''state privateOrder''type) =
-        [record| {base = qdToDecimal privateOrder''base,
-                  counter = qdToDecimal privateOrder''counter,
+        [record| {base = coerce privateOrder''base,
+                  counter = coerce privateOrder''counter,
                   creationTimestamp = tsmsToUTCTime privateOrder''creation_timestamp,
                   expirationTimestamp = tsmsToUTCTime privateOrder''expiration_timestamp,
-                  feeBase = qdToDecimal privateOrder''fee_base,
-                  feeCounter = qdToDecimal privateOrder''fee_counter,
-                  limitPrice = qdToDecimal privateOrder''limit_price,
-                  limitVolume = qdToDecimal privateOrder''limit_volume,
+                  feeBase = coerce privateOrder''fee_base,
+                  feeCounter = coerce privateOrder''fee_counter,
+                  limitPrice = coerce privateOrder''limit_price,
+                  limitVolume = coerce privateOrder''limit_volume,
                   id = privateOrder''order_id,
                   pair = privateOrder''pair,
                   state = requestStatusParse privateOrder''state,
@@ -339,14 +340,14 @@ instance BitXAesRecordConvert PrivateOrderWithTrades PrivateOrderWithTrades_ whe
             privateOrder''fee_counter privateOrder''limit_price privateOrder''limit_volume
             privateOrder''order_id privateOrder''pair privateOrder''state privateOrder''type
             privateOrderWithTrades''trades) =
-        [record| {base = qdToDecimal privateOrder''base,
-                  counter = qdToDecimal privateOrder''counter,
+        [record| {base = coerce privateOrder''base,
+                  counter = coerce privateOrder''counter,
                   creationTimestamp = tsmsToUTCTime privateOrder''creation_timestamp,
                   expirationTimestamp = tsmsToUTCTime privateOrder''expiration_timestamp,
-                  feeBase = qdToDecimal privateOrder''fee_base,
-                  feeCounter = qdToDecimal privateOrder''fee_counter,
-                  limitPrice = qdToDecimal privateOrder''limit_price,
-                  limitVolume = qdToDecimal privateOrder''limit_volume,
+                  feeBase = coerce privateOrder''fee_base,
+                  feeCounter = coerce privateOrder''fee_counter,
+                  limitPrice = coerce privateOrder''limit_price,
+                  limitVolume = coerce privateOrder''limit_volume,
                   id = privateOrder''order_id,
                   pair = privateOrder''pair,
                   state = requestStatusParse privateOrder''state,
@@ -371,9 +372,9 @@ instance BitXAesRecordConvert Balance Balance_ where
             balance''unconfirmed) =
         [record| {id = balance''account_id,
                   asset = balance''asset,
-                  balance = qdToDecimal balance''balance,
-                  reserved = qdToDecimal balance''reserved,
-                  unconfirmed = qdToDecimal balance''unconfirmed} |]
+                  balance = coerce balance''balance,
+                  reserved = coerce balance''reserved,
+                  unconfirmed = coerce balance''unconfirmed} |]
 
 -------------------------------------------- Balances type -----------------------------------------
 
@@ -405,8 +406,8 @@ instance BitXAesRecordConvert FundingAddress FundingAddress_ where
             fundingAdress''total_received fundingAdress''total_unconfirmed) =
         [record| {asset = fundingAdress''asset,
                   address = fundingAdress''address,
-                  totalReceived = qdToDecimal fundingAdress''total_received,
-                  totalUnconfirmed = qdToDecimal fundingAdress''total_unconfirmed} |]
+                  totalReceived = coerce fundingAdress''total_received,
+                  totalUnconfirmed = coerce fundingAdress''total_unconfirmed} |]
 
 --------------------------------------------- Asset type -------------------------------------------
 
@@ -494,8 +495,8 @@ instance BitXAesRecordConvert OrderQuote OrderQuote_ where
         [record| {id = orderQuote''id,
                   type = orderQuote''type,
                   pair = orderQuote''pair,
-                  baseAmount = qdToDecimal orderQuote''base_amount,
-                  counterAmount = qdToDecimal orderQuote''counter_amount,
+                  baseAmount = coerce orderQuote''base_amount,
+                  counterAmount = coerce orderQuote''counter_amount,
                   createdAt = tsmsToUTCTime orderQuote''created_at,
                   expiresAt = tsmsToUTCTime orderQuote''expires_at,
                   discarded = orderQuote''discarded,
@@ -538,10 +539,10 @@ instance BitXAesRecordConvert Transaction Transaction_ where
         transaction''currency transaction''description) =
         [record| {rowIndex = transaction''row_index,
                   timestamp = tsmsToUTCTime transaction''timestamp,
-                  balance = qdToDecimal transaction''balance,
-                  available = qdToDecimal transaction''available,
-                  balanceDelta = qdToDecimal transaction''balance_delta,
-                  availableDelta = qdToDecimal transaction''available_delta,
+                  balance = coerce transaction''balance,
+                  available = coerce transaction''available,
+                  balanceDelta = coerce transaction''balance_delta,
+                  availableDelta = coerce transaction''available_delta,
                   currency = transaction''currency,
                   description = transaction''description} |]
 

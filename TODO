@@ -10,3 +10,4 @@
 *Ask BitX support about error wrt docs for pending transactions call.
 *Test Auth by request app id from BitX as stipulated in docs.
 *Should I even bother including auth module?
+*Investigate using Scientific instead of Decimal.
