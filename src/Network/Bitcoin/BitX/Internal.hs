@@ -40,7 +40,7 @@ simpleBitXGetAuth_ auth verb = withSocketsDo $ do
           userSecret
         . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb)
         :: IO (Either SomeException (Response BL.ByteString))
-    consumeResponseBody_ response
+    return $ consumeResponseBody_ response
     where
         userID = Txt.encodeUtf8 $ (view [lens| id |] auth)
         userSecret = Txt.encodeUtf8 $ (view [lens| secret |] auth)
@@ -54,7 +54,7 @@ simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $ do
         . NetCon.urlEncodedBody (postEncode encrec)
         . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb)
         :: IO (Either SomeException (Response BL.ByteString))
-    consumeResponseBody_ response
+    return $ consumeResponseBody_ response
     where
         userID = Txt.encodeUtf8 $ (view [lens| id |] auth)
         userSecret = Txt.encodeUtf8 $ (view [lens| secret |] auth)
@@ -67,7 +67,7 @@ simpleBitXMETHAuth_ auth meth verb = withSocketsDo $ do
           userID
           userSecret $ initReq
         :: IO (Either SomeException (Response BL.ByteString))
-    consumeResponseBody_ response
+    return $ consumeResponseBody_ response
     where
         userID = Txt.encodeUtf8 $ (view [lens| id |] auth)
         userSecret = Txt.encodeUtf8 $ (view [lens| secret |] auth)
@@ -77,32 +77,32 @@ simpleBitXGet_ verb = withSocketsDo $ do
     resp <- try . NetCon.withManager . NetCon.httpLbs
         . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb)
         :: IO (Either SomeException (Response BL.ByteString))
-    consumeResponse resp
+    return $ consumeResponse resp
 
 consumeResponse :: BitXAesRecordConvert rec aes => Either SomeException (NetCon.Response BL.ByteString)
-    -> IO (BitXAPIResponse rec)
+    -> BitXAPIResponse rec
 consumeResponse resp =
     case resp of
-        Left ex -> return $ ExceptionResponse . Txt.pack . show $ ex
+        Left ex -> ExceptionResponse . Txt.pack . show $ ex
         Right k -> bitXErrorOrPayload k
 
 consumeResponseBody_ :: BitXAesRecordConvert rec aes => Either SomeException (NetCon.Response BL.ByteString)
-    -> IO (BitXAPIResponse rec)
+    -> BitXAPIResponse rec
 consumeResponseBody_ resp =
     case resp of
-        Left ex -> return $ ExceptionResponse . Txt.pack . show $ ex
+        Left ex -> ExceptionResponse . Txt.pack . show $ ex
         Right k -> bitXErrorOrPayload k
 
-bitXErrorOrPayload :: BitXAesRecordConvert rec aes => Response BL.ByteString -> IO (BitXAPIResponse rec)
+bitXErrorOrPayload :: BitXAesRecordConvert rec aes => Response BL.ByteString -> BitXAPIResponse rec
 bitXErrorOrPayload resp = do
     let respTE = Aeson.decode body -- is it a BitX error?
     case respTE of
-        Just e  -> return . ErrorResponse . aesToRec $ e
+        Just e  -> ErrorResponse . aesToRec $ e
         Nothing -> do
             let respTT = Aeson.decode body
             case respTT of
-                Just t  -> return . ValidResponse . aesToRec $ t
-                Nothing -> return . UnparseableResponse $ resp
+                Just t  -> ValidResponse . aesToRec $ t
+                Nothing -> UnparseableResponse $ resp
     where
         body = NetCon.responseBody resp
 

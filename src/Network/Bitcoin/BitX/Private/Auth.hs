@@ -67,7 +67,7 @@ authGrant cauth authCode = withSocketsDo $ do
              ("code", Txt.encodeUtf8 authCode)]
         . fromJust . NetCon.parseUrl $ bitXAPIPrefix ++ "oauth2/grant"
         :: IO (Either SomeException (Response BL.ByteString))
-    consumeResponseBody_ response
+    return $ consumeResponseBody_ response
     where
         userID = Txt.encodeUtf8 $ view [lens| id |] cauth
         userSecret = Txt.encodeUtf8 $ view [lens| secret |] cauth
