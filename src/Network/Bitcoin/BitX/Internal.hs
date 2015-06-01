@@ -101,4 +101,3 @@ bitXErrorOrPayload resp = fromJust $
     <|> Just (UnparseableResponse  resp)
     where
         body = NetCon.responseBody resp
-
