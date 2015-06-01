@@ -69,7 +69,6 @@ library
                        time,
                        http-conduit >= 2.0.0,
                        bytestring >= 0.10.0.0,
-                       Decimal >= 0.3.1,
                        network >= 2.0,
                        split >= 0.2.0.0,
                        scientific
