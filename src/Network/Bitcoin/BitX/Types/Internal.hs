@@ -29,7 +29,8 @@ import Record.Lens (view)
 #else
 import Data.Monoid (mempty)
 #endif
-import Data.Decimal (Decimal)
+import Data.Scientific (Scientific)
+--import Data.Scientific (Scientific)
 import Data.ByteString (ByteString)
 import Data.List.Split (splitOn)
 #if MIN_VERSION_base(4,7,0)
@@ -40,7 +41,7 @@ timestampParse_ :: Integer -> UTCTime
 timestampParse_ = posixSecondsToUTCTime
     . realToFrac
     . ( / 1000)
-    . (fromIntegral :: Integer -> Decimal)
+    . (fromIntegral :: Integer -> Scientific)
 
 class (FromJSON aes) => BitXAesRecordConvert rec aes | rec -> aes where
     aesToRec :: aes -> rec
@@ -52,24 +53,24 @@ class POSTEncodeable rec where
 showableToBytestring_ :: (Show a) => a -> ByteString
 showableToBytestring_ = Txt.encodeUtf8 . Txt.pack . show
 
--- | Wrapper around Decimal and FromJSON instance, to facilitate automatic JSON instances
+-- | Wrapper around Scientific and FromJSON instance, to facilitate automatic JSON instances
 
-newtype QuotedDecimal = QuotedDecimal Decimal deriving (Read, Show)
+newtype QuotedScientific = QuotedScientific Scientific deriving (Read, Show)
 
-instance FromJSON QuotedDecimal where
-   parseJSON (String x) = return . QuotedDecimal . read . Txt.unpack $ x
-   parseJSON (Number x) = return . QuotedDecimal . read . show $ x
+instance FromJSON QuotedScientific where
+   parseJSON (String x) = return . QuotedScientific . read . Txt.unpack $ x
+   parseJSON (Number x) = return . QuotedScientific . read . show $ x
    parseJSON _          = mempty
 
---instance ToJSON QuotedDecimal where
---    toJSON (QuotedDecimal q) = Number . realToFrac $ q
+--instance ToJSON QuotedScientific where
+--    toJSON (QuotedScientific q) = Number . realToFrac $ q
 
-qdToDecimal :: QuotedDecimal -> Decimal
+qdToScientific :: QuotedScientific -> Scientific
 #if MIN_VERSION_base(4,7,0)
-qdToDecimal = coerce
-{-# INLINE qdToDecimal #-}
+qdToScientific = coerce
+{-# INLINE qdToScientific #-}
 #else
-qdToDecimal (QuotedDecimal dec) = dec
+qdToScientific (QuotedScientific dec) = dec
 #endif
 
 -- | Wrapper around UTCTime and FromJSON instance, to facilitate automatic JSON instances
@@ -120,10 +121,10 @@ requestStatusParse (RequestStatus_      x     ) =
 
 data Ticker_ = Ticker_
     { ticker'timestamp :: TimestampMS
-    , ticker'bid :: QuotedDecimal
-    , ticker'ask :: QuotedDecimal
-    , ticker'last_trade :: QuotedDecimal
-    , ticker'rolling_24_hour_volume :: QuotedDecimal
+    , ticker'bid :: QuotedScientific
+    , ticker'ask :: QuotedScientific
+    , ticker'last_trade :: QuotedScientific
+    , ticker'rolling_24_hour_volume :: QuotedScientific
     , ticker'pair :: CcyPair
     }
 
@@ -133,10 +134,10 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 instance BitXAesRecordConvert Ticker Ticker_ where
     aesToRec (Ticker_ {..}) =
         [record| {timestamp = tsmsToUTCTime ticker'timestamp,
-                  bid = qdToDecimal ticker'bid,
-                  ask = qdToDecimal ticker'ask,
-                  lastTrade = qdToDecimal ticker'last_trade,
-                  rolling24HourVolume = qdToDecimal ticker'rolling_24_hour_volume,
+                  bid = qdToScientific ticker'bid,
+                  ask = qdToScientific ticker'ask,
+                  lastTrade = qdToScientific ticker'last_trade,
+                  rolling24HourVolume = qdToScientific ticker'rolling_24_hour_volume,
                   pair = ticker'pair} |]
 
 --------------------------------------------- Tickers type -----------------------------------------
@@ -169,16 +170,16 @@ instance BitXAesRecordConvert BitXError BitXError_ where
 -------------------------------------------- Order type --------------------------------------------
 
 data Order_ = Order_
-    { order'volume :: QuotedDecimal,
-      order'price :: QuotedDecimal
+    { order'volume :: QuotedScientific,
+      order'price :: QuotedScientific
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"} ''Order_)
 
 instance BitXAesRecordConvert Order Order_ where
     aesToRec (Order_ {..}) =
-        [record| {volume = qdToDecimal order'volume,
-              price = qdToDecimal order'price} |]
+        [record| {volume = qdToScientific order'volume,
+              price = qdToScientific order'price} |]
 
 -------------------------------------------- Orderbook type ----------------------------------------
 
@@ -203,9 +204,9 @@ instance BitXAesRecordConvert Orderbook Orderbook_ where
 -------------------------------------------- Trade type --------------------------------------------
 
 data Trade_ = Trade_
-    { trade'volume :: QuotedDecimal
+    { trade'volume :: QuotedScientific
     , trade'timestamp :: TimestampMS
-    , trade'price :: QuotedDecimal
+    , trade'price :: QuotedScientific
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
@@ -213,9 +214,9 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 
 instance BitXAesRecordConvert Trade Trade_ where
     aesToRec (Trade_ {..}) =
-        [record| {volume = qdToDecimal trade'volume,
+        [record| {volume = qdToScientific trade'volume,
               timestamp = tsmsToUTCTime trade'timestamp,
-              price = qdToDecimal trade'price} |]
+              price = qdToScientific trade'price} |]
 
 ----------------------------------------- PublicTrades type ----------------------------------------
 
@@ -233,14 +234,14 @@ instance BitXAesRecordConvert [Trade] PublicTrades_ where
 ------------------------------------------ PrivateOrder type ---------------------------------------
 
 data PrivateOrder_ = PrivateOrder_
-    { privateOrder'base :: QuotedDecimal
-    , privateOrder'counter :: QuotedDecimal
+    { privateOrder'base :: QuotedScientific
+    , privateOrder'counter :: QuotedScientific
     , privateOrder'creation_timestamp :: TimestampMS
     , privateOrder'expiration_timestamp :: TimestampMS
-    , privateOrder'fee_base :: QuotedDecimal
-    , privateOrder'fee_counter :: QuotedDecimal
-    , privateOrder'limit_price :: QuotedDecimal
-    , privateOrder'limit_volume :: QuotedDecimal
+    , privateOrder'fee_base :: QuotedScientific
+    , privateOrder'fee_counter :: QuotedScientific
+    , privateOrder'limit_price :: QuotedScientific
+    , privateOrder'limit_volume :: QuotedScientific
     , privateOrder'order_id :: OrderID
     , privateOrder'pair :: CcyPair
     , privateOrder'state :: RequestStatus_
@@ -252,14 +253,14 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 
 instance BitXAesRecordConvert PrivateOrder PrivateOrder_ where
     aesToRec (PrivateOrder_ {..}) =
-        [record| {base = qdToDecimal privateOrder'base,
-                  counter = qdToDecimal privateOrder'counter,
+        [record| {base = qdToScientific privateOrder'base,
+                  counter = qdToScientific privateOrder'counter,
                   creationTimestamp = tsmsToUTCTime privateOrder'creation_timestamp,
                   expirationTimestamp = tsmsToUTCTime privateOrder'expiration_timestamp,
-                  feeBase = qdToDecimal privateOrder'fee_base,
-                  feeCounter = qdToDecimal privateOrder'fee_counter,
-                  limitPrice = qdToDecimal privateOrder'limit_price,
-                  limitVolume = qdToDecimal privateOrder'limit_volume,
+                  feeBase = qdToScientific privateOrder'fee_base,
+                  feeCounter = qdToScientific privateOrder'fee_counter,
+                  limitPrice = qdToScientific privateOrder'limit_price,
+                  limitVolume = qdToScientific privateOrder'limit_volume,
                   id = privateOrder'order_id,
                   pair = privateOrder'pair,
                   state = requestStatusParse privateOrder'state,
@@ -320,14 +321,14 @@ instance BitXAesRecordConvert RequestSuccess RequestSuccess_ where
 ------------------------------------- PrivateOrderWithTrades type ----------------------------------
 
 data PrivateOrderWithTrades_ = PrivateOrderWithTrades_
-    { privateOrderWithTrades'base :: QuotedDecimal
-    , privateOrderWithTrades'counter :: QuotedDecimal
+    { privateOrderWithTrades'base :: QuotedScientific
+    , privateOrderWithTrades'counter :: QuotedScientific
     , privateOrderWithTrades'creation_timestamp :: TimestampMS
     , privateOrderWithTrades'expiration_timestamp :: TimestampMS
-    , privateOrderWithTrades'fee_base :: QuotedDecimal
-    , privateOrderWithTrades'fee_counter :: QuotedDecimal
-    , privateOrderWithTrades'limit_price :: QuotedDecimal
-    , privateOrderWithTrades'limit_volume :: QuotedDecimal
+    , privateOrderWithTrades'fee_base :: QuotedScientific
+    , privateOrderWithTrades'fee_counter :: QuotedScientific
+    , privateOrderWithTrades'limit_price :: QuotedScientific
+    , privateOrderWithTrades'limit_volume :: QuotedScientific
     , privateOrderWithTrades'order_id :: OrderID
     , privateOrderWithTrades'pair :: CcyPair
     , privateOrderWithTrades'state :: RequestStatus_
@@ -340,14 +341,14 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 
 instance BitXAesRecordConvert PrivateOrderWithTrades PrivateOrderWithTrades_ where
     aesToRec (PrivateOrderWithTrades_ {..}) =
-        [record| {base = qdToDecimal privateOrderWithTrades'base,
-                  counter = qdToDecimal privateOrderWithTrades'counter,
+        [record| {base = qdToScientific privateOrderWithTrades'base,
+                  counter = qdToScientific privateOrderWithTrades'counter,
                   creationTimestamp = tsmsToUTCTime privateOrderWithTrades'creation_timestamp,
                   expirationTimestamp = tsmsToUTCTime privateOrderWithTrades'expiration_timestamp,
-                  feeBase = qdToDecimal privateOrderWithTrades'fee_base,
-                  feeCounter = qdToDecimal privateOrderWithTrades'fee_counter,
-                  limitPrice = qdToDecimal privateOrderWithTrades'limit_price,
-                  limitVolume = qdToDecimal privateOrderWithTrades'limit_volume,
+                  feeBase = qdToScientific privateOrderWithTrades'fee_base,
+                  feeCounter = qdToScientific privateOrderWithTrades'fee_counter,
+                  limitPrice = qdToScientific privateOrderWithTrades'limit_price,
+                  limitVolume = qdToScientific privateOrderWithTrades'limit_volume,
                   id = privateOrderWithTrades'order_id,
                   pair = privateOrderWithTrades'pair,
                   state = requestStatusParse privateOrderWithTrades'state,
@@ -359,9 +360,9 @@ instance BitXAesRecordConvert PrivateOrderWithTrades PrivateOrderWithTrades_ whe
 data Balance_ = Balance_
     { balance'account_id :: AccountID
     , balance'asset :: Asset
-    , balance'balance :: QuotedDecimal
-    , balance'reserved :: QuotedDecimal
-    , balance'unconfirmed :: QuotedDecimal
+    , balance'balance :: QuotedScientific
+    , balance'reserved :: QuotedScientific
+    , balance'unconfirmed :: QuotedScientific
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
@@ -371,9 +372,9 @@ instance BitXAesRecordConvert Balance Balance_ where
     aesToRec (Balance_ {..}) =
         [record| {id = balance'account_id,
                   asset = balance'asset,
-                  balance = qdToDecimal balance'balance,
-                  reserved = qdToDecimal balance'reserved,
-                  unconfirmed = qdToDecimal balance'unconfirmed} |]
+                  balance = qdToScientific balance'balance,
+                  reserved = qdToScientific balance'reserved,
+                  unconfirmed = qdToScientific balance'unconfirmed} |]
 
 -------------------------------------------- Balances type -----------------------------------------
 
@@ -393,8 +394,8 @@ instance BitXAesRecordConvert [Balance] Balances_ where
 data FundingAddress_ = FundingAddress_
     { fundingAdress'asset :: Asset
     , fundingAdress'address :: Text
-    , fundingAdress'total_received :: QuotedDecimal
-    , fundingAdress'total_unconfirmed :: QuotedDecimal
+    , fundingAdress'total_received :: QuotedScientific
+    , fundingAdress'total_unconfirmed :: QuotedScientific
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
@@ -404,8 +405,8 @@ instance BitXAesRecordConvert FundingAddress FundingAddress_ where
     aesToRec (FundingAddress_ {..}) =
         [record| {asset = fundingAdress'asset,
                   address = fundingAdress'address,
-                  totalReceived = qdToDecimal fundingAdress'total_received,
-                  totalUnconfirmed = qdToDecimal fundingAdress'total_unconfirmed} |]
+                  totalReceived = qdToScientific fundingAdress'total_received,
+                  totalUnconfirmed = qdToScientific fundingAdress'total_unconfirmed} |]
 
 --------------------------------------------- Asset type -------------------------------------------
 
@@ -475,8 +476,8 @@ data OrderQuote_ = OrderQuote_
     { orderQuote'id :: Text
     , orderQuote'type :: QuoteType
     , orderQuote'pair :: CcyPair
-    , orderQuote'base_amount :: QuotedDecimal
-    , orderQuote'counter_amount :: QuotedDecimal
+    , orderQuote'base_amount :: QuotedScientific
+    , orderQuote'counter_amount :: QuotedScientific
     , orderQuote'created_at :: TimestampMS
     , orderQuote'expires_at :: TimestampMS
     , orderQuote'discarded :: Bool
@@ -491,8 +492,8 @@ instance BitXAesRecordConvert OrderQuote OrderQuote_ where
         [record| {id = orderQuote'id,
                   type = orderQuote'type,
                   pair = orderQuote'pair,
-                  baseAmount = qdToDecimal orderQuote'base_amount,
-                  counterAmount = qdToDecimal orderQuote'counter_amount,
+                  baseAmount = qdToScientific orderQuote'base_amount,
+                  counterAmount = qdToScientific orderQuote'counter_amount,
                   createdAt = tsmsToUTCTime orderQuote'created_at,
                   expiresAt = tsmsToUTCTime orderQuote'expires_at,
                   discarded = orderQuote'discarded,
@@ -518,10 +519,10 @@ instance BitXAesRecordConvert BitXAuth BitXAuth_ where
 data Transaction_ = Transaction_
     { transaction'row_index :: Int
     , transaction'timestamp :: TimestampMS
-    , transaction'balance :: QuotedDecimal
-    , transaction'available :: QuotedDecimal
-    , transaction'balance_delta :: QuotedDecimal
-    , transaction'available_delta :: QuotedDecimal
+    , transaction'balance :: QuotedScientific
+    , transaction'available :: QuotedScientific
+    , transaction'balance_delta :: QuotedScientific
+    , transaction'available_delta :: QuotedScientific
     , transaction'currency :: Asset
     , transaction'description :: Text
     }
@@ -533,10 +534,10 @@ instance BitXAesRecordConvert Transaction Transaction_ where
     aesToRec (Transaction_ {..}) =
         [record| {rowIndex = transaction'row_index,
                   timestamp = tsmsToUTCTime transaction'timestamp,
-                  balance = qdToDecimal transaction'balance,
-                  available = qdToDecimal transaction'available,
-                  balanceDelta = qdToDecimal transaction'balance_delta,
-                  availableDelta = qdToDecimal transaction'available_delta,
+                  balance = qdToScientific transaction'balance,
+                  available = qdToScientific transaction'available,
+                  balanceDelta = qdToScientific transaction'balance_delta,
+                  availableDelta = qdToScientific transaction'available_delta,
                   currency = transaction'currency,
                   description = transaction'description} |]
 

@@ -88,7 +88,7 @@ import Data.Text (Text)
 import Data.Time.Clock
 import Record
 import GHC.Generics (Generic)
-import Data.Decimal
+import Data.Scientific (Scientific)
 
 -- | A possible error which the BitX API might return,
 -- instead of returning the requested data. Note that as yet there is no
@@ -114,21 +114,21 @@ type BitXError =
 -- @
 --type Ticker =
 --    [record|
---        {ask :: 'Decimal',
+--        {ask :: 'Scientific',
 --         timestamp :: 'UTCTime',
---         bid :: 'Decimal',
---         rolling24HourVolume :: 'Decimal',
---         lastTrade :: 'Decimal',
+--         bid :: 'Scientific',
+--         rolling24HourVolume :: 'Scientific',
+--         lastTrade :: 'Scientific',
 --         pair :: 'CcyPair'} |]
 -- @
 
 type Ticker =
     [record|
-        {ask :: Decimal,
+        {ask :: Scientific,
          timestamp :: UTCTime,
-         bid :: Decimal,
-         rolling24HourVolume :: Decimal,
-         lastTrade :: Decimal,
+         bid :: Scientific,
+         rolling24HourVolume :: Scientific,
+         lastTrade :: Scientific,
          pair :: CcyPair} |]
 
 -- | A currency pair
@@ -174,14 +174,14 @@ type Orderbook =
 -- @
 --type Order =
 --    [record|
---        {volume :: 'Decimal',
---         price :: 'Decimal'} |]
+--        {volume :: 'Scientific',
+--         price :: 'Scientific'} |]
 -- @
 
 type Order =
     [record|
-        {volume :: Decimal,
-         price :: Decimal} |]
+        {volume :: Scientific,
+         price :: Scientific} |]
 
 -- | Convenient type alias for a bid order
 type Bid = Order
@@ -191,9 +191,9 @@ type Ask = Order
 
 type Trade =
     [record|
-        {volume :: Decimal,
+        {volume :: Scientific,
          timestamp :: UTCTime,
-         price :: Decimal} |]
+         price :: Scientific} |]
 
 -- | An auth type used by all private API calls, after authorisation.
 --
@@ -216,14 +216,14 @@ type BitXClientAuth = BitXAuth
 -- @
 --type PrivateOrder =
 --    [record|
---        {base :: 'Decimal',
---         counter :: 'Decimal',
+--        {base :: 'Scientific',
+--         counter :: 'Scientific',
 --         creationTimestamp :: 'UTCTime',
 --         expirationTimestamp :: 'UTCTime',
---         feeBase :: 'Decimal',
---         feeCounter :: 'Decimal',
---         limitPrice :: 'Decimal',
---         limitVolume :: 'Decimal',
+--         feeBase :: 'Scientific',
+--         feeCounter :: 'Scientific',
+--         limitPrice :: 'Scientific',
+--         limitVolume :: 'Scientific',
 --         id :: 'OrderID',
 --         pair :: 'CcyPair',
 --         state :: 'RequestStatus',
@@ -231,14 +231,14 @@ type BitXClientAuth = BitXAuth
 -- @
 type PrivateOrder =
     [record|
-        {base :: Decimal,
-         counter :: Decimal,
+        {base :: Scientific,
+         counter :: Scientific,
          creationTimestamp :: UTCTime,
          expirationTimestamp :: UTCTime,
-         feeBase :: Decimal,
-         feeCounter :: Decimal,
-         limitPrice :: Decimal,
-         limitVolume :: Decimal,
+         feeBase :: Scientific,
+         feeCounter :: Scientific,
+         limitPrice :: Scientific,
+         limitVolume :: Scientific,
          id :: OrderID,
          pair :: CcyPair,
          state :: RequestStatus,
@@ -250,14 +250,14 @@ type PrivateOrder =
 -- @
 --type PrivateOrderWithTrades =
 --    [record|
---        {base :: 'Decimal',
---         counter :: 'Decimal',
+--        {base :: 'Scientific',
+--         counter :: 'Scientific',
 --         creationTimestamp :: 'UTCTime',
 --         expirationTimestamp :: 'UTCTime',
---         feeBase :: 'Decimal',
---         feeCounter :: 'Decimal',
---         limitPrice :: 'Decimal',
---         limitVolume :: 'Decimal',
+--         feeBase :: 'Scientific',
+--         feeCounter :: 'Scientific',
+--         limitPrice :: 'Scientific',
+--         limitVolume :: 'Scientific',
 --         id :: 'OrderID',
 --         pair :: 'CcyPair',
 --         state :: 'RequestStatus',
@@ -266,14 +266,14 @@ type PrivateOrder =
 -- @
 type PrivateOrderWithTrades =
     [record|
-        {base :: Decimal,
-         counter :: Decimal,
+        {base :: Scientific,
+         counter :: Scientific,
          creationTimestamp :: UTCTime,
          expirationTimestamp :: UTCTime,
-         feeBase :: Decimal,
-         feeCounter :: Decimal,
-         limitPrice :: Decimal,
-         limitVolume :: Decimal,
+         feeBase :: Scientific,
+         feeCounter :: Scientific,
+         limitPrice :: Scientific,
+         limitVolume :: Scientific,
          id :: OrderID,
          pair :: CcyPair,
          state :: RequestStatus,
@@ -287,10 +287,10 @@ type PrivateOrderWithTrades =
 --    [record|
 --        {rowIndex :: 'Int',
 --         timestamp :: 'UTCTime',
---         balance :: 'Decimal',
---         available :: 'Decimal',
---         balanceDelta :: 'Decimal',
---         availableDelta :: 'Decimal',
+--         balance :: 'Scientific',
+--         available :: 'Scientific',
+--         balanceDelta :: 'Scientific',
+--         availableDelta :: 'Scientific',
 --         currency :: 'Asset',
 --         description :: 'Text'}|]
 -- @
@@ -298,10 +298,10 @@ type Transaction =
     [record|
         {rowIndex :: Int,
          timestamp :: UTCTime,
-         balance :: Decimal,
-         available :: Decimal,
-         balanceDelta :: Decimal,
-         availableDelta :: Decimal,
+         balance :: Scientific,
+         available :: Scientific,
+         balanceDelta :: Scientific,
+         availableDelta :: Scientific,
          currency :: Asset,
          description :: Text}|]
 
@@ -329,15 +329,15 @@ data RequestStatus =
 --    [record|
 --        {pair :: 'CcyPair',
 --         type :: 'OrderType',
---         volume :: 'Decimal',
---         price :: 'Decimal' } |]
+--         volume :: 'Scientific',
+--         price :: 'Scientific' } |]
 -- @
 type OrderRequest =
     [record|
         {pair :: CcyPair,
          type :: OrderType,
-         volume :: Decimal,
-         price :: Decimal } |]
+         volume :: Scientific,
+         price :: Scientific } |]
 
 type AccountID = Text
 
@@ -348,17 +348,17 @@ type AccountID = Text
 --    [record|
 --        {id :: 'AccountID',
 --         asset :: 'Asset',
---         balance :: 'Decimal',
---         reserved :: 'Decimal',
---         unconfirmed :: 'Decimal' } |]
+--         balance :: 'Scientific',
+--         reserved :: 'Scientific',
+--         unconfirmed :: 'Scientific' } |]
 -- @
 type Balance =
     [record|
         {id :: AccountID,
          asset :: Asset,
-         balance :: Decimal,
-         reserved :: Decimal,
-         unconfirmed :: Decimal } |]
+         balance :: Scientific,
+         reserved :: Scientific,
+         unconfirmed :: Scientific } |]
 
 -- | A registered address for an acocunt.
 --
@@ -367,15 +367,15 @@ type Balance =
 --    [record|
 --        {asset :: 'Asset',
 --         address :: 'Text',
---         totalReceived :: 'Decimal',
---         totalUnconfirmed :: 'Decimal'} |]
+--         totalReceived :: 'Scientific',
+--         totalUnconfirmed :: 'Scientific'} |]
 -- @
 type FundingAddress =
     [record|
         {asset :: Asset,
          address :: Text,
-         totalReceived :: Decimal,
-         totalUnconfirmed :: Decimal} |]
+         totalReceived :: Scientific,
+         totalUnconfirmed :: Scientific} |]
 
 -- | The state of a request to withdraw from an account.
 --
@@ -396,19 +396,19 @@ type WithdrawalRequest =
 --type NewWithdrawal =
 --    [record|
 --        {type :: 'WithdrawalType',
---         amount :: 'Decimal' } |]
+--         amount :: 'Scientific' } |]
 -- @
 type NewWithdrawal =
     [record|
         {type :: WithdrawalType,
-         amount :: Decimal } |]
+         amount :: Scientific } |]
 
 -- | A request to send bitcoin to a bitcoin address or email address.
 --
 -- @
 --type BitcoinSendRequest =
 --    [record|
---        {amount :: 'Decimal',
+--        {amount :: 'Scientific',
 --         currency :: 'Asset',
 --         address :: 'Text',
 --         description :: 'Maybe' 'Text',
@@ -416,7 +416,7 @@ type NewWithdrawal =
 -- @
 type BitcoinSendRequest =
     [record|
-        {amount :: Decimal,
+        {amount :: Scientific,
          currency :: Asset,
          address :: Text,
          description :: Maybe Text,
@@ -429,13 +429,13 @@ type BitcoinSendRequest =
 --    [record|
 --        {type :: 'QuoteType',
 --         pair :: 'CcyPair',
---         baseAmount :: 'Decimal'} |]
+--         baseAmount :: 'Scientific'} |]
 -- @
 type QuoteRequest =
     [record|
         {type :: QuoteType,
          pair :: CcyPair,
-         baseAmount :: Decimal} |]
+         baseAmount :: Scientific} |]
 
 -- | A temporarily locked in quote.
 --
@@ -445,8 +445,8 @@ type QuoteRequest =
 --        {id :: 'Text',
 --         type :: 'QuoteType',
 --         pair :: 'CcyPair',
---         baseAmount :: 'Decimal',
---         counterAmount :: 'Decimal',
+--         baseAmount :: 'Scientific',
+--         counterAmount :: 'Scientific',
 --         createdAt :: 'UTCTime',
 --         expiresAt :: 'UTCTime',
 --         discarded :: 'Bool',
@@ -457,8 +457,8 @@ type OrderQuote =
         {id :: Text,
          type :: QuoteType,
          pair :: CcyPair,
-         baseAmount :: Decimal,
-         counterAmount :: Decimal,
+         baseAmount :: Scientific,
+         counterAmount :: Scientific,
          createdAt :: UTCTime,
          expiresAt :: UTCTime,
          discarded :: Bool,
