@@ -65,12 +65,12 @@ instance FromJSON QuotedScientific where
 --instance ToJSON QuotedScientific where
 --    toJSON (QuotedScientific q) = Number . realToFrac $ q
 
-qdToScientific :: QuotedScientific -> Scientific
+qsToScientific :: QuotedScientific -> Scientific
 #if MIN_VERSION_base(4,7,0)
-qdToScientific = coerce
-{-# INLINE qdToScientific #-}
+qsToScientific = coerce
+{-# INLINE qsToScientific #-}
 #else
-qdToScientific (QuotedScientific dec) = dec
+qsToScientific (QuotedScientific dec) = dec
 #endif
 
 -- | Wrapper around UTCTime and FromJSON instance, to facilitate automatic JSON instances
@@ -134,10 +134,10 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 instance BitXAesRecordConvert Ticker Ticker_ where
     aesToRec (Ticker_ {..}) =
         [record| {timestamp = tsmsToUTCTime ticker'timestamp,
-                  bid = qdToScientific ticker'bid,
-                  ask = qdToScientific ticker'ask,
-                  lastTrade = qdToScientific ticker'last_trade,
-                  rolling24HourVolume = qdToScientific ticker'rolling_24_hour_volume,
+                  bid = qsToScientific ticker'bid,
+                  ask = qsToScientific ticker'ask,
+                  lastTrade = qsToScientific ticker'last_trade,
+                  rolling24HourVolume = qsToScientific ticker'rolling_24_hour_volume,
                   pair = ticker'pair} |]
 
 --------------------------------------------- Tickers type -----------------------------------------
@@ -178,8 +178,8 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 
 instance BitXAesRecordConvert Order Order_ where
     aesToRec (Order_ {..}) =
-        [record| {volume = qdToScientific order'volume,
-              price = qdToScientific order'price} |]
+        [record| {volume = qsToScientific order'volume,
+              price = qsToScientific order'price} |]
 
 -------------------------------------------- Orderbook type ----------------------------------------
 
@@ -214,9 +214,9 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 
 instance BitXAesRecordConvert Trade Trade_ where
     aesToRec (Trade_ {..}) =
-        [record| {volume = qdToScientific trade'volume,
+        [record| {volume = qsToScientific trade'volume,
               timestamp = tsmsToUTCTime trade'timestamp,
-              price = qdToScientific trade'price} |]
+              price = qsToScientific trade'price} |]
 
 ----------------------------------------- PublicTrades type ----------------------------------------
 
@@ -253,14 +253,14 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 
 instance BitXAesRecordConvert PrivateOrder PrivateOrder_ where
     aesToRec (PrivateOrder_ {..}) =
-        [record| {base = qdToScientific privateOrder'base,
-                  counter = qdToScientific privateOrder'counter,
+        [record| {base = qsToScientific privateOrder'base,
+                  counter = qsToScientific privateOrder'counter,
                   creationTimestamp = tsmsToUTCTime privateOrder'creation_timestamp,
                   expirationTimestamp = tsmsToUTCTime privateOrder'expiration_timestamp,
-                  feeBase = qdToScientific privateOrder'fee_base,
-                  feeCounter = qdToScientific privateOrder'fee_counter,
-                  limitPrice = qdToScientific privateOrder'limit_price,
-                  limitVolume = qdToScientific privateOrder'limit_volume,
+                  feeBase = qsToScientific privateOrder'fee_base,
+                  feeCounter = qsToScientific privateOrder'fee_counter,
+                  limitPrice = qsToScientific privateOrder'limit_price,
+                  limitVolume = qsToScientific privateOrder'limit_volume,
                   id = privateOrder'order_id,
                   pair = privateOrder'pair,
                   state = requestStatusParse privateOrder'state,
@@ -341,14 +341,14 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 
 instance BitXAesRecordConvert PrivateOrderWithTrades PrivateOrderWithTrades_ where
     aesToRec (PrivateOrderWithTrades_ {..}) =
-        [record| {base = qdToScientific privateOrderWithTrades'base,
-                  counter = qdToScientific privateOrderWithTrades'counter,
+        [record| {base = qsToScientific privateOrderWithTrades'base,
+                  counter = qsToScientific privateOrderWithTrades'counter,
                   creationTimestamp = tsmsToUTCTime privateOrderWithTrades'creation_timestamp,
                   expirationTimestamp = tsmsToUTCTime privateOrderWithTrades'expiration_timestamp,
-                  feeBase = qdToScientific privateOrderWithTrades'fee_base,
-                  feeCounter = qdToScientific privateOrderWithTrades'fee_counter,
-                  limitPrice = qdToScientific privateOrderWithTrades'limit_price,
-                  limitVolume = qdToScientific privateOrderWithTrades'limit_volume,
+                  feeBase = qsToScientific privateOrderWithTrades'fee_base,
+                  feeCounter = qsToScientific privateOrderWithTrades'fee_counter,
+                  limitPrice = qsToScientific privateOrderWithTrades'limit_price,
+                  limitVolume = qsToScientific privateOrderWithTrades'limit_volume,
                   id = privateOrderWithTrades'order_id,
                   pair = privateOrderWithTrades'pair,
                   state = requestStatusParse privateOrderWithTrades'state,
@@ -372,9 +372,9 @@ instance BitXAesRecordConvert Balance Balance_ where
     aesToRec (Balance_ {..}) =
         [record| {id = balance'account_id,
                   asset = balance'asset,
-                  balance = qdToScientific balance'balance,
-                  reserved = qdToScientific balance'reserved,
-                  unconfirmed = qdToScientific balance'unconfirmed} |]
+                  balance = qsToScientific balance'balance,
+                  reserved = qsToScientific balance'reserved,
+                  unconfirmed = qsToScientific balance'unconfirmed} |]
 
 -------------------------------------------- Balances type -----------------------------------------
 
@@ -405,8 +405,8 @@ instance BitXAesRecordConvert FundingAddress FundingAddress_ where
     aesToRec (FundingAddress_ {..}) =
         [record| {asset = fundingAdress'asset,
                   address = fundingAdress'address,
-                  totalReceived = qdToScientific fundingAdress'total_received,
-                  totalUnconfirmed = qdToScientific fundingAdress'total_unconfirmed} |]
+                  totalReceived = qsToScientific fundingAdress'total_received,
+                  totalUnconfirmed = qsToScientific fundingAdress'total_unconfirmed} |]
 
 --------------------------------------------- Asset type -------------------------------------------
 
@@ -492,8 +492,8 @@ instance BitXAesRecordConvert OrderQuote OrderQuote_ where
         [record| {id = orderQuote'id,
                   type = orderQuote'type,
                   pair = orderQuote'pair,
-                  baseAmount = qdToScientific orderQuote'base_amount,
-                  counterAmount = qdToScientific orderQuote'counter_amount,
+                  baseAmount = qsToScientific orderQuote'base_amount,
+                  counterAmount = qsToScientific orderQuote'counter_amount,
                   createdAt = tsmsToUTCTime orderQuote'created_at,
                   expiresAt = tsmsToUTCTime orderQuote'expires_at,
                   discarded = orderQuote'discarded,
@@ -534,10 +534,10 @@ instance BitXAesRecordConvert Transaction Transaction_ where
     aesToRec (Transaction_ {..}) =
         [record| {rowIndex = transaction'row_index,
                   timestamp = tsmsToUTCTime transaction'timestamp,
-                  balance = qdToScientific transaction'balance,
-                  available = qdToScientific transaction'available,
-                  balanceDelta = qdToScientific transaction'balance_delta,
-                  availableDelta = qdToScientific transaction'available_delta,
+                  balance = qsToScientific transaction'balance,
+                  available = qsToScientific transaction'available,
+                  balanceDelta = qsToScientific transaction'balance_delta,
+                  availableDelta = qsToScientific transaction'available_delta,
                   currency = transaction'currency,
                   description = transaction'description} |]
 
