@@ -1,6 +1,8 @@
 [![Build Status](https://travis-ci.org/tebello-thejane/bitx-haskell.svg?branch=master)](https://travis-ci.org/tebello-thejane/bitx-haskell)
 [![Hackage](https://budueba.com/hackage/bitx-bitcoin)](https://hackage.haskell.org/package/bitx-bitcoin)
 
+[![CC0 1.0 Universal (Public Domain)](http://i.creativecommons.org/p/zero/1.0/88x31.png)](http://creativecommons.org/publicdomain/zero/1.0/)
+
 (Hopefully useful) Haskell bindings to the BitX bitcoin exchange's API.
 
 As a minimal example, to get the current selling price (in South African Rand) of bitcoin on the BitX exchange, do the following:
@@ -8,19 +10,26 @@ As a minimal example, to get the current selling price (in South African Rand) o
 ```haskell
 {-# LANGUAGE QuasiQuotes #-}
 
-import Record.Lens
-import Record
-import Network.Bitcoin.BitX
-import Data.Text
+import Record.Lens (view)
+import Record (lens)
+import Network.Bitcoin.BitX (BitXAPIResponse(..), getTicker, CcyPair(..))
+import Data.Text (unpack)
+import Network.HTTP.Types.Status (Status(..))
+import Network.HTTP.Conduit (responseStatus)
 
+main :: IO ()
 main = do
   bitXResponse <- getTicker XBTZAR
   case bitXResponse of
     ValidResponse tic        -> print (view [lens| ask |] tic)
-    ErrorResponse err        -> 
+    ErrorResponse err        ->
         error $ "BitX error received: \"" ++ (unpack (view [lens| error |] err)) ++ "\""
-    ExceptionResponse ex     -> 
+    ExceptionResponse ex     ->
         error $ "Exception was thrown: \"" ++ (unpack ex) ++ "\""
-    UnparseableResponse resp -> 
-        error $ "Bad HTTP response; HTTP status code was: \"" ++ (show . statusCode $ resp) ++ "\""
+    UnparseableResponse resp ->
+        error $ "Bad HTTP response; HTTP status code was: \"" ++ (show . statusCode . responseStatus $ resp) ++ "\""
 ```
+
+Note that the code snippet above depends on [http-types](https://hackage.haskell.org/package/http-types), [http-conduit](https://hackage.haskell.org/package/http-conduit), [record](https://hackage.haskell.org/package/record), and finally **bitx-bitcoin**.
+
+Note that this library **will not** build on Windows currently, due to networking dependencies which have no Windows support.
