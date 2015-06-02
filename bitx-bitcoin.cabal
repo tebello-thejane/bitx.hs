@@ -33,6 +33,7 @@ build-type:          Custom
 
 extra-source-files:
   README.md
+  CHANGES
 
 cabal-version:       >=1.10
 
