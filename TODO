@@ -1,6 +1,5 @@
 *Add haddocks everywhere possible.
 *Divide into slightly smaller sub-modules.
-*Verify whether I am allowed to use text from BitX in docs...
 *Test all conversions.
 *Verify whether AuthGrant could return a BitXError.
 *Investigate the issue with Aeson failing when the API returns a null instead of an array.
@@ -10,4 +9,3 @@
 *Ask BitX support about error wrt docs for pending transactions call.
 *Test Auth by request app id from BitX as stipulated in docs.
 *Should I even bother including auth module?
-*Investigate using Scientific instead of Decimal.

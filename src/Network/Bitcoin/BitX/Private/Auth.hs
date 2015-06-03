@@ -15,12 +15,13 @@
 --
 -- To use OAuth2, you first need to contact the BitX team <support@bitx.co>,
 -- and provide them with
---  *  Application name
---  *  Application description
---  *  Website URL
---  *  Permissions required
---  *  Redirect URL
---  *  Your BitX account username
+--
+-- * Application name
+-- * Application description
+-- * Website URL
+-- * Permissions required
+-- * Redirect URL
+-- * Your BitX account username
 --
 -- Next, the user needs to be sent to <https://bitx.co/oauth2/authorize?client_id=your_client_id&scope=your_requested_permissions&state=your_unique_state>,
 -- where they can confirm the request. If they do confirm the request, they

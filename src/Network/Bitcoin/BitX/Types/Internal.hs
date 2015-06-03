@@ -70,7 +70,7 @@ qsToScientific :: QuotedScientific -> Scientific
 qsToScientific = coerce
 {-# INLINE qsToScientific #-}
 #else
-qsToScientific (QuotedScientific dec) = dec
+qsToScientific (QuotedScientific sci) = sci
 #endif
 
 -- | Wrapper around UTCTime and FromJSON instance, to facilitate automatic JSON instances

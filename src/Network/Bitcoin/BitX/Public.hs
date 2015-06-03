@@ -15,15 +15,25 @@
 -- @
 --{-\# LANGUAGE QuasiQuotes \#-}
 --
---import Record.Lens
---import Record
---import Network.Bitcoin.BitX
+--import Record.Lens (view)
+--import Record (lens)
+--import Network.Bitcoin.BitX (BitXAPIResponse(..), getTicker, CcyPair(..))
+--import Data.Text (unpack)
+--import Network.HTTP.Types.Status (Status(..))
+--import Network.HTTP.Conduit (responseStatus)
 --
+--main :: IO ()
 --main = do
---  bitXResponse <- 'getTicker' 'XBTZAR'
+--  bitXResponse <- getTicker XBTZAR
 --  case bitXResponse of
---    'ValidResponse' tic -> print ('view' [lens| ask |] tic)
---    _                   -> error "Ah well..."
+--    ValidResponse tic        -> print (view [lens| ask |] tic)
+--    ErrorResponse err        ->
+--        error $ "BitX error received: \"" ++ (unpack (view [lens| error |] err)) ++ "\""
+--    ExceptionResponse ex     ->
+--        error $ "Exception was thrown: \"" ++ (unpack ex) ++ "\""
+--    UnparseableResponse resp ->
+--        error $ "Bad HTTP response; HTTP status code was: \""
+--                  ++ (show . statusCode . responseStatus $ resp) ++ "\""
 -- @
 --
 -----------------------------------------------------------------------------
