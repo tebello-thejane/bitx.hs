@@ -1,5 +1,6 @@
 v0.2.0.0
 * Replaced Decimal with Scientific. This is an API-breaking change.
+* Remove ill-thought-out Auth module.
 * Lots of internal improvements.
 
 0.1.0.0
