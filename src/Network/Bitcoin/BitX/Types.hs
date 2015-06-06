@@ -18,7 +18,7 @@
 -- to avoid using record field prefixes and other awkward hacks to get around
 -- the fact that Haskell does not yet have a real records' system.
 --
--- For example, the declaration of `BitXError` is
+-- For example, the declaration of `BitXAuth` is
 --
 -- @
 -- type BitXAuth =
