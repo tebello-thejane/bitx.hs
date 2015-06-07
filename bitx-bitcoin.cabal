@@ -46,6 +46,8 @@ library
     Network.Bitcoin.BitX.Types
     Network.Bitcoin.BitX.Private.Quote
   --  Network.Bitcoin.BitX.Private.Auth
+    Network.Bitcoin.BitX.Private.Order
+    Network.Bitcoin.BitX.Private.Withdrawal
     Network.Bitcoin.BitX.Response
 
   ghc-options: -Wall

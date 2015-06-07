@@ -45,78 +45,30 @@
 
 module Network.Bitcoin.BitX.Private
   (
-  getAllOrders,
-  postOrder,
-  stopOrder,
-  getOrder,
   getBalances,
   getFundingAddress,
   newFundingAddress,
-  getWithdrawalRequests,
-  newWithdrawalRequest,
-  getWithdrawalRequest,
   sendToAddress,
-  --cancelWithdrawalRequest,
   getTransactions,
-  getPendingTransactions
+  getPendingTransactions,
+
+  module Network.Bitcoin.BitX.Private.Order,
+  module Network.Bitcoin.BitX.Private.Quote,
+  --module Network.Bitcoin.BitX.Private.Auth
+  module Network.Bitcoin.BitX.Private.Withdrawal
   ) where
 
 import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
 import Network.Bitcoin.BitX.Types.Internal
 import qualified Data.Text as Txt
-import Data.Text (Text)
 import Control.Monad (liftM)
 import Network.Bitcoin.BitX.Response
 
-{- | Returns a list of the most recently placed orders.
-
-If the second parameter is @Nothing@ then this will return orders for all markets, whereas if it is
-@Just cpy@ for some @CcyPair cpy@ then the results will be specific to that market.
-
-If the third parameter is @Nothing@ then this will return orders in all states, whereas if it is
-@Just COMPLETE@ or @Just PENDING@ then it will return only completed or pending orders, respectively.
-
-This list is truncated after 100 items.
-
-@Perm_R_Orders@ permission is required.
- -}
-
-getAllOrders :: BitXAuth -> Maybe CcyPair -> Maybe RequestStatus -> IO (BitXAPIResponse [PrivateOrder])
-getAllOrders auth pair status = simpleBitXGetAuth_ auth url
-    where
-        url = "listorders" ++ case (pair, status) of
-            (Nothing, Nothing)  -> ""
-            (Just pr, Nothing)  -> "?pair=" ++ show pr
-            (Nothing, Just st)  -> "?state=" ++ show st
-            (Just pr, Just st)  -> "?pair=" ++ show pr ++ "&state=" ++ show st
-
-{- | Create a new order.
-
-__Warning! Orders cannot be reversed once they have executed. Please ensure your program has been__
-__thoroughly tested before submitting orders.__
-
-@Perm_W_Orders@ permission is required.
- -}
-
-postOrder :: BitXAuth -> OrderRequest -> IO (BitXAPIResponse OrderID)
-postOrder auth oreq = simpleBitXPOSTAuth_ auth oreq "postorder"
-
-{- | Request to stop an order.
-
-@Perm_W_Orders@ permission is required.
- -}
-
-stopOrder :: BitXAuth -> OrderID -> IO (BitXAPIResponse RequestSuccess)
-stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
-
-{- | Get an order by its ID
-
-@Perm_R_Orders@ permission is required.
- -}
-
-getOrder :: BitXAuth -> OrderID -> IO (BitXAPIResponse PrivateOrderWithTrades)
-getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ Txt.unpack oid
+import Network.Bitcoin.BitX.Private.Order
+--import Network.Bitcoin.BitX.Private.Auth
+import Network.Bitcoin.BitX.Private.Quote
+import Network.Bitcoin.BitX.Private.Withdrawal
 
 {- | Return account balances
 
@@ -151,43 +103,6 @@ Allocates a new receive address to your account. There is a limit of 50 receive 
 
 newFundingAddress :: BitXAuth -> Asset -> IO (BitXAPIResponse FundingAddress)
 newFundingAddress auth asset = simpleBitXPOSTAuth_ auth asset "funding_address"
-
-{- | List withdrawal requests
-
-Returns a list of withdrawal requests.
-
-@Perm_R_Withdrawals@ permission required.-}
-
-getWithdrawalRequests :: BitXAuth -> IO (BitXAPIResponse [WithdrawalRequest])
-getWithdrawalRequests auth = simpleBitXGetAuth_ auth "withdrawals/"
-
-{- | Request a withdrawal
-
-Creates a new withdrawal request.
-
-@Perm_W_Withdrawals@ permission required.-}
-
-newWithdrawalRequest :: BitXAuth -> NewWithdrawal -> IO (BitXAPIResponse WithdrawalRequest)
-newWithdrawalRequest auth nwithd = simpleBitXPOSTAuth_ auth nwithd "withdrawals"
-
-{- | Get the status of a withdrawal request
-
-Returns the status of a particular withdrawal request.
-
-@Perm_R_Withdrawals@ permission required.-}
-
-getWithdrawalRequest :: BitXAuth -> Text -- ^ The withdrawal ID
-    -> IO (BitXAPIResponse WithdrawalRequest)
-getWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" ++ Txt.unpack wthid
-
-{- | Cancel a withdrawal request
-
-This can only be done if the request is still in state PENDING.
-
-@Perm_W_Withdrawals@ permission required.-}
-
---cancelWithdrawalRequest :: BitXAuth -> String -> IO (Maybe (Either BitXError WithdrawalRequest))
---cancelWithdrawalRequest auth wthid = simpleBitXMETHAuth_ auth "DELETE" $ "withdrawals/" ++ wthid
 
 {- | Send Bitcoin from your account to a Bitcoin address or email address.
 
