@@ -1,8 +1,6 @@
 {-# LANGUAGE QuasiQuotes, OverloadedStrings, TemplateHaskell, MultiParamTypeClasses,
     FunctionalDependencies, FlexibleInstances, DataKinds, CPP, RecordWildCards #-}
 
---{-# OPTIONS_GHC -fno-warn-unused-binds #-}
-
 module Network.Bitcoin.BitX.Types.Internal
     (
     BitXAesRecordConvert(..),

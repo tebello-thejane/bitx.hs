@@ -10,6 +10,13 @@
 -- Stability   :  Experimental
 -- Portability :  non-portable (GHC Extensions)
 --
+-- Creating and working with orders
+--
+-- Trading on the market is done by submitting trade orders. After a new order has been created,
+-- it is submitted for processing by the order matching engine. The order then either matches
+-- against an existing order in the order book and is filled or it rests in the order book until it
+-- is stopped.
+--
 -----------------------------------------------------------------------------
 
 module Network.Bitcoin.BitX.Private.Order
