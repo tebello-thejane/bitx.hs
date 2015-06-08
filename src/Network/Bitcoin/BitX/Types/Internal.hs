@@ -571,3 +571,24 @@ type PendingTransactions__ =
 pendingTransactionsToTransactions :: PendingTransactions__ -> [Transaction]
 pendingTransactionsToTransactions pts = (view [lens| transactions |] pts)
 
+-------------------------------------------- Account type ------------------------------------------
+
+data Account_ = Account_
+    { account'id :: Text
+    , account'name :: Text
+    , account'currency :: Asset
+    }
+
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''Account_)
+
+instance BitXAesRecordConvert Account Account_ where
+    aesToRec (Account_ {..}) =
+        [record| {id = account'id,
+                  name = account'name,
+                  currency = account'currency} |]
+
+instance POSTEncodeable Account where
+    postEncode acc =
+        [("name", showableToBytestring_ (view [lens| name |] acc)),
+         ("currency", showableToBytestring_ (view [lens| currency |] acc))]

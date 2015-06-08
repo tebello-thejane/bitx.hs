@@ -33,7 +33,7 @@ Returns a list of withdrawal requests.
 @Perm_R_Withdrawals@ permission required.-}
 
 getWithdrawalRequests :: BitXAuth -> IO (BitXAPIResponse [WithdrawalRequest])
-getWithdrawalRequests auth = simpleBitXGetAuth_ auth "withdrawals/"
+getWithdrawalRequests auth = simpleBitXGetAuth_ auth "withdrawals"
 
 {- | Request a withdrawal
 

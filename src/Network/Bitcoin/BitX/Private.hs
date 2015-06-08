@@ -45,6 +45,7 @@
 
 module Network.Bitcoin.BitX.Private
   (
+  newAccount,
   getBalances,
   getFundingAddress,
   newFundingAddress,
@@ -69,6 +70,19 @@ import Network.Bitcoin.BitX.Private.Order
 --import Network.Bitcoin.BitX.Private.Auth
 import Network.Bitcoin.BitX.Private.Quote
 import Network.Bitcoin.BitX.Private.Withdrawal
+
+{- | Create an additional account for the specified currency
+
+Note that the 'id' field of the second parameter can be left blank. The call will return an `Account`
+object resembling the parameter, but with the 'id' field filled in with the newly created account's
+id.
+
+You must be verified to trade the currency in question in order to be able to create an account.
+
+@Perm_W_Addresses@ permission required. -}
+
+newAccount :: BitXAuth -> Account -> IO (BitXAPIResponse Account)
+newAccount auth acc = simpleBitXPOSTAuth_ auth acc "accounts"
 
 {- | Return account balances
 

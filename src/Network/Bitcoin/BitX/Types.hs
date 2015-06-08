@@ -80,7 +80,8 @@ module Network.Bitcoin.BitX.Types
     OrderQuote,
     QuoteType(..),
     BitXClientAuth,
-    Transaction
+    Transaction,
+    Account
   ) where
 
 import Data.Aeson (FromJSON(..))
@@ -463,6 +464,21 @@ type OrderQuote =
          expiresAt :: UTCTime,
          discarded :: Bool,
          exercised :: Bool} |]
+
+-- | A registered account.
+--
+-- @
+--type Account =
+--    [record|
+--        {id :: Text,
+--         name :: Text,
+--         currency :: Asset} |]
+-- @
+type Account =
+    [record|
+        {id :: Text,
+         name :: Text,
+         currency :: Asset} |]
 
 -- | The type of a withdrawal request.
 data WithdrawalType =
