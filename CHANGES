@@ -1,7 +1,9 @@
 v0.2.0.0
-* Replaced Decimal with Scientific. This is an API-breaking change.
+* Replaced Decimal with Scientific. BREAKING CHANGE.
+* Divided much of the Private module into smaller sub-modules. BREAKING CHANGE.
+* Added the new endpoint for creating accounts.
 * Remove ill-thought-out Auth module.
 * Lots of internal improvements.
 
-0.1.0.0
+v0.1.0.0
 * Initial release!
