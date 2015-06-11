@@ -8,6 +8,7 @@ env:
  - CABALVER=1.18 GHCVER=7.8.2
  - CABALVER=1.18 GHCVER=7.8.3
  - CABALVER=1.18 GHCVER=7.8.4
+ - CABALVER=1.18 GHCVER=7.8.4 STACK=YES
  - CABALVER=1.22 GHCVER=7.10.1
  - CABALVER=1.22 GHCVER=7.10.2
  - CABALVER=head GHCVER=head
@@ -26,15 +27,15 @@ before_install:
 install:
  - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
  - travis_retry cabal update
- - cabal install --only-dependencies --enable-tests --enable-benchmarks
+# - cabal install --only-dependencies --enable-tests --enable-benchmarks
+ - if [ -z "$STACK" ]; then .travis/ins-cabal.sh; else .travis/ins-stack.hs; fi
 
 script:
-# - if [ -f configure.ac ]; then autoreconf -i; fi
- - cabal configure --enable-tests -O0 --disable-library-profiling -v2
- - cabal build
- - cabal configure --enable-tests --enable-benchmarks -O0 --disable-library-profiling -v2
-# - cabal install hspec
- - cabal test --show-details=always --test-option=--color
+ - if [ -z "$STACK" ]; then .travis/scr-cabal.sh; else .travis/scr-stack.sh; fi
+# - cabal configure --enable-tests -O0 --disable-library-profiling -v2
+# - cabal build
+# - cabal configure --enable-tests --enable-benchmarks -O0 --disable-library-profiling -v2
+# - cabal test --show-details=always --test-option=--color
  - cabal check
  - cabal sdist
  - cabal install --force-reinstalls dist/*-*.tar.gz
