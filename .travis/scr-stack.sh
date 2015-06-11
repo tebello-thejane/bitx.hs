@@ -2,6 +2,6 @@
 
 set -ev
 
-stack build
-stack test
+time stack build
+time stack test
 
