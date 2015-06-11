@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, QuasiQuotes, TemplateHaskell, DataKinds #-}
+{-# LANGUAGE OverloadedStrings, QuasiQuotes, TemplateHaskell, DataKinds, CPP #-}
 
 module Network.Bitcoin.BitX.Internal
     (
@@ -26,7 +26,12 @@ import Record.Lens (view)
 import qualified Data.Text.Encoding as Txt
 import qualified Data.Text as Txt
 import Network.Bitcoin.BitX.Response
-import Control.Applicative ((<$>), (<|>))
+import Control.Applicative ((<|>))
+#if MIN_VERSION_base(4,8,0)
+-- <$> is in base since 4.8 due to the AMP
+#else
+import Control.Applicative ((<$>))
+#endif
 
 bitXAPIPrefix :: String
 bitXAPIPrefix = "https://api.mybitx.com/api/"
