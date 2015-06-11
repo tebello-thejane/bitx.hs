@@ -30,11 +30,11 @@ install:
 # - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
 # - travis_retry cabal update
 # - cabal install --only-dependencies --enable-tests --enable-benchmarks
- - if [ -z "$STACK" ]; then .travis/ins-cabal.sh; else travis_wait .travis/ins-stack.sh; fi
+ - if [ -z "$STACK" ]; then travis_wait .travis/ins-cabal.sh; else travis_wait .travis/ins-stack.sh; fi
 
 script:
  - if [ -z "$STACK" ]; then export PATH=/home/travis/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH; fi
- - if [ -z "$STACK" ]; then .travis/scr-cabal.sh; else .travis/scr-stack.sh; fi
+ - if [ -z "$STACK" ]; then travis_wait .travis/scr-cabal.sh; else travis_wait .travis/scr-stack.sh; fi
 # - cabal configure --enable-tests -O0 --disable-library-profiling -v2
 # - cabal build
 # - cabal configure --enable-tests --enable-benchmarks -O0 --disable-library-profiling -v2
