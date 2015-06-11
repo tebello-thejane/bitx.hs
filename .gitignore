@@ -3,6 +3,8 @@ dist/
 cabal.sandbox.config
 .project-dettings.yml
 .idea/
+.stack-work/
+dist-stack/
 *.iml
 *.*~
 
