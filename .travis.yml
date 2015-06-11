@@ -1,5 +1,7 @@
 # stolen from https://github.com/hvr/multi-ghc-travis
 
+sudo: required
+
 env:
  - CABALVER=1.16 GHCVER=7.6.1
  - CABALVER=1.16 GHCVER=7.6.2
