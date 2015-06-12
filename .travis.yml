@@ -10,10 +10,10 @@ env:
  - CABALVER=1.18 GHCVER=7.8.2
  - CABALVER=1.18 GHCVER=7.8.3
  - CABALVER=1.18 GHCVER=7.8.4
- - STACK=YES
  - CABALVER=1.22 GHCVER=7.10.1
  - CABALVER=1.22 GHCVER=7.10.2
  - CABALVER=head GHCVER=head
+ - STACK=STACK
 
 matrix:
  allow_failures:
@@ -30,15 +30,15 @@ install:
 # - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
 # - travis_retry cabal update
 # - cabal install --only-dependencies --enable-tests --enable-benchmarks
- - if [ -z "$STACK" ]; then travis_wait .travis/ins-cabal.sh; else travis_wait .travis/ins-stack.sh; fi
+ - if [ -z "$STACK" ]; then .travis/ins-cabal.sh; else .travis/ins-stack.sh; fi
 
 script:
- - if [ -n "$STACK" ]; then travis_wait sudo apt-get install libgmp3-dev git autoconf automake libtool make libgmp-dev ncurses-dev g++ python bzip2; fi
+ - if [ -n "$STACK" ]; then sudo apt-get install libgmp3-dev git autoconf automake libtool make libgmp-dev ncurses-dev g++ python bzip2; fi
  - if [ -n "$STACK" ]; then .travis/stack-build.sh; fi
- - if [ -n "$STACK" ]; then travis_wait stack test; fi
+ - if [ -n "$STACK" ]; then stack test; fi
  
  - if [ -z "$STACK" ]; then export PATH=/home/travis/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH; fi
- - if [ -z "$STACK" ]; then travis_wait .travis/scr-cabal.sh; fi
+ - if [ -z "$STACK" ]; then .travis/scr-cabal.sh; fi
 # - cabal configure --enable-tests -O0 --disable-library-profiling -v2
 # - cabal build
 # - cabal configure --enable-tests --enable-benchmarks -O0 --disable-library-profiling -v2
