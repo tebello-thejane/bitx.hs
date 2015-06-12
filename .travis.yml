@@ -34,7 +34,7 @@ install:
 
 script:
  - if [ -n "$STACK" ]; then travis_wait sudo apt-get install libgmp3-dev git autoconf automake libtool make libgmp-dev ncurses-dev g++ python bzip2; fi
- - if [ -n "$STACK" ]; then travis_wait stack build; fi
+ - if [ -n "$STACK" ]; then .travis/stack-build.sh; fi
  - if [ -n "$STACK" ]; then travis_wait stack test; fi
  
  - if [ -z "$STACK" ]; then export PATH=/home/travis/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH; fi
