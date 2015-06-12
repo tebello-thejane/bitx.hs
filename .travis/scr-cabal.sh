@@ -7,3 +7,6 @@ cabal build
 cabal configure --enable-tests --enable-benchmarks -O0 --disable-library-profiling -v2
 cabal test
 
+cabal check
+cabal sdist
+cabal install --force-reinstalls dist/*-*.tar.gz
