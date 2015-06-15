@@ -31,6 +31,7 @@ install:
 # - travis_retry cabal update
 # - cabal install --only-dependencies --enable-tests --enable-benchmarks
  - if [ -z "$STACK" ]; then .travis/ins-cabal.sh; else .travis/ins-stack.sh; fi
+ - if [ -n "$STACK" ]; then sudo stack setup; fi
 
 script:
  - if [ -n "$STACK" ]; then sudo apt-get install libgmp3-dev; fi
