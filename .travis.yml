@@ -19,6 +19,7 @@ matrix:
  allow_failures:
   - env: CABALVER=head GHCVER=head
   - env: CABALVER=1.22 GHCVER=7.10.2
+  - env: STACK=STACK
 
 #before_install:
 # - travis_retry sudo add-apt-repository -y ppa:hvr/ghc
