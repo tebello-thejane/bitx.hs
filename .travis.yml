@@ -24,7 +24,7 @@ install:
 
 script:
  - if [ -n "$STACK" ]; then .travis/stack-build.sh; fi
- - if [ -n "$STACK" ]; then stack test; fi
+ - if [ -n "$STACK" ]; then sudo stack test; fi
 
  - export PATH=/home/travis/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
  - if [ -z "$STACK" ]; then .travis/scr-cabal.sh; fi
