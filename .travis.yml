@@ -1,5 +1,3 @@
-# stolen from https://github.com/hvr/multi-ghc-travis
-
 sudo: required
 
 env:
@@ -19,30 +17,15 @@ matrix:
  allow_failures:
   - env: CABALVER=head GHCVER=head
   - env: CABALVER=1.22 GHCVER=7.10.2
-  - env: STACK=STACK
-
-#before_install:
-# - travis_retry sudo add-apt-repository -y ppa:hvr/ghc
-# - travis_retry sudo apt-get update
-# - travis_retry sudo apt-get install cabal-install-$CABALVER ghc-$GHCVER
-# - export PATH=/home/travis/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
 
 install:
-# - echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
-# - travis_retry cabal update
-# - cabal install --only-dependencies --enable-tests --enable-benchmarks
  - if [ -n "$STACK" ]; then sudo apt-get build-dep ghc; fi
  - if [ -z "$STACK" ]; then .travis/ins-cabal.sh; else .travis/ins-stack.sh; fi
- - if [ -n "$STACK" ]; then sudo stack setup; fi
 
 script:
  - if [ -n "$STACK" ]; then .travis/stack-build.sh; fi
- - if [ -n "$STACK" ]; then sudo stack test; fi
- 
+ - if [ -n "$STACK" ]; then stack test; fi
+
  - export PATH=/home/travis/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
  - if [ -z "$STACK" ]; then .travis/scr-cabal.sh; fi
-# - cabal configure --enable-tests -O0 --disable-library-profiling -v2
-# - cabal build
-# - cabal configure --enable-tests --enable-benchmarks -O0 --disable-library-profiling -v2
-# - cabal test --show-details=always --test-option=--color
 

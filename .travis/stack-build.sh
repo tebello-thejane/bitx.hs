@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo stack build &
+(sudo stack setup; sudo stack build) &
 pidA=$!
 
 minutes=0
