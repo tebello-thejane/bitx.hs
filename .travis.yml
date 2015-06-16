@@ -35,7 +35,7 @@ install:
  - if [ -n "$STACK" ]; then sudo stack setup; fi
 
 script:
- - if [ -n "$STACK" ]; then sudo apt-get install libgmp3-dev; fi
+ - if [ -n "$STACK" ]; then sudo apt-get build-dep ghc; fi
  - if [ -n "$STACK" ]; then .travis/stack-build.sh; fi
  - if [ -n "$STACK" ]; then stack test; fi
  
