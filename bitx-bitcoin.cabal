@@ -99,7 +99,7 @@ test-suite spec
                        bitx-bitcoin,
                        hspec == 2.*,
                        aeson,
-                       record,
+                       record == 0.3.*,
                        bytestring,
                        time
   other-modules:
