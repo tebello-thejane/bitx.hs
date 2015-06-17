@@ -1,7 +1,6 @@
 [![Build Status](https://travis-ci.org/tebello-thejane/bitx-haskell.svg?branch=master)](https://travis-ci.org/tebello-thejane/bitx-haskell)
 [![Hackage](https://budueba.com/hackage/bitx-bitcoin)](https://hackage.haskell.org/package/bitx-bitcoin)
-
-[![CC0 1.0 Universal (Public Domain)](http://i.creativecommons.org/p/zero/1.0/88x31.png)](http://creativecommons.org/publicdomain/zero/1.0/)
+[![CC0 Public Domain](http://b.repl.ca/v1/CC0-Public_Domain-brightgreen.png)](http://creativecommons.org/publicdomain/zero/1.0/)
 
 (Hopefully useful) Haskell bindings to the BitX bitcoin exchange's API.
 
