@@ -135,13 +135,15 @@ type Ticker =
 -- | A currency pair
 data CcyPair =
     XBTZAR -- ^ Bitcoin vs. ZAR
-    | XBTNAD -- ^  Bitcoin vs. Namibian Dollar
+    | XBTNAD -- ^ Bitcoin vs. Namibian Dollar
     | ZARXBT -- ^ ZAR vs. Namibian Dollar
     | NADXBT -- ^ Namibian Dollar vs. Bitcoin
     | XBTKES -- ^ Bitcoin vs. Kenyan Shilling
     | KESXBT -- ^ Kenyan Shilling vs Bitcoin
     | XBTMYR -- ^ Bitcoin vs. Malaysian Ringgit
     | MYRXBT -- ^ Malaysian Ringgit vs. Bitcoin
+    | XBTNGN -- ^ Bitcoin vs. Nigerian Naira
+    | NGNXBT -- ^ Nigerian Naira vs. Bitcoin
   deriving (Show, Generic, Eq)
 
 -- | A trade-able asset. Essentially, a currency.
@@ -151,6 +153,7 @@ data Asset =
     | XBT -- ^ Bitcoin
     | KES -- ^ Kenyan Shilling
     | MYR -- ^ Malaysian Ringgit
+    | NGN -- ^ Nigerian Naira
   deriving (Show, Generic, Eq)
 
 -- | The current state of the publically accessible orderbook.
