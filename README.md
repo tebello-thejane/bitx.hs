@@ -2,7 +2,7 @@
 [![Hackage](https://budueba.com/hackage/bitx-bitcoin)](https://hackage.haskell.org/package/bitx-bitcoin)
 [![CC0 Public Domain](http://b.repl.ca/v1/CC0-Public_Domain-brightgreen.png)](http://creativecommons.org/publicdomain/zero/1.0/)
 
-(Hopefully useful) Haskell bindings to the BitX bitcoin exchange's API.
+(Hopefully useful) Haskell bindings to the [BitX](https://bitx.co/) bitcoin exchange's [API](https://bitx.co/api).
 
 As a minimal example, to get the current selling price (in South African Rand) of bitcoin on the BitX exchange, do the following:
 
