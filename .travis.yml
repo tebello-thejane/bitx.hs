@@ -16,7 +16,6 @@ env:
 matrix:
  allow_failures:
   - env: CABALVER=head GHCVER=head
-  - env: CABALVER=1.22 GHCVER=7.10.2
 
 install:
  - sudo apt-get update
