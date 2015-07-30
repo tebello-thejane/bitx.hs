@@ -14,6 +14,7 @@ where
 import Network.Bitcoin.BitX.Types
 import Network.Bitcoin.BitX.Types.Internal
 import qualified Network.HTTP.Conduit as NetCon
+import Network.HTTP.Types (status503)
 import Network.HTTP.Conduit (Response(..), Request(..))
 import Control.Exception (try, SomeException)
 import qualified Data.Aeson as Aeson (decode)
@@ -106,3 +107,7 @@ bitXErrorOrPayload resp = fromJust $
     <|> Just (UnparseableResponse  resp)
     where
         body = NetCon.responseBody resp
+
+isRateLimited :: Either SomeException (NetCon.Response BL.ByteString) -> Bool
+isRateLimited (Left  _) = False
+isRateLimited (Right r) = (== status503) . NetCon.responseStatus $ r
