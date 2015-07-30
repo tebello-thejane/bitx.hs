@@ -10,3 +10,4 @@ cabal test
 cabal check
 cabal sdist
 cabal install --force-reinstalls dist/*-*.tar.gz
+cabal configure
