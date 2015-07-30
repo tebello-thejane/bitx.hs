@@ -2,6 +2,9 @@
 
 set -ev
 
+cabal --version
+ghc --version
+
 cabal configure --enable-tests -O0 --disable-library-profiling -v2
 cabal build
 cabal configure --enable-tests -O0 --disable-library-profiling -v2
