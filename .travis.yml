@@ -64,7 +64,8 @@ script:
       ghc --version
 
       cabal configure --enable-tests -O0 --disable-library-profiling -v2
-      cabal build
+      cabal install --only-dependencies
+      cabal install --enable-tests
       cabal test
 
       cabal check
