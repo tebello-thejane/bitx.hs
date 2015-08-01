@@ -138,6 +138,14 @@ instance BitXAesRecordConvert Ticker Ticker_ where
                   rolling24HourVolume = qsToScientific ticker'rolling_24_hour_volume,
                   pair = ticker'pair} |]
 
+instance BitXAesRecordConvert LensTicker Ticker_ where
+    aesToRec (Ticker_ {..}) =
+        LensTicker (tsmsToUTCTime ticker'timestamp)
+                  (qsToScientific ticker'bid)
+                  (qsToScientific ticker'ask)
+                  (qsToScientific ticker'last_trade)
+                  (qsToScientific ticker'rolling_24_hour_volume)
+                  ticker'pair
 --------------------------------------------- Tickers type -----------------------------------------
 
 data Tickers_ = Tickers_

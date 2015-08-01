@@ -43,7 +43,8 @@ module Network.Bitcoin.BitX.Public
     getTicker,
     getTickers,
     getOrderBook,
-    getTrades
+    getTrades,
+    getLensTicker
   ) where
 
 import Network.Bitcoin.BitX.Internal
@@ -54,6 +55,9 @@ import Network.Bitcoin.BitX.Response
 
 getTicker :: CcyPair -> IO (BitXAPIResponse Ticker)
 getTicker cyp = simpleBitXGet_ $ "ticker?pair=" ++ show cyp
+
+getLensTicker :: CcyPair -> IO (BitXAPIResponse LensTicker)
+getLensTicker cyp = simpleBitXGet_ $ "ticker?pair=" ++ show cyp
 
 {- | Returns the latest ticker indicators from all active BitX exchanges. -}
 

@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveGeneric, DefaultSignatures, QuasiQuotes, OverloadedStrings, DataKinds,
-    MultiParamTypeClasses #-}
+    MultiParamTypeClasses, TemplateHaskell, FunctionalDependencies #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -81,7 +81,15 @@ module Network.Bitcoin.BitX.Types
     QuoteType(..),
     BitXClientAuth,
     Transaction,
-    Account
+    Account,
+    LensTicker(..),
+
+    HasAsk(..),
+    HasTimestamp(..),
+    HasBid(..),
+    HasRolling24HourVolume(..),
+    HasPair(..),
+    HasLastTrade(..)
   ) where
 
 import Data.Aeson (FromJSON(..))
@@ -90,6 +98,7 @@ import Data.Time.Clock
 import Record
 import GHC.Generics (Generic)
 import Data.Scientific (Scientific)
+import Control.Lens.TH (makeFields)
 
 -- | A possible error which the BitX API might return,
 -- instead of returning the requested data. Note that as yet there is no
@@ -145,6 +154,17 @@ data CcyPair =
     | XBTNGN -- ^ Bitcoin vs. Nigerian Naira
     | NGNXBT -- ^ Nigerian Naira vs. Bitcoin
   deriving (Show, Generic, Eq)
+
+data LensTicker = LensTicker {
+    lensTickerTimestamp :: UTCTime,
+    lensTickerBid :: Scientific,
+    lensTickerAsk :: Scientific,
+    lensTickerLastTrade :: Scientific,
+    lensTickerRolling24HourVolume :: Scientific,
+    lensTickerPair :: CcyPair
+    } deriving (Show, Eq)
+
+makeFields ''LensTicker
 
 -- | A trade-able asset. Essentially, a currency.
 data Asset =

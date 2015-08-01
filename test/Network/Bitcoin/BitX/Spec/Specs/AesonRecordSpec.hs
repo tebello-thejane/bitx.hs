@@ -29,6 +29,17 @@ spec = do
              rolling24HourVolume = 19.776608,
              lastTrade = 3116.00,
              pair = XBTZAR} |] :: Ticker)
+    it "LensTicker is parsed properly" $ do
+      recordAesCheck
+        "{\"timestamp\":1431811395699,\"bid\":\"3083.00\",\"ask\":\"3115.00\",\
+            \ \"last_trade\":\"3116.00\",\"rolling_24_hour_volume\":\"19.776608\",\"pair\":\"XBTZAR\"}"
+        (LensTicker
+             (posixSecondsToUTCTime 1431811395.699)
+             3083.0
+             3115.00
+             3116.00
+             19.776608
+             XBTZAR)
     it "Balance is parsed properly" $ do
       recordAesCheck
         "{\"account_id\":\"314159\",\"asset\":\"ZAR\",\"balance\":\"2159.15\",\"reserved\":\"320\",\

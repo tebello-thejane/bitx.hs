@@ -14,6 +14,8 @@ import Network.Bitcoin.BitX.Response
 spec :: Spec
 spec = do
   describe "Public BitX connectivity" $ do
+    it "getLensTicker connects to BitX and works" $ do
+      connectsAndParsesOkay $ getLensTicker XBTZAR
     it "getTicker connects to BitX and works" $ do
       connectsAndParsesOkay $ getTicker XBTZAR
     it "getTickers connects to BitX and works" $ do
