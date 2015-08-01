@@ -9,6 +9,7 @@ cabal configure --enable-tests -O0 --disable-library-profiling -v2
 cabal build
 cabal configure --enable-tests -O0 --disable-library-profiling -v2
 cabal clean
+rm ~/.cabal/setup-exe-cache/*
 cabal test
 
 cabal check
