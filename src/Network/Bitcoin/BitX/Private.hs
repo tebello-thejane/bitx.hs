@@ -102,9 +102,9 @@ unconfirmed transactions. total_unconfirmed is the total sum of unconfirmed rece
 -}
 
 getFundingAddress :: BitXAuth -> Asset -> Maybe String -> IO (BitXAPIResponse FundingAddress)
-getFundingAddress auth asset addr = simpleBitXGetAuth_ auth url
+getFundingAddress auth fasset addr = simpleBitXGetAuth_ auth url
     where
-        url = "funding_address?asset=" ++ show asset ++ case addr of
+        url = "funding_address?asset=" ++ show fasset ++ case addr of
             Nothing -> ""
             Just ad -> "&address=" ++ ad
 
@@ -116,7 +116,7 @@ Allocates a new receive address to your account. There is a limit of 50 receive 
 -}
 
 newFundingAddress :: BitXAuth -> Asset -> IO (BitXAPIResponse FundingAddress)
-newFundingAddress auth asset = simpleBitXPOSTAuth_ auth asset "funding_address"
+newFundingAddress auth fasset = simpleBitXPOSTAuth_ auth fasset "funding_address"
 
 {- | Send Bitcoin from your account to a Bitcoin address or email address.
 

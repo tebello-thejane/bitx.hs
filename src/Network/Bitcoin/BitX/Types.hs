@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveGeneric, DefaultSignatures, QuasiQuotes, OverloadedStrings, DataKinds,
-    MultiParamTypeClasses, TemplateHaskell, FunctionalDependencies #-}
+    MultiParamTypeClasses, TemplateHaskell, FunctionalDependencies, FlexibleInstances #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -13,321 +13,99 @@
 --
 -- The types used for the various BitX API calls.
 --
--- Note that these are all `record` types, as provided by Nikita Volkov's
--- "Record" library. The main motivation for using the @record@ library was
--- to avoid using record field prefixes and other awkward hacks to get around
--- the fact that Haskell does not yet have a real records' system.
---
--- For example, the declaration of `BitXAuth` is
---
--- @
--- type BitXAuth =
---     ['record'|
---         {id :: 'Text',
---          secret :: 'Text'} |]
--- @
---
--- To declare a BitXAuth, one might use
---
--- @
--- myAuth :: BitXAuth
--- myAuth =
---     [record|
---         {id = "46793",
---          secret = "387ffBd56eEAA7C59"} |]
--- @
---
--- and to read the fields you would use
---
--- @
--- theID = 'view' ['lens'| id |] myAuth
--- @
---
--- Note that all uses of Volkov's `record`s requires importing "Record" and
--- enabling the 'DataKinds' and 'QuasiQuotes' extensions.
---
--- See <http://nikita-volkov.github.io/record/>
---
 -----------------------------------------------------------------------------
 
 module Network.Bitcoin.BitX.Types
   (
-    Ticker,
+    Ticker(..),
     CcyPair(..),
-    Orderbook,
-    Order,
+    Orderbook(..),
+    Order(..),
     Bid,
     Ask,
-    Trade,
-    BitXAuth,
-    PrivateOrder,
+    Trade(..),
+    BitXAuth(..),
+    PrivateOrder(..),
     OrderID,
     OrderType(..),
     RequestStatus(..),
-    OrderRequest,
+    OrderRequest(..),
     RequestSuccess,
-    BitXError,
-    PrivateOrderWithTrades,
+    BitXError(..),
+    PrivateOrderWithTrades(..),
     AccountID,
     Asset(..),
-    Balance,
-    FundingAddress,
-    WithdrawalRequest,
-    NewWithdrawal,
+    Balance(..),
+    FundingAddress(..),
+    WithdrawalRequest(..),
+    NewWithdrawal(..),
     WithdrawalType(..),
-    BitcoinSendRequest,
-    QuoteRequest,
-    OrderQuote,
+    BitcoinSendRequest(..),
+    QuoteRequest(..),
+    OrderQuote(..),
     QuoteType(..),
     BitXClientAuth,
-    Transaction,
-    Account,
-    LensTicker(..),
+    Transaction(..),
+    Account(..),
 
-    HasAsk(..),
+-- | Lens Has* instances for convenient record accessors
+    HasError(..),
+    HasErrorCode(..),
     HasTimestamp(..),
     HasBid(..),
+    HasAsk(..),
+    HasLastTrade(..),
     HasRolling24HourVolume(..),
     HasPair(..),
-    HasLastTrade(..)
+    HasVolume(..),
+    HasPrice(..),
+    HasBids(..),
+    HasAsks(..),
+    HasSecret(..),
+    HasId(..),
+    HasBase(..),
+    HasCounter(..),
+    HasCreationTimestamp(..),
+    HasExpirationTimestamp(..),
+    HasFeeBase(..),
+    HasFeeCounter(..),
+    HasLimitPrice(..),
+    HasState(..),
+    HasOrderType(..),
+    HasLimitVolume(..),
+    HasTrades(..),
+    HasRowIndex(..),
+    HasBalance(..),
+    HasAvailable(..),
+    HasBalanceDelta(..),
+    HasAvailableDelta(..),
+    HasCurrency(..),
+    HasDescription(..),
+    HasAsset(..),
+    HasReserved(..),
+    HasUnconfirmed(..),
+    HasAddress(..),
+    HasTotalReceived(..),
+    HasTotalUnconfirmed(..),
+    HasAmount(..),
+    HasWithdrawalType(..),
+    HasMessage(..),
+    HasQuoteType(..),
+    HasBaseAmount(..),
+    HasCounterAmount(..),
+    HasCreatedAt(..),
+    HasExpiresAt(..),
+    HasDiscarded(..),
+    HasExercised(..),
+    HasName(..)
   ) where
 
 import Data.Aeson (FromJSON(..))
 import Data.Text (Text)
 import Data.Time.Clock
-import Record
 import GHC.Generics (Generic)
 import Data.Scientific (Scientific)
 import Control.Lens.TH (makeFields)
-
--- | A possible error which the BitX API might return,
--- instead of returning the requested data. Note that as yet there is no
--- exhaustive list of error codes available, so comparisons will have to be
--- done via Text comparisons (as opposed to typed pattern matching). Sorry...
---
--- @
---type BitXError =
---    [record|
---        {error :: 'Text',
---         errorCode :: 'Text'} |]
--- @
-
-type BitXError =
-    [record|
-        {error :: Text,
-         errorCode :: Text} |]
-
--- | The state of a single market, identified by the currency pair.
--- As usual, the ask\/sell price is the price of the last filled ask order, and the bid\/buy price is
--- the price of the last filled bid order. Necessarily @bid <= ask.@
---
--- @
---type Ticker =
---    [record|
---        {ask :: 'Scientific',
---         timestamp :: 'UTCTime',
---         bid :: 'Scientific',
---         rolling24HourVolume :: 'Scientific',
---         lastTrade :: 'Scientific',
---         pair :: 'CcyPair'} |]
--- @
-
-type Ticker =
-    [record|
-        {ask :: Scientific,
-         timestamp :: UTCTime,
-         bid :: Scientific,
-         rolling24HourVolume :: Scientific,
-         lastTrade :: Scientific,
-         pair :: CcyPair} |]
-
--- | A currency pair
-data CcyPair =
-    XBTZAR -- ^ Bitcoin vs. ZAR
-    | XBTNAD -- ^ Bitcoin vs. Namibian Dollar
-    | ZARXBT -- ^ ZAR vs. Namibian Dollar
-    | NADXBT -- ^ Namibian Dollar vs. Bitcoin
-    | XBTKES -- ^ Bitcoin vs. Kenyan Shilling
-    | KESXBT -- ^ Kenyan Shilling vs Bitcoin
-    | XBTMYR -- ^ Bitcoin vs. Malaysian Ringgit
-    | MYRXBT -- ^ Malaysian Ringgit vs. Bitcoin
-    | XBTNGN -- ^ Bitcoin vs. Nigerian Naira
-    | NGNXBT -- ^ Nigerian Naira vs. Bitcoin
-  deriving (Show, Generic, Eq)
-
-data LensTicker = LensTicker {
-    lensTickerTimestamp :: UTCTime,
-    lensTickerBid :: Scientific,
-    lensTickerAsk :: Scientific,
-    lensTickerLastTrade :: Scientific,
-    lensTickerRolling24HourVolume :: Scientific,
-    lensTickerPair :: CcyPair
-    } deriving (Show, Eq)
-
-makeFields ''LensTicker
-
--- | A trade-able asset. Essentially, a currency.
-data Asset =
-    ZAR -- ^ South African Rand
-    | NAD -- ^ Namibian Dollar
-    | XBT -- ^ Bitcoin
-    | KES -- ^ Kenyan Shilling
-    | MYR -- ^ Malaysian Ringgit
-    | NGN -- ^ Nigerian Naira
-  deriving (Show, Generic, Eq)
-
--- | The current state of the publically accessible orderbook.
--- Bid orders are requests to buy, ask orders are requests to sell.
---
--- @
---type Orderbook =
---    [record|
---        {timestamp :: 'UTCTime',
---         bids :: ['Bid'],
---         asks :: ['Ask']} |]
--- @
-
-type Orderbook =
-    [record|
-        {timestamp :: UTCTime,
-         bids :: [Bid],
-         asks :: [Ask]} |]
-
--- | A single placed order in the orderbook
---
--- @
---type Order =
---    [record|
---        {volume :: 'Scientific',
---         price :: 'Scientific'} |]
--- @
-
-type Order =
-    [record|
-        {volume :: Scientific,
-         price :: Scientific} |]
-
--- | Convenient type alias for a bid order
-type Bid = Order
-
--- | Convenient type alias for an ask order
-type Ask = Order
-
-type Trade =
-    [record|
-        {volume :: Scientific,
-         timestamp :: UTCTime,
-         price :: Scientific} |]
-
--- | An auth type used by all private API calls, after authorisation.
---
--- @
---type BitXAuth =
---    [record|
---        {id :: 'Text',
---         secret :: 'Text'} |]
--- @
-type BitXAuth =
-    [record|
-        {id :: Text,
-         secret :: Text} |]
-
-type BitXClientAuth = BitXAuth
-
--- | A recently placed (private) order, containing a lot more information than is available on the
--- public order book.
---
--- @
---type PrivateOrder =
---    [record|
---        {base :: 'Scientific',
---         counter :: 'Scientific',
---         creationTimestamp :: 'UTCTime',
---         expirationTimestamp :: 'UTCTime',
---         feeBase :: 'Scientific',
---         feeCounter :: 'Scientific',
---         limitPrice :: 'Scientific',
---         limitVolume :: 'Scientific',
---         id :: 'OrderID',
---         pair :: 'CcyPair',
---         state :: 'RequestStatus',
---         type :: 'OrderType' } |]
--- @
-type PrivateOrder =
-    [record|
-        {base :: Scientific,
-         counter :: Scientific,
-         creationTimestamp :: UTCTime,
-         expirationTimestamp :: UTCTime,
-         feeBase :: Scientific,
-         feeCounter :: Scientific,
-         limitPrice :: Scientific,
-         limitVolume :: Scientific,
-         id :: OrderID,
-         pair :: CcyPair,
-         state :: RequestStatus,
-         type :: OrderType } |]
-
--- | A recently placed (private) order, containing a lot more information than is available on the
--- public order book, together with details of any trades which have (partially) filled it.
---
--- @
---type PrivateOrderWithTrades =
---    [record|
---        {base :: 'Scientific',
---         counter :: 'Scientific',
---         creationTimestamp :: 'UTCTime',
---         expirationTimestamp :: 'UTCTime',
---         feeBase :: 'Scientific',
---         feeCounter :: 'Scientific',
---         limitPrice :: 'Scientific',
---         limitVolume :: 'Scientific',
---         id :: 'OrderID',
---         pair :: 'CcyPair',
---         state :: 'RequestStatus',
---         type :: 'OrderType',
---         trades :: ['Trade'] } |]
--- @
-type PrivateOrderWithTrades =
-    [record|
-        {base :: Scientific,
-         counter :: Scientific,
-         creationTimestamp :: UTCTime,
-         expirationTimestamp :: UTCTime,
-         feeBase :: Scientific,
-         feeCounter :: Scientific,
-         limitPrice :: Scientific,
-         limitVolume :: Scientific,
-         id :: OrderID,
-         pair :: CcyPair,
-         state :: RequestStatus,
-         type :: OrderType,
-         trades :: [Trade] } |]
-
--- | A transaction on a private user account.
---
--- @
---type Transaction =
---    [record|
---        {rowIndex :: 'Int',
---         timestamp :: 'UTCTime',
---         balance :: 'Scientific',
---         available :: 'Scientific',
---         balanceDelta :: 'Scientific',
---         availableDelta :: 'Scientific',
---         currency :: 'Asset',
---         description :: 'Text'}|]
--- @
-type Transaction =
-    [record|
-        {rowIndex :: Int,
-         timestamp :: UTCTime,
-         balance :: Scientific,
-         available :: Scientific,
-         balanceDelta :: Scientific,
-         availableDelta :: Scientific,
-         currency :: Asset,
-         description :: Text}|]
 
 type OrderID = Text
 
@@ -346,162 +124,57 @@ data RequestStatus =
     -- an order removes it from the orderbook.
     deriving (Show, Generic, Eq)
 
--- | A request to place an order.
---
--- @
---type OrderRequest =
---    [record|
---        {pair :: 'CcyPair',
---         type :: 'OrderType',
---         volume :: 'Scientific',
---         price :: 'Scientific' } |]
--- @
-type OrderRequest =
-    [record|
-        {pair :: CcyPair,
-         type :: OrderType,
-         volume :: Scientific,
-         price :: Scientific } |]
-
 type AccountID = Text
 
--- | The current balance of a private account.
---
--- @
---type Balance =
---    [record|
---        {id :: 'AccountID',
---         asset :: 'Asset',
---         balance :: 'Scientific',
---         reserved :: 'Scientific',
---         unconfirmed :: 'Scientific' } |]
--- @
-type Balance =
-    [record|
-        {id :: AccountID,
-         asset :: Asset,
-         balance :: Scientific,
-         reserved :: Scientific,
-         unconfirmed :: Scientific } |]
+-- | A possible error which the BitX API might return,
+-- instead of returning the requested data. Note that as yet there is no
+-- exhaustive list of error codes available, so comparisons will have to be
+-- done via Text comparisons (as opposed to typed pattern matching). Sorry...
 
--- | A registered address for an acocunt.
---
--- @
---type FundingAddress =
---    [record|
---        {asset :: 'Asset',
---         address :: 'Text',
---         totalReceived :: 'Scientific',
---         totalUnconfirmed :: 'Scientific'} |]
--- @
-type FundingAddress =
-    [record|
-        {asset :: Asset,
-         address :: Text,
-         totalReceived :: Scientific,
-         totalUnconfirmed :: Scientific} |]
+data BitXError = BitXError {
+    bitXErrorError :: Text,
+    bitXErrorErrorCode :: Text
+    } deriving (Eq, Show)
 
--- | The state of a request to withdraw from an account.
---
--- @
---type WithdrawalRequest =
---    [record|
---        {status :: 'RequestStatus',
---         id :: 'Text' } |]
--- @
-type WithdrawalRequest =
-    [record|
-        {status :: RequestStatus,
-         id :: Text } |]
+makeFields ''BitXError
 
--- | A request to withdraw from an account.
---
--- @
---type NewWithdrawal =
---    [record|
---        {type :: 'WithdrawalType',
---         amount :: 'Scientific' } |]
--- @
-type NewWithdrawal =
-    [record|
-        {type :: WithdrawalType,
-         amount :: Scientific } |]
+-- | A currency pair
+data CcyPair =
+    XBTZAR -- ^ Bitcoin vs. ZAR
+    | XBTNAD -- ^ Bitcoin vs. Namibian Dollar
+    | ZARXBT -- ^ ZAR vs. Namibian Dollar
+    | NADXBT -- ^ Namibian Dollar vs. Bitcoin
+    | XBTKES -- ^ Bitcoin vs. Kenyan Shilling
+    | KESXBT -- ^ Kenyan Shilling vs Bitcoin
+    | XBTMYR -- ^ Bitcoin vs. Malaysian Ringgit
+    | MYRXBT -- ^ Malaysian Ringgit vs. Bitcoin
+    | XBTNGN -- ^ Bitcoin vs. Nigerian Naira
+    | NGNXBT -- ^ Nigerian Naira vs. Bitcoin
+  deriving (Show, Generic, Eq)
 
--- | A request to send bitcoin to a bitcoin address or email address.
---
--- @
---type BitcoinSendRequest =
---    [record|
---        {amount :: 'Scientific',
---         currency :: 'Asset',
---         address :: 'Text',
---         description :: 'Maybe' 'Text',
---         message :: 'Maybe' 'Text'} |]
--- @
-type BitcoinSendRequest =
-    [record|
-        {amount :: Scientific,
-         currency :: Asset,
-         address :: Text,
-         description :: Maybe Text,
-         message :: Maybe Text} |]
+-- | The state of a single market, identified by the currency pair.
+-- As usual, the ask\/sell price is the price of the last filled ask order, and the bid\/buy price is
+-- the price of the last filled bid order. Necessarily @bid <= ask.@
+data Ticker = Ticker {
+    tickerTimestamp :: UTCTime,
+    tickerBid :: Scientific,
+    tickerAsk :: Scientific,
+    tickerLastTrade :: Scientific,
+    tickerRolling24HourVolume :: Scientific,
+    tickerPair :: CcyPair
+    } deriving (Eq, Show)
 
--- | A request to lock in a quote.
---
--- @
---type QuoteRequest =
---    [record|
---        {type :: 'QuoteType',
---         pair :: 'CcyPair',
---         baseAmount :: 'Scientific'} |]
--- @
-type QuoteRequest =
-    [record|
-        {type :: QuoteType,
-         pair :: CcyPair,
-         baseAmount :: Scientific} |]
+makeFields ''Ticker
 
--- | A temporarily locked in quote.
---
--- @
---type OrderQuote =
---    [record|
---        {id :: 'Text',
---         type :: 'QuoteType',
---         pair :: 'CcyPair',
---         baseAmount :: 'Scientific',
---         counterAmount :: 'Scientific',
---         createdAt :: 'UTCTime',
---         expiresAt :: 'UTCTime',
---         discarded :: 'Bool',
---         exercised :: 'Bool'} |]
--- @
-type OrderQuote =
-    [record|
-        {id :: Text,
-         type :: QuoteType,
-         pair :: CcyPair,
-         baseAmount :: Scientific,
-         counterAmount :: Scientific,
-         createdAt :: UTCTime,
-         expiresAt :: UTCTime,
-         discarded :: Bool,
-         exercised :: Bool} |]
-
--- | A registered account.
---
--- @
---type Account =
---    [record|
---        {id :: Text,
---         name :: Text,
---         currency :: Asset} |]
--- @
-type Account =
-    [record|
-        {id :: Text,
-         name :: Text,
-         currency :: Asset} |]
+-- | A trade-able asset. Essentially, a currency.
+data Asset =
+    ZAR -- ^ South African Rand
+    | NAD -- ^ Namibian Dollar
+    | XBT -- ^ Bitcoin
+    | KES -- ^ Kenyan Shilling
+    | MYR -- ^ Malaysian Ringgit
+    | NGN -- ^ Nigerian Naira
+  deriving (Show, Generic, Eq)
 
 -- | The type of a withdrawal request.
 data WithdrawalType =
@@ -515,6 +188,179 @@ data WithdrawalType =
 data QuoteType = BUY | SELL deriving (Show, Generic, Eq)
 
 type RequestSuccess = Bool
+
+-- | A single placed order in the orderbook
+data Order = Order {
+    orderVolume :: Scientific,
+    orderPrice :: Scientific
+    } deriving (Eq, Show)
+
+makeFields ''Order
+
+-- | Convenient type alias for a bid order
+type Bid = Order
+
+-- | Convenient type alias for an ask order
+type Ask = Order
+
+-- | The current state of the publically accessible orderbook.
+-- Bid orders are requests to buy, ask orders are requests to sell.
+data Orderbook = Orderbook {
+    orderbookTimestamp :: UTCTime,
+    orderbookBids :: [Bid],
+    orderbookAsks :: [Ask]
+    } deriving (Eq, Show)
+
+makeFields ''Orderbook
+
+data Trade = Trade {
+    tradeTimestamp :: UTCTime,
+    tradeVolume :: Scientific,
+    tradePrice :: Scientific
+    } deriving (Eq, Show)
+
+makeFields ''Trade
+
+-- | An auth type used by all private API calls, after authorisation.
+data BitXAuth = BitXAuth
+        {bitXAuthId :: Text,
+         bitXAuthSecret :: Text} deriving (Eq, Show)
+
+makeFields ''BitXAuth
+
+type BitXClientAuth = BitXAuth
+
+-- | A recently placed (private) order, containing a lot more information than is available on the
+-- public order book.
+data PrivateOrder = PrivateOrder
+        {privateOrderBase :: Scientific,
+         privateOrderCounter :: Scientific,
+         privateOrderCreationTimestamp :: UTCTime,
+         privateOrderExpirationTimestamp :: UTCTime,
+         privateOrderFeeBase :: Scientific,
+         privateOrderFeeCounter :: Scientific,
+         privateOrderLimitPrice :: Scientific,
+         privateOrderLimitVolume :: Scientific,
+         privateOrderId :: OrderID,
+         privateOrderPair :: CcyPair,
+         privateOrderState :: RequestStatus,
+         privateOrderOrderType :: OrderType } deriving (Eq, Show)
+
+makeFields ''PrivateOrder
+
+-- | A recently placed (private) order, containing a lot more information than is available on the
+-- public order book, together with details of any trades which have (partially) filled it.
+data PrivateOrderWithTrades = PrivateOrderWithTrades
+        {privateOrderWithTradesBase :: Scientific,
+         privateOrderWithTradesCounter :: Scientific,
+         privateOrderWithTradesCreationTimestamp :: UTCTime,
+         privateOrderWithTradesExpirationTimestamp :: UTCTime,
+         privateOrderWithTradesFeeBase :: Scientific,
+         privateOrderWithTradesFeeCounter :: Scientific,
+         privateOrderWithTradesLimitPrice :: Scientific,
+         privateOrderWithTradesLimitVolume :: Scientific,
+         privateOrderWithTradesId :: OrderID,
+         privateOrderWithTradesPair :: CcyPair,
+         privateOrderWithTradesState :: RequestStatus,
+         privateOrderWithTradesOrderType :: OrderType,
+         privateOrderWithTradesTrades :: [Trade] } deriving (Eq, Show)
+
+makeFields ''PrivateOrderWithTrades
+
+-- | A transaction on a private user account.
+data Transaction = Transaction
+        {transactionRowIndex :: Int,
+         transactionTimestamp :: UTCTime,
+         transactionBalance :: Scientific,
+         transactionAvailable :: Scientific,
+         transactionBalanceDelta :: Scientific,
+         transactionAvailableDelta :: Scientific,
+         transactionCurrency :: Asset,
+         transactionDescription :: Text} deriving (Eq, Show)
+
+makeFields ''Transaction
+
+-- | A request to place an order.
+data OrderRequest = OrderRequest
+        {orderRequestPair :: CcyPair,
+         orderRequestOrderType :: OrderType,
+         orderRequestVolume :: Scientific,
+         orderRequestPrice :: Scientific } deriving (Eq, Show)
+
+makeFields ''OrderRequest
+
+-- | The current balance of a private account.
+data Balance = Balance
+        {balanceId :: AccountID,
+         balanceAsset :: Asset,
+         balanceBalance :: Scientific,
+         balanceReserved :: Scientific,
+         balanceUnconfirmed :: Scientific } deriving (Eq, Show)
+
+makeFields ''Balance
+
+-- | A registered address for an acocunt.
+data FundingAddress = FundingAddress
+        {fundingAddressAsset :: Asset,
+         fundingAddressAddress :: Text,
+         fundingAddressTotalReceived :: Scientific,
+         fundingAddressTotalUnconfirmed :: Scientific} deriving (Eq, Show)
+
+makeFields ''FundingAddress
+
+-- | The state of a request to withdraw from an account.
+data WithdrawalRequest = WithdrawalRequest
+        {withdrawalRequestStatus :: RequestStatus,
+         withdrawalRequestId :: Text } deriving (Eq, Show)
+
+makeFields ''WithdrawalRequest
+
+-- | A request to withdraw from an account.
+data NewWithdrawal = NewWithdrawal
+        {newWithdrawalWithdrawalType :: WithdrawalType,
+         newWithdrawalAmount :: Scientific } deriving (Eq, Show)
+
+makeFields ''NewWithdrawal
+
+-- | A request to send bitcoin to a bitcoin address or email address.
+data BitcoinSendRequest = BitcoinSendRequest
+        {bitcoinSendRequestAmount :: Scientific,
+         bitcoinSendRequestCurrency :: Asset,
+         bitcoinSendRequestAddress :: Text,
+         bitcoinSendRequestDescription :: Maybe Text,
+         bitcoinSendRequestMessage :: Maybe Text} deriving (Eq, Show)
+
+makeFields ''BitcoinSendRequest
+
+-- | A request to lock in a quote.
+data QuoteRequest = QuoteRequest
+        {quoteRequestQuoteType :: QuoteType,
+         quoteRequestPair :: CcyPair,
+         quoteRequestBaseAmount :: Scientific} deriving (Eq, Show)
+
+makeFields ''QuoteRequest
+
+-- | A temporarily locked in quote.
+data OrderQuote = OrderQuote
+        {orderQuoteId :: Text,
+         orderQuoteQuoteType :: QuoteType,
+         orderQuotePair :: CcyPair,
+         orderQuoteBaseAmount :: Scientific,
+         orderQuoteCounterAmount :: Scientific,
+         orderQuoteCreatedAt :: UTCTime,
+         orderQuoteExpiresAt :: UTCTime,
+         orderQuoteDiscarded :: Bool,
+         orderQuoteExercised :: Bool}
+
+makeFields ''OrderQuote
+
+-- | A registered account.
+data Account = Account
+        {accountId :: Text,
+         accountName :: Text,
+         accountCurrency :: Asset}
+
+makeFields ''Account
 
 instance FromJSON CcyPair
 

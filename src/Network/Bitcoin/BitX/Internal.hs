@@ -12,6 +12,7 @@ module Network.Bitcoin.BitX.Internal
 where
 
 import Network.Bitcoin.BitX.Types
+import qualified Network.Bitcoin.BitX.Types as Types
 import Network.Bitcoin.BitX.Types.Internal
 import qualified Network.HTTP.Conduit as NetCon
 import Network.HTTP.Types (status503)
@@ -22,12 +23,11 @@ import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString as BS
 import Data.Maybe (fromJust)
 import Network (withSocketsDo)
-import Record (lens)
-import Record.Lens (view)
 import qualified Data.Text.Encoding as Txt
 import qualified Data.Text as Txt
 import Network.Bitcoin.BitX.Response
 import Control.Applicative ((<|>))
+import Control.Lens
 #if MIN_VERSION_base(4,8,0)
 -- <$> is in base since 4.8 due to the AMP
 #else
@@ -49,8 +49,8 @@ simpleBitXGetAuth_ auth verb = withSocketsDo $ do
         :: IO (Either SomeException (Response BL.ByteString))
     return $ consumeResponseBody_ response
     where
-        userID = Txt.encodeUtf8 $ (view [lens| id |] auth)
-        userSecret = Txt.encodeUtf8 $ (view [lens| secret |] auth)
+        userID = Txt.encodeUtf8 $ (auth ^. Types.id)
+        userSecret = Txt.encodeUtf8 $ (auth ^. Types.secret)
 
 simpleBitXPOSTAuth_ :: (BitXAesRecordConvert rec aes, POSTEncodeable inprec) => BitXAuth -> inprec
     -> String -> IO (BitXAPIResponse rec)
@@ -63,8 +63,8 @@ simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $ do
         :: IO (Either SomeException (Response BL.ByteString))
     return $ consumeResponseBody_ response
     where
-        userID = Txt.encodeUtf8 $ (view [lens| id |] auth)
-        userSecret = Txt.encodeUtf8 $ (view [lens| secret |] auth)
+        userID = Txt.encodeUtf8 $ (auth ^. Types.id)
+        userSecret = Txt.encodeUtf8 $ (auth ^. Types.secret)
 
 simpleBitXMETHAuth_ :: BitXAesRecordConvert rec aes => BitXAuth -> BS.ByteString
     -> String -> IO (BitXAPIResponse rec)
@@ -76,8 +76,8 @@ simpleBitXMETHAuth_ auth meth verb = withSocketsDo $ do
         :: IO (Either SomeException (Response BL.ByteString))
     return $ consumeResponseBody_ response
     where
-        userID = Txt.encodeUtf8 $ (view [lens| id |] auth)
-        userSecret = Txt.encodeUtf8 $ (view [lens| secret |] auth)
+        userID = Txt.encodeUtf8 $ (auth ^. Types.id)
+        userSecret = Txt.encodeUtf8 $ (auth ^. Types.secret)
 
 simpleBitXGet_ :: BitXAesRecordConvert rec aes => String -> IO (BitXAPIResponse rec)
 simpleBitXGet_ verb = withSocketsDo $ do
