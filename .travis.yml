@@ -20,12 +20,55 @@ matrix:
 install:
  - sudo apt-get update
  - if [ -n "$STACK" ]; then sudo apt-get install libgmp-dev; fi
- - if [ -z "$STACK" ]; then .travis/ins-cabal.sh; else .travis/ins-stack.sh; fi
+ -|
+    if [ -z "$STACK" ]; then
+      sudo add-apt-repository -y ppa:hvr/ghc
+      sudo apt-get update
+      time sudo apt-get install cabal-install-$CABALVER ghc-$GHCVER
+      export PATH=/home/travis/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
+
+      echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
+      cabal update
+
+    else
+      wget -q -O- http://download.fpcomplete.com/ubuntu/fpco.key | sudo apt-key add -
+      echo 'deb http://download.fpcomplete.com/ubuntu/precise stable main'|sudo tee /etc/apt/sources.list.d/fpco.list
+      sudo apt-get update
+      sudo apt-get install stack -y
+    fi
 
 script:
- - if [ -n "$STACK" ]; then .travis/stack-build.sh; fi
- - if [ -n "$STACK" ]; then sudo stack test; fi
+ -|
+    if [ -n "$STACK" ]; then 
+      (sudo stack setup; sudo stack build) &
+      pidA=$!
+
+      minutes=0
+
+      while true; do sleep 60; ((minutes++)); echo -e "\033[0;32m$minutes minute(s) elapsed.\033[0m"; done &
+      pidB=$!
+
+      wait $pidA
+
+      echo -e "\033[0;32mstack build is finished.\033[0m"
+
+      kill -9 $pidB
+
+      sudo stack test
+    fi
 
  - export PATH=/home/travis/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
- - if [ -z "$STACK" ]; then .travis/scr-cabal.sh; fi
+ -|
+    if [ -z "$STACK" ]; then
+      cabal --version
+      ghc --version
+
+      cabal configure --enable-tests -O0 --disable-library-profiling -v2
+      cabal build
+      cabal test
+
+      cabal check
+      cabal sdist
+      cabal install --force-reinstalls dist/*-*.tar.gz
+    fi
 
