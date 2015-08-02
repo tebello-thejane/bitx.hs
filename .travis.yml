@@ -65,9 +65,9 @@ script:
       cabal --version
       ghc --version
 
-      cabal install --only-dependencies --enable-tests 
+      #cabal install --only-dependencies --enable-tests 
       #cabal configure --enable-tests 
-      cabal build 
+      #cabal build 
       echo -e "\033[0;32mTesting.\033[0m"
       cabal test 
 
