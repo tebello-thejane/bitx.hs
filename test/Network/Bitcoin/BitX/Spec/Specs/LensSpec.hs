@@ -165,11 +165,6 @@ _orderQuote = do
     let _ = x ^. BitX.exercised
     Nothing
 
---data Account = Account
---        {accountId :: Text,
---         accountName :: Text,
---         accountCurrency :: Asset}
-
 _account :: Maybe Int
 _account = do
     let x = BitX.Account "" "" ZAR
