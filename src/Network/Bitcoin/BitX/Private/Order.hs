@@ -46,9 +46,9 @@ This list is truncated after 100 items.
  -}
 
 getAllOrders :: BitXAuth -> Maybe CcyPair -> Maybe RequestStatus -> IO (BitXAPIResponse [PrivateOrder])
-getAllOrders auth pair status = simpleBitXGetAuth_ auth url
+getAllOrders auth cpair status = simpleBitXGetAuth_ auth url
     where
-        url = "listorders" ++ case (pair, status) of
+        url = "listorders" ++ case (cpair, status) of
             (Nothing, Nothing)  -> ""
             (Just pr, Nothing)  -> "?pair=" ++ show pr
             (Nothing, Just st)  -> "?state=" ++ show st

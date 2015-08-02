@@ -5,4 +5,5 @@
 *Find out why calling cancelWithdrawalRequest causes an internal server error during testing.
 *Investigate doing a private test suite (with creds ignored in .gitignore).
 *Think about using the new Record package?
+*Rate limiting handling
 

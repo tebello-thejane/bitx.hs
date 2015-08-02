@@ -1,3 +1,6 @@
+v0.3.0.0
+* Replaced Volkov records with lenses
+
 v0.2.0.0
 * Replaced Decimal with Scientific. BREAKING CHANGE.
 * Divided much of the Private module into smaller sub-modules. BREAKING CHANGE.

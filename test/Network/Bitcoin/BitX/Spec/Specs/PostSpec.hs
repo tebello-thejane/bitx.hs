@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, QuasiQuotes, DataKinds #-}
+{-# LANGUAGE OverloadedStrings, DataKinds #-}
 
 module Network.Bitcoin.BitX.Spec.Specs.PostSpec
     (
@@ -7,55 +7,54 @@ module Network.Bitcoin.BitX.Spec.Specs.PostSpec
 
 import Test.Hspec
 import Network.Bitcoin.BitX
-import Record
 
 spec :: Spec
-spec = do
+spec =
   describe "PostEncode test" $ do
-    it "OrderRequest is post-encoded properly" $ do
+    it "OrderRequest is post-encoded properly" $
         postEncode
-          ([record|
-            {pair = XBTZAR,
-             type = BID,
-             volume = 83.02,
-             price = 15.23 } |] :: OrderRequest)
+          OrderRequest
+            {orderRequestPair = XBTZAR,
+             orderRequestOrderType = BID,
+             orderRequestVolume = 83.02,
+             orderRequestPrice = 15.23 }
       `shouldBe`
         [("pair", "XBTZAR"),
          ("type", "BID"),
          ("volume", "83.02"),
          ("price", "15.23")]
-    it "Asset is post-encoded properly" $ do
+    it "Asset is post-encoded properly" $
         postEncode ZAR
       `shouldBe`
         [("asset", "ZAR")]
-    it "NewWithdrawal is post-encoded properly" $ do
+    it "NewWithdrawal is post-encoded properly" $
         postEncode
-          ([record|
-            {type = ZAR_EFT,
-             amount = 83.02} |] :: NewWithdrawal)
+          NewWithdrawal
+            {newWithdrawalWithdrawalType = ZAR_EFT,
+             newWithdrawalAmount = 83.02}
       `shouldBe`
         [("type", "ZAR_EFT"),
          ("amount", "83.02")]
-    it "BitcoinSendRequest is post-encoded properly" $ do
+    it "BitcoinSendRequest is post-encoded properly" $
         postEncode
-          ([record|
-            {amount = 83.02,
-             currency = XBT,
-             address = "ahglk98aslfk",
-             description = Just "Send some coinz to dis ere dude.",
-             message = Just "Dude, ere'z your coinz."} |] :: BitcoinSendRequest)
+          BitcoinSendRequest
+            {bitcoinSendRequestAmount = 83.02,
+             bitcoinSendRequestCurrency = XBT,
+             bitcoinSendRequestAddress = "ahglk98aslfk",
+             bitcoinSendRequestDescription = Just "Send some coinz to dis ere dude.",
+             bitcoinSendRequestMessage = Just "Dude, ere'z your coinz."}
       `shouldBe`
         [("amount", "83.02"),
          ("currency", "XBT"),
          ("address", "ahglk98aslfk"),
          ("description", "Send some coinz to dis ere dude."),
          ("message", "Dude, ere'z your coinz.")]
-    it "QuoteRequest is post-encoded properly" $ do
+    it "QuoteRequest is post-encoded properly" $
         postEncode
-          ([record|
-            {type = BUY,
-             pair = XBTKES,
-             baseAmount = 566.76} |] :: QuoteRequest)
+          QuoteRequest
+            {quoteRequestQuoteType = BUY,
+             quoteRequestPair = XBTKES,
+             quoteRequestBaseAmount = 566.76}
       `shouldBe`
         [("type", "BUY"),
          ("pair", "XBTKES"),
