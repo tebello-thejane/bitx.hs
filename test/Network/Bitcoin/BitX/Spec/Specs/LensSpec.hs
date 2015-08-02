@@ -12,9 +12,9 @@ import Network.Bitcoin.BitX.Types
 import Data.Time.Clock.POSIX
 
 spec :: Spec
-spec = do
-  describe "Lens functionality test" $ do
-    it "This file should just compile" $ do
+spec =
+  describe "Lens functionality test" $
+    it "This file should just compile" $
       True `shouldBe` True
 
 -- If this file compiles, then (hopefully) all the Has* classes have been created and exported properly
