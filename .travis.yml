@@ -22,24 +22,24 @@ install:
  - if [ -n "$STACK" ]; then sudo apt-get install libgmp-dev; fi
  - |
     if [ -z "$STACK" ]; then
-      sudo add-apt-repository -y ppa:hvr/ghc
-      sudo apt-get update
-      time sudo apt-get install cabal-install-$CABALVER ghc-$GHCVER
+      sudo add-apt-repository -y ppa:hvr/ghc &&
+      sudo apt-get update &&
+      time sudo apt-get install cabal-install-$CABALVER ghc-$GHCVER &&
       export PATH=/home/travis/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
 
       echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
       cabal update
 
     else
-      wget -q -O- http://download.fpcomplete.com/ubuntu/fpco.key | sudo apt-key add -
-      echo 'deb http://download.fpcomplete.com/ubuntu/precise stable main'|sudo tee /etc/apt/sources.list.d/fpco.list
-      sudo apt-get update
+      wget -q -O- http://download.fpcomplete.com/ubuntu/fpco.key | sudo apt-key add . &&
+      echo 'deb http://download.fpcomplete.com/ubuntu/precise stable main'|sudo tee /etc/apt/sources.list.d/fpco.list &&
+      sudo apt-get update &&
       sudo apt-get install stack -y
     fi
 
 script:
  - |
-    if [ -n "$STACK" ]; then 
+    if [ -n "$STACK" ]; then
       (sudo stack setup; sudo stack build) &
       pidA=$!
 
@@ -57,21 +57,19 @@ script:
       sudo stack test
     fi
 
- - export PATH=/home/travis/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
  - |
     if [ -z "$STACK" ]; then
       cabal --version
       ghc --version
 
-      
-      cabal install --only-dependencies --enable-tests
-      cabal configure --enable-tests
-      cabal build
+      cabal install --only-dependencies --enable-tests &&
+      cabal configure --enable-tests &&
+      cabal build &&
       echo -e "\033[0;32mTesting.\033[0m"
-      cabal test
+      cabal test &&
 
-      cabal check
-      cabal sdist
+      cabal check &&
+      cabal sdist &&
       cabal install --force-reinstalls dist/*-*.tar.gz
     fi
 
