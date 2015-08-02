@@ -40,9 +40,13 @@ bitXAPIPrefix = "https://api.mybitx.com/api/"
 bitXAPIRoot :: String
 bitXAPIRoot = bitXAPIPrefix ++ "1/"
 
+globalManager :: IO NetCon.Manager
+globalManager = NetCon.newManager NetCon.tlsManagerSettings
+
 simpleBitXGetAuth_ :: BitXAesRecordConvert rec aes => BitXAuth -> String -> IO (BitXAPIResponse rec)
 simpleBitXGetAuth_ auth verb = withSocketsDo $ do
-    response <- try . NetCon.withManager . NetCon.httpLbs . NetCon.applyBasicAuth
+    manager <- globalManager
+    response <- try . (flip NetCon.httpLbs) manager . NetCon.applyBasicAuth
           userID
           userSecret
         . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb)
@@ -55,7 +59,8 @@ simpleBitXGetAuth_ auth verb = withSocketsDo $ do
 simpleBitXPOSTAuth_ :: (BitXAesRecordConvert rec aes, POSTEncodeable inprec) => BitXAuth -> inprec
     -> String -> IO (BitXAPIResponse rec)
 simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $ do
-    response <- try . NetCon.withManager . NetCon.httpLbs . NetCon.applyBasicAuth
+    manager <- globalManager
+    response <- try . (flip NetCon.httpLbs) manager . NetCon.applyBasicAuth
           userID
           userSecret
         . NetCon.urlEncodedBody (postEncode encrec)
@@ -70,7 +75,8 @@ simpleBitXMETHAuth_ :: BitXAesRecordConvert rec aes => BitXAuth -> BS.ByteString
     -> String -> IO (BitXAPIResponse rec)
 simpleBitXMETHAuth_ auth meth verb = withSocketsDo $ do
     let initReq = (fromJust (NetCon.parseUrl $ (bitXAPIRoot ++ verb))) { method = meth }
-    response <- try . NetCon.withManager . NetCon.httpLbs . NetCon.applyBasicAuth
+    manager <- globalManager
+    response <- try . (flip NetCon.httpLbs) manager . NetCon.applyBasicAuth
           userID
           userSecret $ initReq
         :: IO (Either SomeException (Response BL.ByteString))
@@ -81,7 +87,8 @@ simpleBitXMETHAuth_ auth meth verb = withSocketsDo $ do
 
 simpleBitXGet_ :: BitXAesRecordConvert rec aes => String -> IO (BitXAPIResponse rec)
 simpleBitXGet_ verb = withSocketsDo $ do
-    resp <- try . NetCon.withManager . NetCon.httpLbs
+    manager <- globalManager
+    resp <- try . (flip NetCon.httpLbs) manager
         . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb)
         :: IO (Either SomeException (Response BL.ByteString))
     return $ consumeResponse resp
