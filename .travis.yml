@@ -63,9 +63,10 @@ script:
       cabal --version
       ghc --version
 
-      cabal configure --enable-tests -O0 --disable-library-profiling -v2
+      
       cabal install --only-dependencies --enable-tests
       cabal build
+      echo -e "\033[0;32mTesting.\033[0m"
       cabal test
 
       cabal check
