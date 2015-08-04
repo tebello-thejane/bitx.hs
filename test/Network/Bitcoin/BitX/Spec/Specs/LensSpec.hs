@@ -6,7 +6,7 @@ module Network.Bitcoin.BitX.Spec.Specs.LensSpec
     ) where
 
 import Test.Hspec
-import Control.Lens
+import Lens.Micro
 import qualified Network.Bitcoin.BitX as BitX
 import Network.Bitcoin.BitX.Types
 import Data.Time.Clock.POSIX

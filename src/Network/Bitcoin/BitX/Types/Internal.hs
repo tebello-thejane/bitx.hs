@@ -20,7 +20,7 @@ import qualified Data.Text.Encoding as Txt
 import Data.Text (Text)
 import Data.Time.Clock (UTCTime)
 import Data.Time.Clock.POSIX (posixSecondsToUTCTime)
-import Control.Lens ((^.))
+import Lens.Micro ((^.))
 #if MIN_VERSION_base(4,8,0)
 -- base 4.8 re-exports Monoid and its functions/constants
 #else

@@ -105,7 +105,7 @@ import Data.Text (Text)
 import Data.Time.Clock
 import GHC.Generics (Generic)
 import Data.Scientific (Scientific)
-import Control.Lens.TH (makeFields)
+import Lens.Micro.TH (makeFields)
 
 type OrderID = Text
 

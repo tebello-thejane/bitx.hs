@@ -27,7 +27,7 @@ import qualified Data.Text.Encoding as Txt
 import qualified Data.Text as Txt
 import Network.Bitcoin.BitX.Response
 import Control.Applicative ((<|>))
-import Control.Lens
+import Lens.Micro
 #if MIN_VERSION_base(4,8,0)
 -- <$> is in base since 4.8 due to the AMP
 #else
