@@ -18,6 +18,17 @@
 -- useful 'record', a 'BitXError' if BitX actually returned an error, or 'Nothing' if some exception
 -- occured (or if the data returned by BitX was unparseable).
 --
+-- It would probably be best to create the 'BitXAuth' record using the constructor 'mkBitXAuth' and
+-- lens setters:
+--
+-- @
+-- let auth = mkBitXAuth
+--              '&' BitX.id '.~' "dude"
+--              & BitX.secret .~ "mySecret"
+-- let resp = BitX.getBalances auth
+-- ...
+-- @
+--
 -- =Permissions
 --
 -- Each API key is granted a set of permissions when it is created. The key can only be used to call

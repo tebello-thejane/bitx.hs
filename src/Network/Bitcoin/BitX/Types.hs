@@ -48,7 +48,31 @@ module Network.Bitcoin.BitX.Types
     Transaction(..),
     Account(..),
 
--- | Lens Has* instances for convenient record accessors
+-- | Convenient constructors for records which serve as input parameters to functions. These are not
+--   completely safe (since you can forget to set a field and the Haskell compiler won't notice),
+--   but they are a bit more convenient than dealing with the raw records directly, as long as
+--   you're careful.
+    mkBitXAuth,
+    mkAccount,
+    mkBitcoinSendRequest,
+    mkOrderRequest,
+    mkQuoteRequest,
+    mkNewWithdrawal,
+
+-- | Lens @Has*@ instances for convenient record accessors and mutators.
+--
+--   For a broader view of how these function (and why you can generally ignore them) see the
+--   documentation for 'lens''s 'Control.Lens.TH.makeFields'.
+--
+--   Essentially, an instance declaration of the form
+--
+-- @
+-- instance HasFoo MyRecord Int
+-- @
+--   implies that we can pretend that the data type @MyRecord@ has a field called @Foo@ of type @Int@
+--   (although in reality the field would be called @myRecordFoo@ or such), and that there exists a
+--   lens called @foo@ which can be used -- among other things -- as a setter and getter on
+--   @MyRecord@.
     HasError(..),
     HasErrorCode(..),
     HasTimestamp(..),
@@ -226,6 +250,9 @@ data BitXAuth = BitXAuth
         {bitXAuthId :: Text,
          bitXAuthSecret :: Text} deriving (Eq, Show)
 
+mkBitXAuth :: BitXAuth
+mkBitXAuth = BitXAuth "" ""
+
 makeFields ''BitXAuth
 
 type BitXClientAuth = BitXAuth
@@ -289,6 +316,9 @@ data OrderRequest = OrderRequest
 
 makeFields ''OrderRequest
 
+mkOrderRequest :: OrderRequest
+mkOrderRequest = OrderRequest ZARXBT BID 0 0
+
 -- | The current balance of a private account.
 data Balance = Balance
         {balanceId :: AccountID,
@@ -322,6 +352,9 @@ data NewWithdrawal = NewWithdrawal
 
 makeFields ''NewWithdrawal
 
+mkNewWithdrawal :: NewWithdrawal
+mkNewWithdrawal = NewWithdrawal ZAR_EFT 0
+
 -- | A request to send bitcoin to a bitcoin address or email address.
 data BitcoinSendRequest = BitcoinSendRequest
         {bitcoinSendRequestAmount :: Scientific,
@@ -332,6 +365,9 @@ data BitcoinSendRequest = BitcoinSendRequest
 
 makeFields ''BitcoinSendRequest
 
+mkBitcoinSendRequest :: BitcoinSendRequest
+mkBitcoinSendRequest = BitcoinSendRequest 0 ZAR "" Nothing Nothing
+
 -- | A request to lock in a quote.
 data QuoteRequest = QuoteRequest
         {quoteRequestQuoteType :: QuoteType,
@@ -340,7 +376,10 @@ data QuoteRequest = QuoteRequest
 
 makeFields ''QuoteRequest
 
--- | A temporarily locked in quote.
+mkQuoteRequest :: QuoteRequest
+mkQuoteRequest = QuoteRequest BUY ZARXBT 0
+
+-- | A temporarily locked-in quote.
 data OrderQuote = OrderQuote
         {orderQuoteId :: Text,
          orderQuoteQuoteType :: QuoteType,
@@ -361,6 +400,9 @@ data Account = Account
          accountCurrency :: Asset}
 
 makeFields ''Account
+
+mkAccount :: Account
+mkAccount = Account "" "" ZAR
 
 instance FromJSON CcyPair
 
