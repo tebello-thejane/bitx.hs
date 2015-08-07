@@ -1,7 +1,7 @@
-resolver: lts-2.20
+resolver: lts-2.21
 flags: {}
 packages:
 - '.'
 extra-deps:
-  - microlens-0.1.2.0
-  - microlens-th-0.1.2.0
+  - microlens-0.2.0.0
+  - microlens-th-0.2.1.0
