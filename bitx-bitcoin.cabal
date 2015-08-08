@@ -103,7 +103,6 @@ test-suite spec
                        aeson,
                        bytestring,
                        time,
-                       mtl,
                        microlens
   other-modules:
     Network.Bitcoin.BitX.Spec.Common
@@ -111,4 +110,5 @@ test-suite spec
     Network.Bitcoin.BitX.Spec.Specs.NetSpec
     Network.Bitcoin.BitX.Spec.Specs.PostSpec
     Network.Bitcoin.BitX.Spec.Specs.JsonSpec
+    Network.Bitcoin.BitX.Spec.Specs.LensSpec
 

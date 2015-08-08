@@ -1,5 +1,6 @@
 v0.3.0.0
-* Replaced Volkov records with (micro)lenses
+* Replaced Volkov records with (micro)lenses. BREAKING CHANGE.
+* Implemented a (naive) mechanism to work around nginx rate limiting.
 
 v0.2.0.0
 * Replaced Decimal with Scientific. BREAKING CHANGE.

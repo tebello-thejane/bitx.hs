@@ -6,7 +6,6 @@ module Network.Bitcoin.BitX.Internal
     simpleBitXGet_,
     simpleBitXPOSTAuth_,
     simpleBitXMETHAuth_,
-    consumeResponseBody_,
     bitXAPIPrefix
     )
 where
@@ -15,9 +14,9 @@ import Network.Bitcoin.BitX.Types
 import qualified Network.Bitcoin.BitX.Types as Types
 import Network.Bitcoin.BitX.Types.Internal
 import qualified Network.HTTP.Conduit as NetCon
---import Network.HTTP.Types (status503)
+import Network.HTTP.Types (status503)
 import Network.HTTP.Conduit (Response(..), Request(..))
-import Control.Exception (try, SomeException)
+import Control.Exception (try)
 import qualified Data.Aeson as Aeson (decode)
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString as BS
@@ -27,7 +26,8 @@ import qualified Data.Text.Encoding as Txt
 import qualified Data.Text as Txt
 import Network.Bitcoin.BitX.Response
 import Control.Applicative ((<|>))
-import Lens.Micro
+import Lens.Micro ((^.))
+import Control.Concurrent (threadDelay)
 #if MIN_VERSION_base(4,8,0)
 -- <$> is in base since 4.8 due to the AMP
 #else
@@ -43,7 +43,7 @@ bitXAPIRoot = bitXAPIPrefix ++ "1/"
 globalManager :: IO NetCon.Manager
 globalManager = NetCon.newManager NetCon.tlsManagerSettings
 
-authConnect :: BitXAuth -> NetCon.Manager -> Request -> IO (Either SomeException (Response BL.ByteString))
+authConnect :: BitXAuth -> NetCon.Manager -> Request -> IO (Either NetCon.HttpException (Response BL.ByteString))
 authConnect auth manager = do
     try . (flip NetCon.httpLbs) manager . NetCon.applyBasicAuth userID userSecret
     where
@@ -53,49 +53,53 @@ authConnect auth manager = do
 simpleBitXGetAuth_ :: BitXAesRecordConvert rec aes => BitXAuth -> String -> IO (BitXAPIResponse rec)
 simpleBitXGetAuth_ auth verb = withSocketsDo $ do
     manager <- globalManager
-    response <- authConnect auth manager
-        . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb)
-        :: IO (Either SomeException (Response BL.ByteString))
-    return $ consumeResponseBody_ response
+    rateLimit (\v -> authConnect auth manager
+        . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ v))
+      consumeResponseIO verb
 
 simpleBitXPOSTAuth_ :: (BitXAesRecordConvert rec aes, POSTEncodeable inprec) => BitXAuth -> inprec
     -> String -> IO (BitXAPIResponse rec)
 simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $ do
     manager <- globalManager
-    response <- authConnect auth manager
+    rateLimit (\v -> authConnect auth manager
         . NetCon.urlEncodedBody (postEncode encrec)
-        . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb)
-        :: IO (Either SomeException (Response BL.ByteString))
-    return $ consumeResponseBody_ response
+        . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ v))
+      consumeResponseIO verb
 
 simpleBitXMETHAuth_ :: BitXAesRecordConvert rec aes => BitXAuth -> BS.ByteString
     -> String -> IO (BitXAPIResponse rec)
 simpleBitXMETHAuth_ auth meth verb = withSocketsDo $ do
-    let initReq = (fromJust (NetCon.parseUrl $ (bitXAPIRoot ++ verb))) { method = meth }
     manager <- globalManager
-    response <- authConnect auth manager initReq
-        :: IO (Either SomeException (Response BL.ByteString))
-    return $ consumeResponseBody_ response
+    rateLimit (\v ->
+        authConnect auth manager (fromJust (NetCon.parseUrl $ (bitXAPIRoot ++ v))) { method = meth })
+      consumeResponseIO verb
 
 simpleBitXGet_ :: BitXAesRecordConvert rec aes => String -> IO (BitXAPIResponse rec)
 simpleBitXGet_ verb = withSocketsDo $ do
     manager <- globalManager
-    resp <- try . (flip NetCon.httpLbs) manager
-        . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb)
-        :: IO (Either SomeException (Response BL.ByteString))
-    return $ consumeResponse resp
+    rateLimit (\v -> try . (flip NetCon.httpLbs) manager
+        . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ v))
+      consumeResponseIO verb
 
-consumeResponse :: BitXAesRecordConvert rec aes => Either SomeException (NetCon.Response BL.ByteString)
-    -> BitXAPIResponse rec
-consumeResponse resp =
-    case resp of
-        Left ex -> ExceptionResponse . Txt.pack . show $ ex
-        Right k -> bitXErrorOrPayload k
+rateLimit :: (a -> IO (Either NetCon.HttpException c)) -> (Either NetCon.HttpException c -> IO d) -> a -> IO d
+rateLimit act1 act2 verb = go 500000
+    where
+        go del = do
+            resp <- act1 verb
+            if isRateLimited resp then do
+                if del > maxLimit
+                    then act2 resp
+                    else do
+                        threadDelay del
+                        go (incDelay del)
+            else act2 resp
+        maxLimit = (30 * 1000 * 1000) -- 30 seconds probably means something else is wrong...
+        incDelay = round . (* (1.5 :: Double)) . fromIntegral
 
-consumeResponseBody_ :: BitXAesRecordConvert rec aes => Either SomeException (NetCon.Response BL.ByteString)
-    -> BitXAPIResponse rec
-consumeResponseBody_ resp =
-    case resp of
+consumeResponseIO :: BitXAesRecordConvert rec aes => Either NetCon.HttpException (NetCon.Response BL.ByteString)
+    -> IO (BitXAPIResponse rec)
+consumeResponseIO resp =
+    return $ case resp of
         Left ex -> ExceptionResponse . Txt.pack . show $ ex
         Right k -> bitXErrorOrPayload k
 
@@ -107,6 +111,6 @@ bitXErrorOrPayload resp = fromJust $
     where
         body = NetCon.responseBody resp
 
---isRateLimited :: Either SomeException (NetCon.Response BL.ByteString) -> Bool
---isRateLimited (Left  _) = False
---isRateLimited (Right r) = (== status503) . NetCon.responseStatus $ r
+isRateLimited :: Either NetCon.HttpException a -> Bool
+isRateLimited (Left  (NetCon.StatusCodeException st _ _)) = st == status503
+isRateLimited _ = False
