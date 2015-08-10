@@ -13,11 +13,11 @@
 -- As a small example, to get the current selling price of bitcoin on the BitX exchange, do the following:
 --
 -- @
---{-\# LANGUAGE QuasiQuotes \#-}
+--{-# LANGUAGE DataKinds #-}
 --
---import Record.Lens (view)
---import Record (lens)
+--import Control.Lens ((^.))
 --import Network.Bitcoin.BitX (BitXAPIResponse(..), getTicker, CcyPair(..))
+--import qualified Network.Bitcoin.BitX as BitX
 --import Data.Text (unpack)
 --import Network.HTTP.Types.Status (Status(..))
 --import Network.HTTP.Conduit (responseStatus)
@@ -26,14 +26,13 @@
 --main = do
 --  bitXResponse <- getTicker XBTZAR
 --  case bitXResponse of
---    ValidResponse tic        -> print (view [lens| ask |] tic)
+--    ValidResponse tic        -> print (tic ^. BitX.ask)
 --    ErrorResponse err        ->
---        error $ "BitX error received: \"" ++ (unpack (view [lens| error |] err)) ++ "\""
+--        error $ "BitX error received: \"" ++ unpack (err ^. BitX.error) ++ "\""
 --    ExceptionResponse ex     ->
---        error $ "Exception was thrown: \"" ++ (unpack ex) ++ "\""
+--        error $ "Exception was thrown: \"" ++ unpack ex ++ "\""
 --    UnparseableResponse resp ->
---        error $ "Bad HTTP response; HTTP status code was: \""
---                  ++ (show . statusCode . responseStatus $ resp) ++ "\""
+--        error $ "Bad HTTP response; HTTP status code was: \"" ++ (show . statusCode . responseStatus $ resp) ++ "\""
 -- @
 --
 -----------------------------------------------------------------------------

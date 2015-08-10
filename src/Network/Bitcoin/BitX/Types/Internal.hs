@@ -5,10 +5,8 @@ module Network.Bitcoin.BitX.Types.Internal
     (
     BitXAesRecordConvert(..),
     POSTEncodeable(..),
-    --showableToBytestring_,
     Transaction_(..),
-    pendingTransactionsToTransactions,
-    PendingTransactions__
+    pendingTransactionsToTransactions
     )
 where
 
@@ -27,7 +25,6 @@ import Lens.Micro ((^.))
 import Data.Monoid (mempty)
 #endif
 import Data.Scientific (Scientific)
---import Data.Scientific (Scientific)
 import Data.ByteString (ByteString)
 import Data.List.Split (splitOn)
 #if MIN_VERSION_base(4,7,0)
@@ -127,15 +124,6 @@ data Ticker_ = Ticker_
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
     ''Ticker_)
-
---instance BitXAesRecordConvert Ticker Ticker_ where
---    aesToRec (Ticker_ {..}) =
---        [record| {timestamp = tsmsToUTCTime ticker'timestamp,
---                  bid = qsToScientific ticker'bid,
---                  ask = qsToScientific ticker'ask,
---                  lastTrade = qsToScientific ticker'last_trade,
---                  rolling24HourVolume = qsToScientific ticker'rolling_24_hour_volume,
---                  pair = ticker'pair} |]
 
 instance BitXAesRecordConvert Types.Ticker Ticker_ where
     aesToRec (Ticker_ {..}) =

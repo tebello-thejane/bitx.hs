@@ -1,4 +1,4 @@
-{-# LANGUAGE DeriveGeneric, DefaultSignatures, QuasiQuotes, OverloadedStrings, DataKinds,
+{-# LANGUAGE DeriveGeneric, QuasiQuotes, OverloadedStrings, DataKinds,
     MultiParamTypeClasses, TemplateHaskell, FunctionalDependencies, FlexibleInstances #-}
 
 -----------------------------------------------------------------------------
@@ -144,7 +144,7 @@ data RequestStatus =
     PENDING -- ^ Not yet completed. An order will stay in 'PENDING' state even as it is partially
     -- filled, and will move to 'COMPLETE' once it has been completely filled.
     | COMPLETE -- ^ Completed.
-    | CANCELLED -- ^ Cancelled. Note that an order cannot be in  'CANCELLED' state, since cancelling
+    | CANCELLED -- ^ Cancelled. Note that an order cannot be in 'CANCELLED' state, since cancelling
     -- an order removes it from the orderbook.
     deriving (Show, Generic, Eq)
 
@@ -250,6 +250,7 @@ data BitXAuth = BitXAuth
         {bitXAuthId :: Text,
          bitXAuthSecret :: Text} deriving (Eq, Show)
 
+-- |@mkBitXAuth = BitXAuth "" ""@
 mkBitXAuth :: BitXAuth
 mkBitXAuth = BitXAuth "" ""
 
@@ -316,6 +317,7 @@ data OrderRequest = OrderRequest
 
 makeFields ''OrderRequest
 
+-- |@mkOrderRequest = OrderRequest ZARXBT BID 0 0@
 mkOrderRequest :: OrderRequest
 mkOrderRequest = OrderRequest ZARXBT BID 0 0
 
@@ -352,6 +354,7 @@ data NewWithdrawal = NewWithdrawal
 
 makeFields ''NewWithdrawal
 
+-- |@mkNewWithdrawal = NewWithdrawal ZAR_EFT 0@
 mkNewWithdrawal :: NewWithdrawal
 mkNewWithdrawal = NewWithdrawal ZAR_EFT 0
 
@@ -365,6 +368,7 @@ data BitcoinSendRequest = BitcoinSendRequest
 
 makeFields ''BitcoinSendRequest
 
+-- |@mkBitcoinSendRequest = BitcoinSendRequest 0 ZAR "" Nothing Nothing@
 mkBitcoinSendRequest :: BitcoinSendRequest
 mkBitcoinSendRequest = BitcoinSendRequest 0 ZAR "" Nothing Nothing
 
@@ -376,6 +380,7 @@ data QuoteRequest = QuoteRequest
 
 makeFields ''QuoteRequest
 
+-- |@mkQuoteRequest = QuoteRequest BUY ZARXBT 0@
 mkQuoteRequest :: QuoteRequest
 mkQuoteRequest = QuoteRequest BUY ZARXBT 0
 
@@ -401,6 +406,7 @@ data Account = Account
 
 makeFields ''Account
 
+-- |@mkAccount = Account "" "" ZAR@
 mkAccount :: Account
 mkAccount = Account "" "" ZAR
 

@@ -43,50 +43,50 @@ bitXAPIRoot = bitXAPIPrefix ++ "1/"
 globalManager :: IO NetCon.Manager
 globalManager = NetCon.newManager NetCon.tlsManagerSettings
 
-authConnect :: BitXAuth -> NetCon.Manager -> Request -> IO (Either NetCon.HttpException (Response BL.ByteString))
-authConnect auth manager = do
-    try . (flip NetCon.httpLbs) manager . NetCon.applyBasicAuth userID userSecret
+authConnect :: BitXAuth -> Request -> IO (Either NetCon.HttpException (Response BL.ByteString))
+authConnect auth req = do
+    manager <- globalManager
+    try . (flip NetCon.httpLbs) manager . NetCon.applyBasicAuth userID userSecret $ req
     where
         userID = Txt.encodeUtf8 $ (auth ^. Types.id)
         userSecret = Txt.encodeUtf8 $ (auth ^. Types.secret)
 
 simpleBitXGetAuth_ :: BitXAesRecordConvert rec aes => BitXAuth -> String -> IO (BitXAPIResponse rec)
 simpleBitXGetAuth_ auth verb = withSocketsDo $ do
-    manager <- globalManager
-    rateLimit (\v -> authConnect auth manager
-        . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ v))
-      consumeResponseIO verb
+    rateLimit
+        (authConnect auth
+            . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb))
+        consumeResponseIO
 
 simpleBitXPOSTAuth_ :: (BitXAesRecordConvert rec aes, POSTEncodeable inprec) => BitXAuth -> inprec
     -> String -> IO (BitXAPIResponse rec)
 simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $ do
-    manager <- globalManager
-    rateLimit (\v -> authConnect auth manager
-        . NetCon.urlEncodedBody (postEncode encrec)
-        . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ v))
-      consumeResponseIO verb
+    rateLimit
+        (authConnect auth
+            . NetCon.urlEncodedBody (postEncode encrec)
+            . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb))
+        consumeResponseIO
 
 simpleBitXMETHAuth_ :: BitXAesRecordConvert rec aes => BitXAuth -> BS.ByteString
     -> String -> IO (BitXAPIResponse rec)
 simpleBitXMETHAuth_ auth meth verb = withSocketsDo $ do
-    manager <- globalManager
-    rateLimit (\v ->
-        authConnect auth manager (fromJust (NetCon.parseUrl $ (bitXAPIRoot ++ v))) { method = meth })
-      consumeResponseIO verb
+    rateLimit
+        (authConnect auth (fromJust (NetCon.parseUrl $ (bitXAPIRoot ++ verb))) { method = meth })
+        consumeResponseIO
 
 simpleBitXGet_ :: BitXAesRecordConvert rec aes => String -> IO (BitXAPIResponse rec)
 simpleBitXGet_ verb = withSocketsDo $ do
     manager <- globalManager
-    rateLimit (\v -> try . (flip NetCon.httpLbs) manager
-        . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ v))
-      consumeResponseIO verb
+    rateLimit
+        (try . (flip NetCon.httpLbs) manager . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb))
+        consumeResponseIO
 
-rateLimit :: (a -> IO (Either NetCon.HttpException c)) -> (Either NetCon.HttpException c -> IO d) -> a -> IO d
-rateLimit act1 act2 verb = go 500000
+rateLimit :: IO (Either NetCon.HttpException c) -> (Either NetCon.HttpException c -> IO d) -> IO d
+rateLimit act1 act2 = go 500000
     where
         go del = do
-            resp <- act1 verb
-            if isRateLimited resp then do
+            resp <- act1
+            if isRateLimited resp then
                 if del > maxLimit
                     then act2 resp
                     else do

@@ -58,8 +58,9 @@ library
     Network.Bitcoin.BitX.Internal
     Network.Bitcoin.BitX.Types.Internal
 
-  -- LANGUAGE extensions used by modules in this package.
-  -- other-extensions:
+  other-extensions: OverloadedStrings, DeriveGeneric, QuasiQuotes, DataKinds,
+    MultiParamTypeClasses, TemplateHaskell, FunctionalDependencies, FlexibleInstances,
+    StandaloneDeriving, CPP
 
   build-depends:       base >=4.5 && <5,
                        aeson >= 0.8.0.0,
