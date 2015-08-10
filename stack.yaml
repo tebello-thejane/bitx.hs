@@ -1,4 +1,4 @@
-resolver: lts-2.21
+resolver: nightly-2015-08-10
 flags: {}
 packages:
 - '.'
