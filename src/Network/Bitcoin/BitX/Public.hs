@@ -13,7 +13,7 @@
 -- As a small example, to get the current selling price of bitcoin on the BitX exchange, do the following:
 --
 -- @
---{-# LANGUAGE DataKinds #-}
+--{-\# LANGUAGE DataKinds \#-}
 --
 --import Control.Lens ((^.))
 --import Network.Bitcoin.BitX (BitXAPIResponse(..), getTicker, CcyPair(..))
@@ -28,11 +28,11 @@
 --  case bitXResponse of
 --    ValidResponse tic        -> print (tic ^. BitX.ask)
 --    ErrorResponse err        ->
---        error $ "BitX error received: \"" ++ unpack (err ^. BitX.error) ++ "\""
+--        error $ "BitX error received: \\"" ++ unpack (err ^. BitX.error) ++ "\\""
 --    ExceptionResponse ex     ->
---        error $ "Exception was thrown: \"" ++ unpack ex ++ "\""
+--        error $ "Exception was thrown: \\"" ++ unpack ex ++ "\\""
 --    UnparseableResponse resp ->
---        error $ "Bad HTTP response; HTTP status code was: \"" ++ (show . statusCode . responseStatus $ resp) ++ "\""
+--        error $ "Bad HTTP response; HTTP status code was: \\"" ++ (show . statusCode . responseStatus $ resp) ++ "\\""
 -- @
 --
 -----------------------------------------------------------------------------

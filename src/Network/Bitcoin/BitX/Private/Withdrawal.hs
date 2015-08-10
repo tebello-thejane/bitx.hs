@@ -44,13 +44,13 @@ Creates a new withdrawal request.
 newWithdrawalRequest :: BitXAuth -> NewWithdrawal -> IO (BitXAPIResponse WithdrawalRequest)
 newWithdrawalRequest auth nwithd = simpleBitXPOSTAuth_ auth nwithd "withdrawals"
 
-{- | Get the status of a withdrawal request
+{- | Get the status of a withdrawal request by ID
 
 Returns the status of a particular withdrawal request.
 
 @Perm_R_Withdrawals@ permission required.-}
 
-getWithdrawalRequest :: BitXAuth -> Text -- ^ The withdrawal ID
+getWithdrawalRequest :: BitXAuth -> Text
     -> IO (BitXAPIResponse WithdrawalRequest)
 getWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" ++ Txt.unpack wthid
 
