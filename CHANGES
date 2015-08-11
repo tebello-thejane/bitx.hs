@@ -1,3 +1,6 @@
+v0.4.0.0
+* ExceptionResponse now holds the actual exception, rather than its text representation. BREAKING CHANGE.
+
 v0.3.0.0
 * Replaced Volkov records with (micro)lenses. BREAKING CHANGE.
 * Implemented a (naive) mechanism to work around nginx rate limiting.
