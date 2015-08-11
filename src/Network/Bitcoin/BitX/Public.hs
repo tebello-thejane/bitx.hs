@@ -30,7 +30,7 @@
 --    ErrorResponse err        ->
 --        error $ "BitX error received: \\"" ++ unpack (err ^. BitX.error) ++ "\\""
 --    ExceptionResponse ex     ->
---        error $ "Exception was thrown: \\"" ++ unpack ex ++ "\\""
+--        error $ "Exception was thrown: \\"" ++ show ex ++ "\\""
 --    UnparseableResponse resp ->
 --        error $ "Bad HTTP response; HTTP status code was: \\"" ++ (show . statusCode . responseStatus $ resp) ++ "\\""
 -- @
@@ -71,4 +71,3 @@ getOrderBook cyp = simpleBitXGet_ $ "orderbook?pair=" ++ show cyp
 
 getTrades :: CcyPair -> IO (BitXAPIResponse [Trade])
 getTrades cyp = simpleBitXGet_ $ "trades?pair=" ++ show cyp
-

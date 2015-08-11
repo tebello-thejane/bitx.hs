@@ -38,3 +38,5 @@ import Network.Bitcoin.BitX.Private.Order
 import Network.Bitcoin.BitX.Private.Withdrawal
 import Network.Bitcoin.BitX.Types.Internal
 import Network.Bitcoin.BitX.Response
+
+{-# ANN module ("HLint: ignore Use import/export shortcut" :: String) #-}

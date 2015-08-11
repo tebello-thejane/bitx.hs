@@ -25,7 +25,7 @@ main = do
     ErrorResponse err        ->
         error $ "BitX error received: \"" ++ unpack (err ^. BitX.error) ++ "\""
     ExceptionResponse ex     ->
-        error $ "Exception was thrown: \"" ++ unpack ex ++ "\""
+        error $ "Exception was thrown: \"" ++ show ex ++ "\""
     UnparseableResponse resp ->
         error $ "Bad HTTP response; HTTP status code was: \"" ++ (show . statusCode . responseStatus $ resp) ++ "\""
 ```

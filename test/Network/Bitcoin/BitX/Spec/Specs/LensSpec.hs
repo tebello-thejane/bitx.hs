@@ -11,6 +11,8 @@ import qualified Network.Bitcoin.BitX as BitX
 import Network.Bitcoin.BitX.Types
 import Data.Time.Clock.POSIX
 
+{-# ANN module ("HLint: ignore Reduce duplication" :: String) #-}
+
 spec :: Spec
 spec =
   describe "Lens functionality test" $

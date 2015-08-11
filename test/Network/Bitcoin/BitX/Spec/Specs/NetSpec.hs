@@ -1,4 +1,4 @@
-{-# LANGUAGE OverloadedStrings, QuasiQuotes, DataKinds, TemplateHaskell #-}
+{-# LANGUAGE OverloadedStrings, DataKinds #-}
 
 module Network.Bitcoin.BitX.Spec.Specs.NetSpec
     (
@@ -12,20 +12,20 @@ import System.IO.Unsafe (unsafePerformIO)
 import Network.Bitcoin.BitX.Response
 
 spec :: Spec
-spec = do
+spec =
   describe "Public BitX connectivity" $ do
-    it "getTicker connects to BitX and works" $ do
+    it "getTicker connects to BitX and works" $
       connectsAndParsesOkay $ getTicker XBTZAR
-    it "getTickers connects to BitX and works" $ do
-      connectsAndParsesOkay $ getTickers
-    it "getOrderBook connects to BitX and works" $ do
+    it "getTickers connects to BitX and works" $
+      connectsAndParsesOkay getTickers
+    it "getOrderBook connects to BitX and works" $
       connectsAndParsesOkay $ getOrderBook XBTZAR
-    it "getTrades connects to BitX and works" $ do
+    it "getTrades connects to BitX and works" $
       connectsAndParsesOkay $ getTrades XBTKES
 
-connectsAndParsesOkay :: IO (BitXAPIResponse rec) -> Bool
+connectsAndParsesOkay :: IO (BitXAPIResponse recd) -> Bool
 connectsAndParsesOkay = isValidResponse . unsafePerformIO
 
-isValidResponse :: BitXAPIResponse rec -> Bool
+isValidResponse :: BitXAPIResponse recd -> Bool
 isValidResponse (ValidResponse _) = True
 isValidResponse        _          = False

@@ -31,17 +31,19 @@ import Data.List.Split (splitOn)
 import Data.Coerce
 #endif
 
+{-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
+
 timestampParse_ :: Integer -> UTCTime
 timestampParse_ = posixSecondsToUTCTime
     . realToFrac
     . ( / 1000)
     . (fromIntegral :: Integer -> Scientific)
 
-class (FromJSON aes) => BitXAesRecordConvert rec aes | rec -> aes where
-    aesToRec :: aes -> rec
+class (FromJSON aes) => BitXAesRecordConvert recd aes | recd -> aes where
+    aesToRec :: aes -> recd
 
-class POSTEncodeable rec where
-    postEncode :: rec -> [(ByteString, ByteString)]
+class POSTEncodeable recd where
+    postEncode :: recd -> [(ByteString, ByteString)]
 
 
 showableToBytestring_ :: (Show a) => a -> ByteString
@@ -171,8 +173,8 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 
 instance BitXAesRecordConvert Types.Order Order_ where
     aesToRec (Order_ {..}) =
-        Types.Order {orderVolume = (qsToScientific order'volume),
-              orderPrice = (qsToScientific order'price)}
+        Types.Order {orderVolume = qsToScientific order'volume,
+              orderPrice = qsToScientific order'price}
 
 -------------------------------------------- Orderbook type ----------------------------------------
 
@@ -190,9 +192,9 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 
 instance BitXAesRecordConvert Types.Orderbook Orderbook_ where
     aesToRec (Orderbook_ {..}) =
-        Types.Orderbook {orderbookTimestamp = (tsmsToUTCTime orderbook'timestamp),
-                  orderbookBids = (map aesToRec orderbook'bids),
-                  orderbookAsks = (map aesToRec orderbook'asks)}
+        Types.Orderbook {orderbookTimestamp = tsmsToUTCTime orderbook'timestamp,
+                  orderbookBids = map aesToRec orderbook'bids,
+                  orderbookAsks = map aesToRec orderbook'asks}
 
 -------------------------------------------- Trade type --------------------------------------------
 
@@ -207,9 +209,9 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 
 instance BitXAesRecordConvert Types.Trade Trade_ where
     aesToRec (Trade_ {..}) =
-        Types.Trade { tradeTimestamp = (tsmsToUTCTime trade'timestamp),
-            tradeVolume = (qsToScientific trade'volume),
-            tradePrice = (qsToScientific trade'price) }
+        Types.Trade { tradeTimestamp = tsmsToUTCTime trade'timestamp,
+            tradeVolume = qsToScientific trade'volume,
+            tradePrice = qsToScientific trade'price }
 
 ----------------------------------------- PublicTrades type ----------------------------------------
 

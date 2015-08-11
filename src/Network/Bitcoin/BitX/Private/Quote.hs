@@ -95,4 +95,3 @@ yet.
 
 discardQuote :: BitXAuth -> Text -> IO (BitXAPIResponse OrderQuote)
 discardQuote auth qid = simpleBitXMETHAuth_ auth "DELETE" $ "quotes/" ++ Txt.unpack qid
-

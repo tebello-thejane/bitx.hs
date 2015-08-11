@@ -19,21 +19,18 @@ module Network.Bitcoin.BitX.Response
     BitXAPIResponse(..)
   ) where
 
-import Network.HTTP.Conduit (Response(..))
+import Network.HTTP.Conduit (Response(..), HttpException)
 import Data.ByteString.Lazy (ByteString)
 import Network.Bitcoin.BitX.Types
-import Data.Text (Text)
 
 -- | This retun type enumerates all possible failure modes.
 
-data BitXAPIResponse rec =
-      ExceptionResponse Text -- ^ Some exception occured while making the call to BitX, and this was
-                             -- the exception text.
+data BitXAPIResponse recd =
+      ExceptionResponse HttpException -- ^ Some exception occured while making the call to BitX.
     | ErrorResponse BitXError -- ^ BitX returned an error record instead of returning the data we
                               -- were expecting.
-    | ValidResponse rec -- ^ We received the data type we were expecting.
+    | ValidResponse recd -- ^ We received the data type we were expecting.
     | UnparseableResponse (Response ByteString) -- ^ BitX retuned data which couldn't be parsed,
                                                 -- such as some text which was probably not JSON format.
 
-deriving instance Show rec => Show (BitXAPIResponse rec)
-deriving instance Eq rec => Eq (BitXAPIResponse rec)
+deriving instance Show recd => Show (BitXAPIResponse recd)

@@ -80,6 +80,8 @@ import Network.Bitcoin.BitX.Private.Order
 import Network.Bitcoin.BitX.Private.Quote
 import Network.Bitcoin.BitX.Private.Withdrawal
 
+{-# ANN module ("HLint: ignore Use import/export shortcut" :: String) #-}
+
 {- | Create an additional account for the specified currency
 
 Note that the 'id' field of the second parameter can be left blank. The call will return an `Account`
