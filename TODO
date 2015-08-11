@@ -4,5 +4,4 @@
 *Maybe rethink this whole RequestStatus_ mess...
 *Find out why calling cancelWithdrawalRequest causes an internal server error during testing.
 *Investigate doing a private test suite (with creds ignored in .gitignore).
-*Rate limiting handling
 
