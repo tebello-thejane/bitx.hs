@@ -63,8 +63,8 @@ library
                        text,
                        time,
                        http-conduit >= 2.0.0,
-                       bytestring >= 0.10.0.0,
-                       network >= 2.0,
+                       bytestring,
+                       network,
                        split >= 0.2.0.0,
                        scientific,
                        microlens,
@@ -94,7 +94,7 @@ test-suite spec
   main-is:
       Spec.hs
   default-language:    Haskell2010
-  build-depends:       base == 4.*,
+  build-depends:       base,
                        bitx-bitcoin,
                        hspec == 2.*,
                        aeson,
