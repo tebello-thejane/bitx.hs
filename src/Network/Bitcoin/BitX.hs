@@ -40,3 +40,4 @@ import Network.Bitcoin.BitX.Types.Internal
 import Network.Bitcoin.BitX.Response
 
 {-# ANN module ("HLint: ignore Use import/export shortcut" :: String) #-}
+

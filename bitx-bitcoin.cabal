@@ -36,6 +36,8 @@ cabal-version:       >=1.10
 
 homepage:            https://github.com/tebello-thejane/bitx-haskell
 
+tested-with:         GHC >=7.6.1 && <=7.10.2
+
 --------------------------------------------------------------------------------
 
 library
