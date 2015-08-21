@@ -7,4 +7,5 @@ cabal.sandbox.config
 dist-stack/
 *.iml
 *.*~
+PRIVATE_API_KEY
 
