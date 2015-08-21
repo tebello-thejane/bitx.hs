@@ -26,10 +26,12 @@ import Data.Monoid (mempty)
 #endif
 import Data.Scientific (Scientific)
 import Data.ByteString (ByteString)
+import Data.ByteString.Char8 (pack)
 import Data.List.Split (splitOn)
 #if MIN_VERSION_base(4,7,0)
 import Data.Coerce
 #endif
+import Numeric (showFFloat)
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
 
@@ -46,8 +48,11 @@ class POSTEncodeable recd where
     postEncode :: recd -> [(ByteString, ByteString)]
 
 
-showableToBytestring_ :: (Show a) => a -> ByteString
+showableToBytestring_ :: Show a => a -> ByteString
 showableToBytestring_ = Txt.encodeUtf8 . Txt.pack . show
+
+realToDecimalByteString_ :: Real a => a -> ByteString
+realToDecimalByteString_ k = pack ( (showFFloat Nothing . (fromRational :: Rational -> Double) . toRational $ k) "")
 
 -- | Wrapper around Scientific and FromJSON instance, to facilitate automatic JSON instances
 
@@ -280,8 +285,8 @@ instance POSTEncodeable Types.OrderRequest where
     postEncode oreq =
         [("pair", showableToBytestring_ (oreq ^. Types.pair)),
          ("type", showableToBytestring_ (oreq ^. Types.orderType)),
-         ("volume", showableToBytestring_ (oreq ^. Types.volume)),
-         ("price", showableToBytestring_ (oreq ^. Types.price))]
+         ("volume", realToDecimalByteString_ (oreq ^. Types.volume)),
+         ("price", realToDecimalByteString_ (oreq ^. Types.price))]
 
 -------------------------------------------- OrderIDRec type ---------------------------------------
 
@@ -442,13 +447,13 @@ instance BitXAesRecordConvert [Types.WithdrawalRequest] WithdrawalRequests_ wher
 instance POSTEncodeable Types.NewWithdrawal where
     postEncode nwthd =
         [("type", showableToBytestring_ (nwthd ^. Types.withdrawalType)),
-         ("amount", showableToBytestring_ (nwthd ^. Types.amount))]
+         ("amount", realToDecimalByteString_ (nwthd ^. Types.amount))]
 
 -------------------------------------- BitcoinSendRequest type -------------------------------------
 
 instance POSTEncodeable Types.BitcoinSendRequest where
     postEncode oreq =
-        [("amount", showableToBytestring_ (oreq ^. Types.amount)),
+        [("amount", realToDecimalByteString_ (oreq ^. Types.amount)),
          ("currency", showableToBytestring_ (oreq ^. Types.currency)),
          ("address", Txt.encodeUtf8 (oreq ^. Types.address)),
          ("description", Txt.encodeUtf8 . unjustText $ (oreq ^. Types.description)),
@@ -463,7 +468,7 @@ instance POSTEncodeable Types.QuoteRequest where
     postEncode oreq =
         [("type", showableToBytestring_ (oreq ^. Types.quoteType)),
          ("pair", showableToBytestring_ (oreq ^. Types.pair)),
-         ("base_amount", showableToBytestring_ (oreq ^. Types.baseAmount))]
+         ("base_amount", realToDecimalByteString_ (oreq ^. Types.baseAmount))]
 
 ------------------------------------------ OrderQuote type -----------------------------------------
 
