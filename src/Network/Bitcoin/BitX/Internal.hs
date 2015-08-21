@@ -88,7 +88,7 @@ rateLimit act1 act2 = go 500000
         go del = do
             resp <- act1
             if isRateLimited resp then do
-                putStrLn ("Rate limited: " ++ show del)
+                -- putStrLn ("Rate limited: " ++ show del)
                 if del > maxLimit
                     then act2 resp
                     else do
