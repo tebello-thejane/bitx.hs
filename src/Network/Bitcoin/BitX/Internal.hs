@@ -20,7 +20,6 @@ import Control.Exception (try)
 import qualified Data.Aeson as Aeson (decode)
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString as BS
-import qualified Data.ByteString.Char8 as B8
 import Data.Maybe (fromJust)
 import Network (withSocketsDo)
 import qualified Data.Text.Encoding as Txt
@@ -60,8 +59,7 @@ simpleBitXGetAuth_ auth verb = withSocketsDo $
 
 simpleBitXPOSTAuth_ :: (BitXAesRecordConvert recd aes, POSTEncodeable inprec) => BitXAuth -> inprec
     -> String -> IO (BitXAPIResponse recd)
-simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $ do
-    --putStrLn $ B8.unpack $ snd $((postEncode encrec) !! 3)
+simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $
     rateLimit
         (authConnect auth
             . NetCon.urlEncodedBody (postEncode encrec)
@@ -87,8 +85,7 @@ rateLimit act1 act2 = go 500000
     where
         go del = do
             resp <- act1
-            if isRateLimited resp then do
-                -- putStrLn ("Rate limited: " ++ show del)
+            if isRateLimited resp then
                 if del > maxLimit
                     then act2 resp
                     else do

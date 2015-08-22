@@ -2,7 +2,8 @@
 
 module Network.Bitcoin.BitX.Spec.Specs.NetSpec
     (
-    spec
+    spec,
+    isValidResponse
     ) where
 
 import Test.Hspec

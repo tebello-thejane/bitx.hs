@@ -103,7 +103,9 @@ test-suite spec
                        bytestring,
                        time,
                        microlens,
-                       directory
+                       directory,
+                       text,
+                       pretty-show
   other-modules:
     Network.Bitcoin.BitX.Spec.Common
     Network.Bitcoin.BitX.Spec.Specs.AesonRecordSpec
@@ -111,3 +113,4 @@ test-suite spec
     Network.Bitcoin.BitX.Spec.Specs.PostSpec
     Network.Bitcoin.BitX.Spec.Specs.JsonSpec
     Network.Bitcoin.BitX.Spec.Specs.LensSpec
+    Network.Bitcoin.BitX.Spec.Specs.PrivateSpec

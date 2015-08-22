@@ -52,7 +52,7 @@ showableToBytestring_ :: Show a => a -> ByteString
 showableToBytestring_ = Txt.encodeUtf8 . Txt.pack . show
 
 realToDecimalByteString_ :: Real a => a -> ByteString
-realToDecimalByteString_ k = pack ( (showFFloat (Just 6) . (fromRational :: Rational -> Double) . toRational $ k) "")
+realToDecimalByteString_ k = pack . reverse . dropWhile (== '0') . reverse $ (showFFloat (Just 6) . (fromRational :: Rational -> Double) . toRational $ k) ""
 
 -- | Wrapper around Scientific and FromJSON instance, to facilitate automatic JSON instances
 
