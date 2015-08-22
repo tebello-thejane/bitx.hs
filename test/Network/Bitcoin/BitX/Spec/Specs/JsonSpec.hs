@@ -13,11 +13,11 @@ import Data.Time.Clock.POSIX
 spec :: Spec
 spec =
   describe "FromJSON intances" $ do
-    it "QuotedDecimal is parsed whether quoted or not, for floating point numbers" $
+    it "QuotedScientific is parsed whether quoted or not, for floating point numbers" $
       recordAesCheck
         "{\"volume\":314159.23,\"price\":\"4321.56\"}"
         (Order 314159.23 4321.56)
-    it "QuotedDecimal is parsed whether quoted or not, for integral numbers" $
+    it "QuotedScientific is parsed whether quoted or not, for integral numbers" $
       recordAesCheck
         "{\"volume\":314159,\"price\":\"4321\"}"
         (Order 314159 4321)
