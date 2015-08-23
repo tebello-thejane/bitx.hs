@@ -1,5 +1,6 @@
 v0.5.0.0
 * Prices should be integers, not real. BREAKING CHANGE.
+* Dropped support for versions of GHC lower than 7.8.1.
 
 v0.4.0.0
 * ExceptionResponse now holds the actual exception, rather than its text representation. BREAKING CHANGE.
