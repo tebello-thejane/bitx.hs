@@ -36,7 +36,7 @@ cabal-version:       >=1.10
 
 homepage:            https://github.com/tebello-thejane/bitx-haskell
 
-tested-with:         GHC >=7.6.1 && <=7.10.2
+tested-with:         GHC >=7.8.1 && <=7.10.2
 
 --------------------------------------------------------------------------------
 
@@ -62,7 +62,7 @@ library
     Network.Bitcoin.BitX.Types.Internal.Decimal
 
   build-depends:       base >=4.5 && <5,
-                       aeson >= 0.7,
+                       aeson >= 0.8,
                        text,
                        time,
                        http-conduit >= 2.0.0,
