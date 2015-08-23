@@ -14,27 +14,31 @@ import System.Directory (doesFileExist)
 import Data.Maybe (isJust, fromJust)
 import Data.Text (pack)
 import Lens.Micro
-import Debug.Trace
+--import Debug.Trace
 import Network.Bitcoin.BitX.Spec.Specs.NetSpec
-import Text.Show.Pretty
+--import Text.Show.Pretty (parseValue, valToStr)
+import Safe
 
 spec :: Spec
-spec =
-  describe "Private functionality test" $ do
+spec = describe "Private functionality test" $ do
     mauth <- runIO privateAuth
     if isJust mauth
         then do
             let auth = fromJust mauth
             it "getBalances connects to BitX and works" $
               connectsAndParsesOkay $ BitX.getBalances auth
-        else do
+            it "getAllOrders connects to BitX and works" $
+              connectsAndParsesOkay $ BitX.getAllOrders auth Nothing Nothing
+        else
             it "API key file not found -- skipping private tests" $
               True `shouldBe` True
 
 connectsAndParsesOkay :: Show recd => IO (BitXAPIResponse recd) -> Bool
-connectsAndParsesOkay k = isValidResponse $ tracePretty (unsafePerformIO k)
+connectsAndParsesOkay = isValidResponse . unsafePerformIO
+--connectsAndParsesOkay k = isValidResponse $ tracePretty (unsafePerformIO k)
 
-tracePretty a = trace (valToStr . fromJust . parseValue $ show a) a
+--tracePretty :: Show a => a -> a
+--tracePretty a = trace (show a) a
 
 keyFileName :: FilePath
 keyFileName = "PRIVATE_API_KEY"
@@ -46,9 +50,16 @@ privateAuth =  do
         then do
             contents <- readFile keyFileName
             let lns = lines contents
-            return . Just $
-                mkBitXAuth
-                    & BitX.id .~ pack (head lns)
-                    & BitX.secret .~ pack (lns !! 1)
+            let key_id = headMay lns
+            let key_secret = atMay lns 1
+
+            if isJust key_id && isJust key_secret
+                then
+                    return . Just $
+                        mkBitXAuth
+                            & BitX.id .~ pack (fromJust key_id)
+                            & BitX.secret .~ pack (fromJust key_secret)
+                else
+                    return Nothing
         else
             return Nothing

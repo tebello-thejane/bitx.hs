@@ -19,13 +19,13 @@ spec =
         BitXError {bitXErrorError = "oops", bitXErrorErrorCode = "ABadError"}
     it "Ticker is parsed properly" $
       recordAesCheck
-        "{\"timestamp\":1431811395699,\"bid\":\"3083.00\",\"ask\":\"3115.00\",\
-            \ \"last_trade\":\"3116.00\",\"rolling_24_hour_volume\":\"19.776608\",\"pair\":\"XBTZAR\"}"
+        "{\"timestamp\":1431811395699,\"bid\":\"3083\",\"ask\":\"3115\",\
+            \ \"last_trade\":\"3116\",\"rolling_24_hour_volume\":\"19.776608\",\"pair\":\"XBTZAR\"}"
         Ticker {
              tickerTimestamp = posixSecondsToUTCTime 1431811395.699,
-             tickerBid = 3083.0,
-             tickerAsk = 3115.00,
-             tickerLastTrade = 3116.00,
+             tickerBid = 3083,
+             tickerAsk = 3115,
+             tickerLastTrade = 3116,
              tickerRolling24HourVolume = 19.776608,
              tickerPair = XBTZAR}
     it "Balance is parsed properly" $
@@ -40,7 +40,7 @@ spec =
              balanceUnconfirmed = 175}
     it "Order is parsed properly" $
       recordAesCheck
-        "{\"volume\":\"314159\",\"price\":\"4321\"}"
+        "{\"volume\":\"314159\",\"price\":4321}"
         Order {orderVolume = 314159, orderPrice = 4321}
     it "WithdrawalRequest is parsed properly" $
       recordAesCheck
@@ -50,29 +50,29 @@ spec =
             withdrawalRequestId = "271828" }
     it "Tickers is parsed properly" $
       recordAesCheck
-        "{\"tickers\":[{\"timestamp\":1431811395699,\"bid\":\"3083.00\",\"ask\":\"3115.00\",\
-            \ \"last_trade\":\"3116.00\",\"rolling_24_hour_volume\":\"19.776608\",\
+        "{\"tickers\":[{\"timestamp\":1431811395699,\"bid\":\"3083\",\"ask\":\"3115\",\
+            \ \"last_trade\":\"3116\",\"rolling_24_hour_volume\":\"19.776608\",\
             \ \"pair\":\"XBTZAR\"}]}"
         [tickerInner]
     it "Orderbook is parsed properly" $
       recordAesCheck
-        "{\"timestamp\":1431811395699,\"bids\":[{\"volume\":\"654.98\",\"price\":\"3789.66\"}],\
-            \ \"asks\":[{\"volume\":\"654.98\",\"price\":\"3789.66\"}]}"
+        "{\"timestamp\":1431811395699,\"bids\":[{\"volume\":\"654.98\",\"price\":\"3789\"}],\
+            \ \"asks\":[{\"volume\":\"654.98\",\"price\":\"3789\"}]}"
         Orderbook
             {orderbookTimestamp = posixSecondsToUTCTime 1431811395.699,
              orderbookBids = [orderInner],
              orderbookAsks = [orderInner]}
     it "Trade is parsed properly" $
       recordAesCheck
-        "{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327.765\"}"
+        "{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327\"}"
         Trade
             {tradeTimestamp = posixSecondsToUTCTime 1431811395.699,
              tradeVolume = 6754.09,
-             tradePrice = 5327.765}
+             tradePrice = 5327}
     it "PublicTrades is parsed properly" $
       recordAesCheck
         "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\
-            \ \"price\":\"5327.765\"}],\"currency\":\"ZAR\"}"
+            \ \"price\":\"5327\"}],\"currency\":\"ZAR\"}"
         [tradeInner]
     it "PrivateOrder is parsed properly" $
       recordAesCheck
@@ -106,7 +106,7 @@ spec =
         ("57983" :: OrderID)
     it "PublicTrades is parsed properly" $
       recordAesCheck
-        "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327.765\"}], \
+        "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327\"}], \
             \ \"currency\":\"ZAR\"}"
          [tradeInner]
     it "RequestSuccess is parsed properly" $
@@ -119,7 +119,7 @@ spec =
             \ \"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
             \ \"limit_price\":765,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
             \ \"state\":\"COMPLETE\",\"type\":\"BID\", \"trades\":[{\"timestamp\":1431811395699, \
-            \ \"volume\":\"6754.09\",\"price\":\"5327.765\"}]}"
+            \ \"volume\":\"6754.09\",\"price\":\"5327\"}]}"
         PrivateOrderWithTrades
             {privateOrderWithTradesBase = 568.7,
              privateOrderWithTradesCounter = 3764.2,
@@ -173,22 +173,22 @@ spec =
 tickerInner :: Ticker
 tickerInner =
     Ticker (posixSecondsToUTCTime 1431811395.699)
-        3083.0
-        3115.00
-        3116.00
+        3083
+        3115
+        3116
         19.776608
         XBTZAR
 
 orderInner :: Order
 orderInner =
-    Order 654.98 3789.66
+    Order 654.98 3789
 
 tradeInner :: Trade
 tradeInner =
     Trade {
          tradeTimestamp = posixSecondsToUTCTime 1431811395.699,
          tradeVolume = 6754.09,
-         tradePrice = 5327.765}
+         tradePrice = 5327}
 
 privateOrderInner :: PrivateOrder
 privateOrderInner =

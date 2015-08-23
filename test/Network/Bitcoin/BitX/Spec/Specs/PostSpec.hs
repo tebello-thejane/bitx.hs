@@ -17,12 +17,12 @@ spec =
             {orderRequestPair = XBTZAR,
              orderRequestOrderType = BID,
              orderRequestVolume = 83.02,
-             orderRequestPrice = 15.23 }
+             orderRequestPrice = 15 }
       `shouldBe`
         [("pair", "XBTZAR"),
          ("type", "BID"),
          ("volume", "83.02"),
-         ("price", "15.23")]
+         ("price", "15")]
     it "Asset is post-encoded properly" $
         postEncode ZAR
       `shouldBe`

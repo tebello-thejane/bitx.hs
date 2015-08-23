@@ -181,9 +181,9 @@ data CcyPair =
 -- the price of the last filled bid order. Necessarily @bid <= ask.@
 data Ticker = Ticker {
     tickerTimestamp :: UTCTime,
-    tickerBid :: Scientific,
-    tickerAsk :: Scientific,
-    tickerLastTrade :: Scientific,
+    tickerBid :: Int,
+    tickerAsk :: Int,
+    tickerLastTrade :: Int,
     tickerRolling24HourVolume :: Scientific,
     tickerPair :: CcyPair
     } deriving (Eq, Show)
@@ -216,7 +216,7 @@ type RequestSuccess = Bool
 -- | A single placed order in the orderbook
 data Order = Order {
     orderVolume :: Scientific,
-    orderPrice :: Scientific
+    orderPrice :: Int
     } deriving (Eq, Show)
 
 makeFields ''Order
@@ -240,7 +240,7 @@ makeFields ''Orderbook
 data Trade = Trade {
     tradeTimestamp :: UTCTime,
     tradeVolume :: Scientific,
-    tradePrice :: Scientific
+    tradePrice :: Int
     } deriving (Eq, Show)
 
 makeFields ''Trade
@@ -267,7 +267,7 @@ data PrivateOrder = PrivateOrder
          privateOrderExpirationTimestamp :: UTCTime,
          privateOrderFeeBase :: Scientific,
          privateOrderFeeCounter :: Scientific,
-         privateOrderLimitPrice :: Scientific,
+         privateOrderLimitPrice :: Int,
          privateOrderLimitVolume :: Scientific,
          privateOrderId :: OrderID,
          privateOrderPair :: CcyPair,
@@ -285,7 +285,7 @@ data PrivateOrderWithTrades = PrivateOrderWithTrades
          privateOrderWithTradesExpirationTimestamp :: UTCTime,
          privateOrderWithTradesFeeBase :: Scientific,
          privateOrderWithTradesFeeCounter :: Scientific,
-         privateOrderWithTradesLimitPrice :: Scientific,
+         privateOrderWithTradesLimitPrice :: Int,
          privateOrderWithTradesLimitVolume :: Scientific,
          privateOrderWithTradesId :: OrderID,
          privateOrderWithTradesPair :: CcyPair,
@@ -313,7 +313,7 @@ data OrderRequest = OrderRequest
         {orderRequestPair :: CcyPair,
          orderRequestOrderType :: OrderType,
          orderRequestVolume :: Scientific,
-         orderRequestPrice :: Scientific } deriving (Eq, Show)
+         orderRequestPrice :: Int } deriving (Eq, Show)
 
 makeFields ''OrderRequest
 
@@ -394,7 +394,7 @@ data OrderQuote = OrderQuote
          orderQuoteCreatedAt :: UTCTime,
          orderQuoteExpiresAt :: UTCTime,
          orderQuoteDiscarded :: Bool,
-         orderQuoteExercised :: Bool}
+         orderQuoteExercised :: Bool} deriving (Eq, Show)
 
 makeFields ''OrderQuote
 
@@ -402,7 +402,7 @@ makeFields ''OrderQuote
 data Account = Account
         {accountId :: Text,
          accountName :: Text,
-         accountCurrency :: Asset}
+         accountCurrency :: Asset} deriving (Eq, Show)
 
 makeFields ''Account
 

@@ -13,14 +13,30 @@ import Data.Time.Clock.POSIX
 spec :: Spec
 spec =
   describe "FromJSON intances" $ do
-    it "QuotedScientific is parsed whether quoted or not, for floating point numbers" $
+    it "QuotedScientific is parsed when quoted, for floating point numbers" $
       recordAesCheck
-        "{\"volume\":314159.23,\"price\":\"4321.56\"}"
-        (Order 314159.23 4321.56)
-    it "QuotedScientific is parsed whether quoted or not, for integral numbers" $
+        "{\"volume\":\"314159.23\",\"price\":\"4321\"}"
+        (Order 314159.23 4321)
+    it "QuotedScientific is parsed when not quoted, for floating point numbers" $
+      recordAesCheck
+        "{\"volume\":314159.23,\"price\":\"4321\"}"
+        (Order 314159.23 4321)
+    it "QuotedScientific is parsed when quoted, for integral numbers" $
+      recordAesCheck
+        "{\"volume\":\"314159\",\"price\":\"4321\"}"
+        (Order 314159 4321)
+    it "QuotedScientific is parsed when not quoted, for integral numbers" $
       recordAesCheck
         "{\"volume\":314159,\"price\":\"4321\"}"
         (Order 314159 4321)
+    it "QuotedInt is parsed when quoted" $
+      recordAesCheck
+        "{\"volume\":0,\"price\":\"4321\"}"
+        (Order 0 4321)
+    it "QuotedInt is parsed when not quoted" $
+      recordAesCheck
+        "{\"volume\":0,\"price\":4321}"
+        (Order 0 4321)
     it "OrderType BUY is parsed properly" $
       recordAesCheck
         "{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \

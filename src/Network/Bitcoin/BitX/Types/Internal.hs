@@ -10,6 +10,7 @@ module Network.Bitcoin.BitX.Types.Internal
     )
 where
 
+import Network.Bitcoin.BitX.Types.Internal.Decimal
 import qualified Network.Bitcoin.BitX.Types as Types
 import Data.Aeson (FromJSON(..), parseJSON, Value(..))
 import qualified Data.Aeson.TH as AesTH
@@ -26,12 +27,11 @@ import Data.Monoid (mempty)
 #endif
 import Data.Scientific (Scientific)
 import Data.ByteString (ByteString)
-import Data.ByteString.Char8 (pack)
 import Data.List.Split (splitOn)
+import qualified Data.ByteString.Char8 as BS8 (pack)
 #if MIN_VERSION_base(4,7,0)
 import Data.Coerce
 #endif
-import Numeric (showFFloat)
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
 
@@ -51,20 +51,23 @@ class POSTEncodeable recd where
 showableToBytestring_ :: Show a => a -> ByteString
 showableToBytestring_ = Txt.encodeUtf8 . Txt.pack . show
 
-realToDecimalByteString_ :: Real a => a -> ByteString
-realToDecimalByteString_ k = pack . reverse . dropWhile (== '0') . reverse $ (showFFloat (Just 6) . (fromRational :: Rational -> Double) . toRational $ k) ""
+--realToDecimalByteString_ :: Real a => a -> ByteString
+--realToDecimalByteString_ k = pack . reverse . dropWhile (== '0') . reverse $ (showFFloat (Just 6) . (fromRational :: Rational -> Double) . toRational $ k) ""
 
--- | Wrapper around Scientific and FromJSON instance, to facilitate automatic JSON instances
+-- | Wrappers around Scientific and Int, and FromJSON instance, to facilitate automatic JSON instances
 
 newtype QuotedScientific = QuotedScientific Scientific deriving (Read, Show)
+newtype QuotedInt = QuotedInt Int deriving (Read, Show)
 
 instance FromJSON QuotedScientific where
    parseJSON (String x) = return . QuotedScientific . read . Txt.unpack $ x
    parseJSON (Number x) = return . QuotedScientific . read . show $ x
    parseJSON _          = mempty
 
---instance ToJSON QuotedScientific where
---    toJSON (QuotedScientific q) = Number . realToFrac $ q
+instance FromJSON QuotedInt where
+   parseJSON (String x) = return . QuotedInt . read . Txt.unpack $ x
+   parseJSON (Number x) = return . QuotedInt . (truncate :: Scientific -> Int) . read . show $ x
+   parseJSON _          = mempty
 
 qsToScientific :: QuotedScientific -> Scientific
 #if MIN_VERSION_base(4,7,0)
@@ -72,6 +75,14 @@ qsToScientific = coerce
 {-# INLINE qsToScientific #-}
 #else
 qsToScientific (QuotedScientific sci) = sci
+#endif
+
+qiToInt :: QuotedInt -> Int
+#if MIN_VERSION_base(4,7,0)
+qiToInt = coerce
+{-# INLINE qiToInt #-}
+#else
+qiToInt (QuotedInt i) = i
 #endif
 
 -- | Wrapper around UTCTime and FromJSON instance, to facilitate automatic JSON instances
@@ -122,9 +133,9 @@ requestStatusParse (RequestStatus_      x     ) =
 
 data Ticker_ = Ticker_
     { ticker'timestamp :: TimestampMS
-    , ticker'bid :: QuotedScientific
-    , ticker'ask :: QuotedScientific
-    , ticker'last_trade :: QuotedScientific
+    , ticker'bid :: QuotedInt
+    , ticker'ask :: QuotedInt
+    , ticker'last_trade :: QuotedInt
     , ticker'rolling_24_hour_volume :: QuotedScientific
     , ticker'pair :: Types.CcyPair
     }
@@ -135,9 +146,9 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 instance BitXAesRecordConvert Types.Ticker Ticker_ where
     aesToRec (Ticker_ {..}) =
         Types.Ticker {tickerTimestamp = tsmsToUTCTime ticker'timestamp,
-                  tickerBid = qsToScientific ticker'bid,
-                  tickerAsk = qsToScientific ticker'ask,
-                  tickerLastTrade = qsToScientific ticker'last_trade,
+                  tickerBid = qiToInt ticker'bid,
+                  tickerAsk = qiToInt ticker'ask,
+                  tickerLastTrade = qiToInt ticker'last_trade,
                   tickerRolling24HourVolume = qsToScientific ticker'rolling_24_hour_volume,
                   tickerPair = ticker'pair}
 
@@ -171,7 +182,7 @@ instance BitXAesRecordConvert Types.BitXError BitXError_ where
 
 data Order_ = Order_
     { order'volume :: QuotedScientific,
-      order'price :: QuotedScientific
+      order'price :: QuotedInt
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"} ''Order_)
@@ -179,7 +190,7 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 instance BitXAesRecordConvert Types.Order Order_ where
     aesToRec (Order_ {..}) =
         Types.Order {orderVolume = qsToScientific order'volume,
-              orderPrice = qsToScientific order'price}
+              orderPrice = qiToInt order'price}
 
 -------------------------------------------- Orderbook type ----------------------------------------
 
@@ -206,7 +217,7 @@ instance BitXAesRecordConvert Types.Orderbook Orderbook_ where
 data Trade_ = Trade_
     { trade'volume :: QuotedScientific
     , trade'timestamp :: TimestampMS
-    , trade'price :: QuotedScientific
+    , trade'price :: QuotedInt
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
@@ -216,7 +227,7 @@ instance BitXAesRecordConvert Types.Trade Trade_ where
     aesToRec (Trade_ {..}) =
         Types.Trade { tradeTimestamp = tsmsToUTCTime trade'timestamp,
             tradeVolume = qsToScientific trade'volume,
-            tradePrice = qsToScientific trade'price }
+            tradePrice = qiToInt trade'price }
 
 ----------------------------------------- PublicTrades type ----------------------------------------
 
@@ -240,7 +251,7 @@ data PrivateOrder_ = PrivateOrder_
     , privateOrder'expiration_timestamp :: TimestampMS
     , privateOrder'fee_base :: QuotedScientific
     , privateOrder'fee_counter :: QuotedScientific
-    , privateOrder'limit_price :: QuotedScientific
+    , privateOrder'limit_price :: QuotedInt
     , privateOrder'limit_volume :: QuotedScientific
     , privateOrder'order_id :: Types.OrderID
     , privateOrder'pair :: Types.CcyPair
@@ -259,7 +270,7 @@ instance BitXAesRecordConvert Types.PrivateOrder PrivateOrder_ where
                   privateOrderExpirationTimestamp = tsmsToUTCTime privateOrder'expiration_timestamp,
                   privateOrderFeeBase = qsToScientific privateOrder'fee_base,
                   privateOrderFeeCounter = qsToScientific privateOrder'fee_counter,
-                  privateOrderLimitPrice = qsToScientific privateOrder'limit_price,
+                  privateOrderLimitPrice = qiToInt privateOrder'limit_price,
                   privateOrderLimitVolume = qsToScientific privateOrder'limit_volume,
                   privateOrderId = privateOrder'order_id,
                   privateOrderPair = privateOrder'pair,
@@ -286,7 +297,7 @@ instance POSTEncodeable Types.OrderRequest where
         [("pair", showableToBytestring_ (oreq ^. Types.pair)),
          ("type", showableToBytestring_ (oreq ^. Types.orderType)),
          ("volume", realToDecimalByteString_ (oreq ^. Types.volume)),
-         ("price", realToDecimalByteString_ (oreq ^. Types.price))]
+         ("price", BS8.pack . show $ (oreq ^. Types.price))]
 
 -------------------------------------------- OrderIDRec type ---------------------------------------
 
@@ -327,7 +338,7 @@ data PrivateOrderWithTrades_ = PrivateOrderWithTrades_
     , privateOrderWithTrades'expiration_timestamp :: TimestampMS
     , privateOrderWithTrades'fee_base :: QuotedScientific
     , privateOrderWithTrades'fee_counter :: QuotedScientific
-    , privateOrderWithTrades'limit_price :: QuotedScientific
+    , privateOrderWithTrades'limit_price :: QuotedInt
     , privateOrderWithTrades'limit_volume :: QuotedScientific
     , privateOrderWithTrades'order_id :: Types.OrderID
     , privateOrderWithTrades'pair :: Types.CcyPair
@@ -347,7 +358,7 @@ instance BitXAesRecordConvert Types.PrivateOrderWithTrades PrivateOrderWithTrade
                   privateOrderWithTradesExpirationTimestamp = tsmsToUTCTime privateOrderWithTrades'expiration_timestamp,
                   privateOrderWithTradesFeeBase = qsToScientific privateOrderWithTrades'fee_base,
                   privateOrderWithTradesFeeCounter = qsToScientific privateOrderWithTrades'fee_counter,
-                  privateOrderWithTradesLimitPrice = qsToScientific privateOrderWithTrades'limit_price,
+                  privateOrderWithTradesLimitPrice = qiToInt privateOrderWithTrades'limit_price,
                   privateOrderWithTradesLimitVolume = qsToScientific privateOrderWithTrades'limit_volume,
                   privateOrderWithTradesId = privateOrderWithTrades'order_id,
                   privateOrderWithTradesPair = privateOrderWithTrades'pair,

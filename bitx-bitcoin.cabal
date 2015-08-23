@@ -59,6 +59,7 @@ library
   other-modules:
     Network.Bitcoin.BitX.Internal
     Network.Bitcoin.BitX.Types.Internal
+    Network.Bitcoin.BitX.Types.Internal.Decimal
 
   build-depends:       base >=4.5 && <5,
                        aeson >= 0.8.0.1,
@@ -105,7 +106,7 @@ test-suite spec
                        microlens,
                        directory,
                        text,
-                       pretty-show
+                       safe
   other-modules:
     Network.Bitcoin.BitX.Spec.Common
     Network.Bitcoin.BitX.Spec.Specs.AesonRecordSpec
@@ -114,3 +115,14 @@ test-suite spec
     Network.Bitcoin.BitX.Spec.Specs.JsonSpec
     Network.Bitcoin.BitX.Spec.Specs.LensSpec
     Network.Bitcoin.BitX.Spec.Specs.PrivateSpec
+
+--------------------------------------------------------------------------------
+
+test-suite doctests
+  type:                exitcode-stdio-1.0
+  ghc-options:         -threaded
+  main-is:             Doctests.hs
+  build-depends:       base,
+                       doctest >= 0.8
+  hs-source-dirs:      test
+  default-language:    Haskell2010
