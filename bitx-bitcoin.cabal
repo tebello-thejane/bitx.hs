@@ -62,7 +62,7 @@ library
     Network.Bitcoin.BitX.Types.Internal.Decimal
 
   build-depends:       base >=4.5 && <5,
-                       aeson >= 0.8.0.1,
+                       aeson >= 0.7,
                        text,
                        time,
                        http-conduit >= 2.0.0,
