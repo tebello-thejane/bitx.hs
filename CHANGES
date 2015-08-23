@@ -1,3 +1,6 @@
+v0.5.0.0
+* Prices should be integers, not real. BREAKING CHANGE.
+
 v0.4.0.0
 * ExceptionResponse now holds the actual exception, rather than its text representation. BREAKING CHANGE.
 
@@ -14,3 +17,4 @@ v0.2.0.0
 
 v0.1.0.0
 * Initial release!
+
