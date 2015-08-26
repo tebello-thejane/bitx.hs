@@ -54,7 +54,6 @@ script:
     if [ -z "$STACK" ]; then
       cabal --version
       ghc --version
-      cabal install happy
 
       echo -e "\033[0;32mcabal install only deps.\033[0m"
       cabal install --only-dependencies --enable-tests
