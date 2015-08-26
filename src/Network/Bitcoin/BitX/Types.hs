@@ -4,8 +4,8 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Network.Bitcoin.BitX.Types
--- Copyright   :  No Rights Reserved
--- License     :  Public Domain
+-- Copyright   :  2015 Tebello Thejane
+-- License     :  BSD3
 --
 -- Maintainer  :  Tebello Thejane <zyxoas+hackage@gmail.com>
 -- Stability   :  Experimental

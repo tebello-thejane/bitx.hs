@@ -1,4 +1,3 @@
-
 module Network.Bitcoin.BitX.Types.Internal.Decimal
     (
     realToDecimalByteString_

@@ -3,8 +3,8 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Network.Bitcoin.BitX.Private.Withdrawal
--- Copyright   :  No Rights Reserved
--- License     :  Public Domain
+-- Copyright   :  2015 Tebello Thejane
+-- License     :  BSD3
 --
 -- Maintainer  :  Tebello Thejane <zyxoas+hackage@gmail.com>
 -- Stability   :  Experimental

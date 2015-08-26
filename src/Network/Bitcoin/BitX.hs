@@ -3,8 +3,8 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Network.Bitcoin.BitX
--- Copyright   :  No Rights Reserved
--- License     :  Public Domain
+-- Copyright   :  2015 Tebello Thejane
+-- License     :  BSD3
 --
 -- Maintainer  :  Tebello Thejane <zyxoas+hackage@gmail.com>
 -- Stability   :  Experimental
@@ -39,5 +39,5 @@ import Network.Bitcoin.BitX.Private.Withdrawal
 import Network.Bitcoin.BitX.Types.Internal
 import Network.Bitcoin.BitX.Response
 
-{-# ANN module ("HLint: ignore Use import/export shortcut" :: String) #-}
+{-# ANN module "HLint: ignore Use import/export shortcut" #-}
 
