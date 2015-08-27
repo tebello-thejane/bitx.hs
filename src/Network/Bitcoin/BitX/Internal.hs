@@ -50,14 +50,14 @@ authConnect auth req = do
         userID = Txt.encodeUtf8 (auth ^. Types.id)
         userSecret = Txt.encodeUtf8 (auth ^. Types.secret)
 
-simpleBitXGetAuth_ :: BitXAesRecordConvert recd aes => BitXAuth -> String -> IO (BitXAPIResponse recd)
+simpleBitXGetAuth_ :: BitXAesRecordConvert recd => BitXAuth -> String -> IO (BitXAPIResponse recd)
 simpleBitXGetAuth_ auth verb = withSocketsDo $
     rateLimit
         (authConnect auth
             . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb))
         consumeResponseIO
 
-simpleBitXPOSTAuth_ :: (BitXAesRecordConvert recd aes, POSTEncodeable inprec) => BitXAuth -> inprec
+simpleBitXPOSTAuth_ :: (BitXAesRecordConvert recd, POSTEncodeable inprec) => BitXAuth -> inprec
     -> String -> IO (BitXAPIResponse recd)
 simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $
     rateLimit
@@ -66,14 +66,14 @@ simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $
             . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb))
         consumeResponseIO
 
-simpleBitXMETHAuth_ :: BitXAesRecordConvert recd aes => BitXAuth -> BS.ByteString
+simpleBitXMETHAuth_ :: BitXAesRecordConvert recd => BitXAuth -> BS.ByteString
     -> String -> IO (BitXAPIResponse recd)
 simpleBitXMETHAuth_ auth meth verb = withSocketsDo $
     rateLimit
         (authConnect auth (fromJust (NetCon.parseUrl (bitXAPIRoot ++ verb))) { method = meth })
         consumeResponseIO
 
-simpleBitXGet_ :: BitXAesRecordConvert recd aes => String -> IO (BitXAPIResponse recd)
+simpleBitXGet_ :: BitXAesRecordConvert recd => String -> IO (BitXAPIResponse recd)
 simpleBitXGet_ verb = withSocketsDo $ do
     manager <- globalManager
     rateLimit
@@ -95,14 +95,14 @@ rateLimit act1 act2 = go 500000
         maxLimit = 5 * 1000 * 1000 -- 5 seconds probably means something else is wrong...
         incDelay = round . (* (1.5 :: Double)) . fromIntegral
 
-consumeResponseIO :: BitXAesRecordConvert recd aes => Either NetCon.HttpException (NetCon.Response BL.ByteString)
+consumeResponseIO :: BitXAesRecordConvert recd => Either NetCon.HttpException (NetCon.Response BL.ByteString)
     -> IO (BitXAPIResponse recd)
 consumeResponseIO resp =
     return $ case resp of
         Left ex -> ExceptionResponse ex
         Right k -> bitXErrorOrPayload k
 
-bitXErrorOrPayload :: BitXAesRecordConvert recd aes => Response BL.ByteString -> BitXAPIResponse recd
+bitXErrorOrPayload :: BitXAesRecordConvert recd => Response BL.ByteString -> BitXAPIResponse recd
 bitXErrorOrPayload resp = fromJust $
         ErrorResponse . aesToRec <$> Aeson.decode body -- is it a BitX error?
     <|> ValidResponse . aesToRec <$> Aeson.decode body

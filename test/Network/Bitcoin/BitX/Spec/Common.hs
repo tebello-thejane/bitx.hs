@@ -8,5 +8,5 @@ import Data.Aeson
 import Network.Bitcoin.BitX (BitXAesRecordConvert(..))
 import Data.ByteString.Lazy (ByteString)
 
-recordAesCheck :: (BitXAesRecordConvert recd aes, Show recd, Eq recd) => ByteString -> recd -> Expectation
+recordAesCheck :: (BitXAesRecordConvert recd, Show recd, Eq recd) => ByteString -> recd -> Expectation
 recordAesCheck aesTxt recd = fmap aesToRec (decode aesTxt) `shouldBe` Just recd
