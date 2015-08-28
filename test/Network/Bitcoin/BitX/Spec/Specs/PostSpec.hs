@@ -17,7 +17,7 @@ spec =
             {orderRequestPair = XBTZAR,
              orderRequestOrderType = BID,
              orderRequestVolume = 83.02,
-             orderRequestPrice = 15 }
+             orderRequestPrice = 15}
       `shouldBe`
         [("pair", "XBTZAR"),
          ("type", "BID"),

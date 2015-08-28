@@ -19,6 +19,12 @@ import Network.Bitcoin.BitX.Spec.Specs.NetSpec
 --import Text.Show.Pretty (parseValue, valToStr)
 import Safe
 
+-- To use this spec, create a file called "PRIVATE_API_KEY" with the private key and secret, respectively.
+--  placed on their own lines.
+--
+-- To ensure that nothing funny happens, you can create an Api key without the Perm_W_Withdrawals
+--  permission.
+
 spec :: Spec
 spec = describe "Private functionality test" $ do
     mauth <- runIO privateAuth

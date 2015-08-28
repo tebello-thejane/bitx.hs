@@ -1,5 +1,5 @@
-{-# LANGUAGE QuasiQuotes, OverloadedStrings, TemplateHaskell, TypeFamilies,
-    FlexibleContexts, FlexibleInstances, DataKinds, CPP, RecordWildCards #-}
+{-# LANGUAGE QuasiQuotes, OverloadedStrings, TemplateHaskell, TypeFamilies, FlexibleContexts,
+    FlexibleInstances, DataKinds, CPP, RecordWildCards #-}
 
 module Network.Bitcoin.BitX.Types.Internal
     (
@@ -69,7 +69,7 @@ instance FromJSON QuotedScientific where
    parseJSON _          = mempty
 
 instance FromJSON QuotedInt where
-   parseJSON (String x) = return . QuotedInt . read . Txt.unpack $ x
+   parseJSON (String x) = return . QuotedInt . (truncate :: Scientific -> Int) . read . Txt.unpack $ x
    parseJSON (Number x) = return . QuotedInt . (truncate :: Scientific -> Int) . read . show $ x
    parseJSON _          = mempty
 

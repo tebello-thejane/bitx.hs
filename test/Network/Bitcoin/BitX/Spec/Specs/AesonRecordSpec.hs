@@ -19,8 +19,8 @@ spec =
         BitXError {bitXErrorError = "oops", bitXErrorErrorCode = "ABadError"}
     it "Ticker is parsed properly" $
       recordAesCheck
-        "{\"timestamp\":1431811395699,\"bid\":\"3083\",\"ask\":\"3115\",\
-            \ \"last_trade\":\"3116\",\"rolling_24_hour_volume\":\"19.776608\",\"pair\":\"XBTZAR\"}"
+        "{\"timestamp\":1431811395699,\"bid\":\"3083.00\",\"ask\":\"3115.00\",\
+            \ \"last_trade\":\"3116.00\",\"rolling_24_hour_volume\":\"19.776608\",\"pair\":\"XBTZAR\"}"
         Ticker {
              tickerTimestamp = posixSecondsToUTCTime 1431811395.699,
              tickerBid = 3083,
@@ -30,18 +30,18 @@ spec =
              tickerPair = XBTZAR}
     it "Balance is parsed properly" $
       recordAesCheck
-        "{\"account_id\":\"314159\",\"asset\":\"ZAR\",\"balance\":\"2159.15\",\"reserved\":\"320\",\
-            \ \"unconfirmed\":\"175\"}"
+        "{\"account_id\":\"314159\",\"asset\":\"ZAR\",\"balance\":\"2159.15\",\"reserved\":\"320.43\",\
+            \ \"unconfirmed\":\"175.34\"}"
         Balance
             {balanceId = "314159",
              balanceAsset = ZAR,
              balanceBalance = 2159.15,
-             balanceReserved = 320,
-             balanceUnconfirmed = 175}
+             balanceReserved = 320.43,
+             balanceUnconfirmed = 175.34}
     it "Order is parsed properly" $
       recordAesCheck
-        "{\"volume\":\"314159\",\"price\":4321}"
-        Order {orderVolume = 314159, orderPrice = 4321}
+        "{\"volume\":\"314159.26\",\"price\":4321.00}"
+        Order {orderVolume = 314159.26, orderPrice = 4321}
     it "WithdrawalRequest is parsed properly" $
       recordAesCheck
         "{\"status\":\"PENDING\",\"id\":\"271828\"}"
@@ -50,21 +50,21 @@ spec =
             withdrawalRequestId = "271828" }
     it "Tickers is parsed properly" $
       recordAesCheck
-        "{\"tickers\":[{\"timestamp\":1431811395699,\"bid\":\"3083\",\"ask\":\"3115\",\
-            \ \"last_trade\":\"3116\",\"rolling_24_hour_volume\":\"19.776608\",\
+        "{\"tickers\":[{\"timestamp\":1431811395699,\"bid\":\"3083.00\",\"ask\":\"3115.00\",\
+            \ \"last_trade\":\"3116.00\",\"rolling_24_hour_volume\":\"19.776608\",\
             \ \"pair\":\"XBTZAR\"}]}"
         [tickerInner]
     it "Orderbook is parsed properly" $
       recordAesCheck
-        "{\"timestamp\":1431811395699,\"bids\":[{\"volume\":\"654.98\",\"price\":\"3789\"}],\
-            \ \"asks\":[{\"volume\":\"654.98\",\"price\":\"3789\"}]}"
+        "{\"timestamp\":1431811395699,\"bids\":[{\"volume\":\"654.98\",\"price\":\"3789.00\"}],\
+            \ \"asks\":[{\"volume\":\"654.98\",\"price\":\"3789.00\"}]}"
         Orderbook
             {orderbookTimestamp = posixSecondsToUTCTime 1431811395.699,
              orderbookBids = [orderInner],
              orderbookAsks = [orderInner]}
     it "Trade is parsed properly" $
       recordAesCheck
-        "{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327\"}"
+        "{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327.00\"}"
         Trade
             {tradeTimestamp = posixSecondsToUTCTime 1431811395.699,
              tradeVolume = 6754.09,
@@ -72,13 +72,13 @@ spec =
     it "PublicTrades is parsed properly" $
       recordAesCheck
         "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\
-            \ \"price\":\"5327\"}],\"currency\":\"ZAR\"}"
+            \ \"price\":\"5327.00\"}],\"currency\":\"ZAR\"}"
         [tradeInner]
     it "PrivateOrder is parsed properly" $
       recordAesCheck
         "{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
             \ \"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
-            \ \"limit_price\":765,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
+            \ \"limit_price\":765.00,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
             \ \"state\":\"COMPLETE\",\"type\":\"BID\"}"
         PrivateOrder
             {privateOrderBase = 568.7,
@@ -97,7 +97,7 @@ spec =
       recordAesCheck
         "{\"orders\":[{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
             \ \"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
-            \ \"limit_price\":765,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
+            \ \"limit_price\":765.00,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
             \ \"state\":\"COMPLETE\",\"type\":\"BID\"}]}"
         [privateOrderInner]
     it "OrderID is parsed properly" $
@@ -106,7 +106,7 @@ spec =
         ("57983" :: OrderID)
     it "PublicTrades is parsed properly" $
       recordAesCheck
-        "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327\"}], \
+        "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327.00\"}], \
             \ \"currency\":\"ZAR\"}"
          [tradeInner]
     it "RequestSuccess is parsed properly" $
@@ -117,9 +117,9 @@ spec =
       recordAesCheck
         "{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
             \ \"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
-            \ \"limit_price\":765,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
+            \ \"limit_price\":765.00,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
             \ \"state\":\"COMPLETE\",\"type\":\"BID\", \"trades\":[{\"timestamp\":1431811395699, \
-            \ \"volume\":\"6754.09\",\"price\":\"5327\"}]}"
+            \ \"volume\":\"6754.09\",\"price\":\"5327.00\"}]}"
         PrivateOrderWithTrades
             {privateOrderWithTradesBase = 568.7,
              privateOrderWithTradesCounter = 3764.2,
