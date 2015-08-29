@@ -126,3 +126,18 @@ test-suite doctests
                        doctest >= 0.8
   hs-source-dirs:      test
   default-language:    Haskell2010
+
+--------------------------------------------------------------------------------
+
+test-suite example
+  type:                exitcode-stdio-1.0
+  ghc-options:         -threaded
+  main-is:             Example.hs
+  build-depends:       base,
+                       microlens,
+                       bitx-bitcoin,
+                       http-types,
+                       http-conduit,
+                       text
+  hs-source-dirs:      test
+  default-language:    Haskell2010

@@ -31,9 +31,9 @@ main = do
 ```
 
 Note that the code snippet above depends on [http-types](https://hackage.haskell.org/package/http-types),
-[http-conduit](https://hackage.haskell.org/package/http-conduit), [lens](https://hackage.haskell.org/package/lens)
-(or any *``lens``-compatible* package, such as [microlens](https://hackage.haskell.org/package/microlens)),
-and finally **bitx-bitcoin**.
+[text](https://hackage.haskell.org/package/text), [http-conduit](https://hackage.haskell.org/package/http-conduit),
+[lens](https://hackage.haskell.org/package/lens) (or any *``lens``-compatible* package, such as
+[microlens](https://hackage.haskell.org/package/microlens)), and finally **bitx-bitcoin**.
 
 This library is known to work on Windows, but if you wish to use it then you will have to do a bit
 more work due to the ``Network`` library not building on Windows out of the box. See
