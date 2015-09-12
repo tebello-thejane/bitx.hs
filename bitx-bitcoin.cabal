@@ -65,7 +65,7 @@ library
                        aeson >= 0.8,
                        text,
                        time,
-                       http-conduit >= 2.0.0,
+                       http-conduit >= 2.1.7,
                        bytestring,
                        network,
                        split >= 0.2.0.0,
