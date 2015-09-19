@@ -178,7 +178,7 @@ data BitXError_= BitXError_
       bitXError'error_code :: Text
     } deriving (Show, Eq)
 
-$(AesTH.deriveJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"} ''BitXError_)
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"} ''BitXError_)
 
 instance BitXAesRecordConvert Types.BitXError where
     type Aes Types.BitXError = BitXError_
