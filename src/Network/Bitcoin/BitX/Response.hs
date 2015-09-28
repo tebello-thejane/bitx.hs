@@ -19,7 +19,7 @@ module Network.Bitcoin.BitX.Response
     BitXAPIResponse(..)
   ) where
 
-import Network.HTTP.Conduit (Response(..), HttpException)
+import Network.HTTP.Client (Response(..), HttpException)
 import Data.ByteString.Lazy (ByteString)
 import Network.Bitcoin.BitX.Types
 

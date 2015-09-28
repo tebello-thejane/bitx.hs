@@ -15,7 +15,7 @@ import Network.Bitcoin.BitX (BitXAPIResponse(..), getTicker, CcyPair(..))
 import qualified Network.Bitcoin.BitX as BitX
 import Data.Text (unpack)
 import Network.HTTP.Types.Status (Status(..))
-import Network.HTTP.Conduit (responseStatus)
+import Network.HTTP.Client (responseStatus)
 
 main :: IO ()
 main = do
@@ -31,7 +31,7 @@ main = do
 ```
 
 Note that the code snippet above depends on [http-types](https://hackage.haskell.org/package/http-types),
-[text](https://hackage.haskell.org/package/text), [http-conduit](https://hackage.haskell.org/package/http-conduit),
+[text](https://hackage.haskell.org/package/text), [http-client](https://hackage.haskell.org/package/http-client),
 [lens](https://hackage.haskell.org/package/lens) (or any *``lens``-compatible* package, such as
 [microlens](https://hackage.haskell.org/package/microlens)), and finally **bitx-bitcoin**.
 

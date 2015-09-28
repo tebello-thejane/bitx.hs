@@ -13,9 +13,10 @@ where
 import Network.Bitcoin.BitX.Types
 import qualified Network.Bitcoin.BitX.Types as Types
 import Network.Bitcoin.BitX.Types.Internal
-import qualified Network.HTTP.Conduit as NetCon
+import qualified Network.HTTP.Client as NetCon
+import qualified Network.HTTP.Client.TLS as NetCon
 import Network.HTTP.Types (status503)
-import Network.HTTP.Conduit (Response(..), Request(..))
+import Network.HTTP.Client (Response(..), Request(..))
 import Control.Exception (try)
 import qualified Data.Aeson as Aeson (decode)
 import qualified Data.ByteString.Lazy as BL

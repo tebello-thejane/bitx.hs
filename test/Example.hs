@@ -5,7 +5,7 @@ import Network.Bitcoin.BitX (BitXAPIResponse(..), getTicker, CcyPair(..))
 import qualified Network.Bitcoin.BitX as BitX
 import Data.Text (unpack)
 import Network.HTTP.Types.Status (Status(..))
-import Network.HTTP.Conduit (responseStatus)
+import Network.HTTP.Client (responseStatus)
 
 main :: IO ()
 main = do
