@@ -1,3 +1,7 @@
+v0.5.0.1
+* Replaced HTTP-Conduit with HTTP-Client and HTTP-Client-TLS.
+* A few more major bugfixes w.r.t. to BitX number formatting.
+
 v0.5.0.0
 * Prices should be integers, not real. BREAKING CHANGE.
 * Dropped support for versions of GHC lower than 7.8.1.
