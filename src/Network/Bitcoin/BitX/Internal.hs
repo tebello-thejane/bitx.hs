@@ -28,8 +28,8 @@ import Network.Bitcoin.BitX.Response
 import Control.Applicative ((<|>))
 import Lens.Micro ((^.))
 import Control.Concurrent (threadDelay)
-#if MIN_VERSION_base(4,8,0)
--- <$> is in base since 4.8 due to the AMP
+#if __GLASGOW_HASKELL__ >= 710
+-- <$> is in base since 4.8 (GHC 7.10) due to the AMP
 #else
 import Control.Applicative ((<$>))
 #endif

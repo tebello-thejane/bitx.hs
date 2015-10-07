@@ -20,8 +20,8 @@ import Data.Text (Text)
 import Data.Time.Clock (UTCTime)
 import Data.Time.Clock.POSIX (posixSecondsToUTCTime)
 import Lens.Micro ((^.))
-#if MIN_VERSION_base(4,8,0)
--- base 4.8 re-exports Monoid and its functions/constants
+#if __GLASGOW_HASKELL__ >= 710
+-- base 4.8+ (GHC 7.10+) re-exports Monoid and its functions/constants
 #else
 import Data.Monoid (mempty)
 #endif
@@ -29,7 +29,7 @@ import Data.Scientific (Scientific)
 import Data.ByteString (ByteString)
 import Data.List.Split (splitOn)
 import qualified Data.ByteString.Char8 as BS8 (pack)
-#if MIN_VERSION_base(4,7,0)
+#if __GLASGOW_HASKELL__ >= 708
 import Data.Coerce
 #endif
 
@@ -74,7 +74,7 @@ instance FromJSON QuotedInt where
    parseJSON _          = mempty
 
 qsToScientific :: QuotedScientific -> Scientific
-#if MIN_VERSION_base(4,7,0)
+#if __GLASGOW_HASKELL__ >= 708
 qsToScientific = coerce
 {-# INLINE qsToScientific #-}
 #else
@@ -82,7 +82,7 @@ qsToScientific (QuotedScientific sci) = sci
 #endif
 
 qiToInt :: QuotedInt -> Int
-#if MIN_VERSION_base(4,7,0)
+#if __GLASGOW_HASKELL__ >= 708
 qiToInt = coerce
 {-# INLINE qiToInt #-}
 #else
