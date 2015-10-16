@@ -82,7 +82,7 @@ simpleBitXGet_ verb = withSocketsDo $ do
         consumeResponseIO
 
 rateLimit :: IO (Either NetCon.HttpException c) -> (Either NetCon.HttpException c -> IO d) -> IO d
-rateLimit act1 act2 = go (500 * 000)
+rateLimit act1 act2 = go (500 * 1000)
     where
         go del = do
             resp <- act1
