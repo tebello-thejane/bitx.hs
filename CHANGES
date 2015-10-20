@@ -1,3 +1,6 @@
+v0.6.0.0
+* Added the new endpoint for creating market (spot) orders.
+
 v0.5.0.1
 * Replaced HTTP-Conduit with HTTP-Client and HTTP-Client-TLS.
 * A few more major bugfixes w.r.t. to BitX number formatting.

@@ -175,4 +175,10 @@ _account = do
     let _ = x ^. BitX.currency
     Nothing
 
-
+_marketOrderRequest :: Maybe Int
+_marketOrderRequest = do
+    let x = BitX.MarketOrderRequest XBTZAR BID 0
+    let _ = x ^. BitX.pair
+    let _ = x ^. BitX.orderType
+    let _ = x ^. BitX.volume
+    Nothing

@@ -30,6 +30,7 @@ module Network.Bitcoin.BitX.Types
     OrderType(..),
     RequestStatus(..),
     OrderRequest(..),
+    MarketOrderRequest(..),
     RequestSuccess,
     BitXError(..),
     PrivateOrderWithTrades(..),
@@ -58,6 +59,7 @@ module Network.Bitcoin.BitX.Types
     mkOrderRequest,
     mkQuoteRequest,
     mkNewWithdrawal,
+    mkMarketOrderRequest,
 
 -- | Lens @Has*@ instances for convenient record accessors and mutators.
 --
@@ -320,6 +322,17 @@ makeFields ''OrderRequest
 -- |@mkOrderRequest = OrderRequest ZARXBT BID 0 0@
 mkOrderRequest :: OrderRequest
 mkOrderRequest = OrderRequest ZARXBT BID 0 0
+
+data MarketOrderRequest = MarketOrderRequest
+        {marketOrderRequestPair :: CcyPair,
+         marketOrderRequestOrderType :: OrderType,
+         marketOrderRequestVolume :: Scientific } deriving (Eq, Show)
+
+makeFields ''MarketOrderRequest
+
+-- |@mkMarketOrderRequest = MarketOrderRequest ZARXBT BID 0@
+mkMarketOrderRequest :: MarketOrderRequest
+mkMarketOrderRequest = MarketOrderRequest ZARXBT BID 0
 
 -- | The current balance of a private account.
 data Balance = Balance

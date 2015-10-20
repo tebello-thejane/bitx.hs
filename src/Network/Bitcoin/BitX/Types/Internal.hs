@@ -631,3 +631,11 @@ instance POSTEncodeable Types.Account where
     postEncode acc =
         [("name", showableToBytestring_ (acc ^. Types.name)),
          ("currency", showableToBytestring_ (acc ^. Types.currency))]
+
+------------------------------------- MarketOrderRequest type ------------------------------------
+
+instance POSTEncodeable Types.MarketOrderRequest where
+    postEncode moreq =
+        [("type", if (moreq ^. Types.orderType) == Types.BID then "BUY" else "SELL"),
+         ("pair", showableToBytestring_ (moreq ^. Types.pair)),
+         (if (moreq ^. Types.orderType) == Types.BID then "counter_volume" else "base_volume", realToDecimalByteString_ (moreq ^. Types.volume))]

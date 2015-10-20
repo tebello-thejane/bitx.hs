@@ -24,7 +24,8 @@ module Network.Bitcoin.BitX.Private.Order
   getAllOrders,
   postOrder,
   stopOrder,
-  getOrder
+  getOrder,
+  postMarketOrder
   ) where
 
 import Network.Bitcoin.BitX.Internal
@@ -80,3 +81,19 @@ stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
 
 getOrder :: BitXAuth -> OrderID -> IO (BitXAPIResponse PrivateOrderWithTrades)
 getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ Txt.unpack oid
+
+{- | Create a new market order.
+
+__Warning! Orders cannot be reversed once they have executed. Please ensure your program has been__
+__thoroughly tested before submitting orders.__
+
+A market order executes immediately, and either buys as much bitcoin that can be
+bought for a set amount of fiat currency, or sells a set amount of bitcoin for
+as much fiat as possible.
+
+Use order type @BID@ to buy bitcoin or @ASK@ to sell.
+
+@Perm_W_Orders@ permission is required.
+ -}
+postMarketOrder :: BitXAuth -> MarketOrderRequest -> IO (BitXAPIResponse OrderID)
+postMarketOrder auth moreq = simpleBitXPOSTAuth_ auth moreq "marketorder"
