@@ -1,13 +1,22 @@
 v0.6.0.0
 * Added the new endpoint for creating market (spot) orders.
+* Replaced http-conduit with http-client and http-client-tls.
+* Fixed broken rate limiting.
 
 v0.5.0.1
-* Replaced HTTP-Conduit with HTTP-Client and HTTP-Client-TLS.
 * A few more major bugfixes w.r.t. to BitX number formatting.
+
+v0.5.0.1
+* Fixed issue due to BitX's handling of ints as decimal.
 
 v0.5.0.0
 * Prices should be integers, not real. BREAKING CHANGE.
 * Dropped support for versions of GHC lower than 7.8.1.
+
+v0.4.0.1
+* BitX expects decimals to have 6 places and no trailing zeros.
+* Changed license to BSD3.
+* Now builds on Stack LTS-3.
 
 v0.4.0.0
 * ExceptionResponse now holds the actual exception, rather than its text representation. BREAKING CHANGE.
@@ -15,6 +24,12 @@ v0.4.0.0
 v0.3.0.0
 * Replaced Volkov records with (micro)lenses. BREAKING CHANGE.
 * Implemented a (naive) mechanism to work around nginx rate limiting.
+
+v0.2.0.2
+* Added Naigerian Naira.
+
+v0.2.0.1
+* Record library idependency needs upper bound.
 
 v0.2.0.0
 * Replaced Decimal with Scientific. BREAKING CHANGE.
