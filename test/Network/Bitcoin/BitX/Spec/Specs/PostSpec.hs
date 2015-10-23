@@ -59,3 +59,23 @@ spec =
         [("type", "BUY"),
          ("pair", "XBTKES"),
          ("base_amount", "566.76")]
+    it "MarketOrderRequest for buy is post-encoded properly" $
+        postEncode
+          MarketOrderRequest
+            {marketOrderRequestPair = XBTZAR,
+             marketOrderRequestOrderType = BID,
+             marketOrderRequestVolume = 15.023}
+     `shouldBe`
+       [("type", "BUY"),
+        ("pair", "XBTZAR"),
+        ("counter_volume", "15.023")]
+    it "MarketOrderRequest for sell is post-encoded properly" $
+        postEncode
+          MarketOrderRequest
+            {marketOrderRequestPair = XBTZAR,
+             marketOrderRequestOrderType = ASK,
+             marketOrderRequestVolume = 15.023}
+     `shouldBe`
+       [("type", "SELL"),
+        ("pair", "XBTZAR"),
+        ("base_volume", "15.023")]
