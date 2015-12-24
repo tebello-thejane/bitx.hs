@@ -1,3 +1,5 @@
+language: c
+
 sudo: false
 
 matrix:
@@ -19,7 +21,6 @@ matrix:
     - env: CABALVER=head GHCVER=head
       addons: {apt: {packages: [cabal-install-head,ghc-head],  sources: [hvr-ghc]}}
     - env: STACK=STACK
-      addons: {apt: {packages: [stack]}}
 
   allow_failures:
    - env: CABALVER=head GHCVER=head
@@ -37,6 +38,11 @@ install:
       cabal update
 
     else
+      curl -o stack.tar.gz -L https://www.stackage.org/stack/linux-x86_64
+      mkdir ./stack
+      tar -xvf stack.tar.gz -C ./stack --strip-components=1
+      export PATH=$PATH:./stack/
+
       stack update
       stack upgrade
     fi
@@ -53,11 +59,8 @@ script:
 
       echo -e "\033[0;32mstack test.\033[0m"
       stack test
-    fi
 
- - |
-    set -e
-    if [ -z "$STACK" ]; then
+    else
       cabal --version
       ghc --version
 
