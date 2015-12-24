@@ -21,7 +21,7 @@ matrix:
     - env: CABALVER=head GHCVER=head
       addons: {apt: {packages: [cabal-install-head,ghc-head],  sources: [hvr-ghc]}}
     - env: STACK=STACK
-      addons: {apt: {packages: [perl,make,automake,gcc,gmp-devel]}}
+      addons: {apt: {packages: [libgmp-dev]}}
 
   allow_failures:
    - env: CABALVER=head GHCVER=head
