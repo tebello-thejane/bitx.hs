@@ -53,10 +53,10 @@ script:
     set -e
     if [ -n "$STACK" ]; then
       echo -e "\033[0;32mstack setup.\033[0m"
-      stack setup -v
+      stack setup
 
       echo -e "\033[0;32mstack build.\033[0m"
-      stack build -v
+      stack build
 
       echo -e "\033[0;32mstack test.\033[0m"
       stack test
