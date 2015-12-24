@@ -1,38 +1,42 @@
-sudo: required
-
-env:
- - CABALVER=1.18 GHCVER=7.8.1
- - CABALVER=1.18 GHCVER=7.8.2
- - CABALVER=1.18 GHCVER=7.8.3
- - CABALVER=1.18 GHCVER=7.8.4
- - CABALVER=1.22 GHCVER=7.10.1
- - CABALVER=1.22 GHCVER=7.10.2
- - CABALVER=head GHCVER=head
- - STACK=STACK
+sudo: false
 
 matrix:
- allow_failures:
-  - env: CABALVER=head GHCVER=head
+  include:
+    - env: CABALVER=1.18 GHCVER=7.8.1
+      addons: {apt: {packages: [cabal-install-1.18,ghc-7.8.1], sources: [hvr-ghc]}}
+    - env: CABALVER=1.18 GHCVER=7.8.2
+      addons: {apt: {packages: [cabal-install-1.18,ghc-7.8.2], sources: [hvr-ghc]}}
+    - env: CABALVER=1.18 GHCVER=7.8.3
+      addons: {apt: {packages: [cabal-install-1.18,ghc-7.8.3], sources: [hvr-ghc]}}
+    - env: CABALVER=1.22 GHCVER=7.10.1
+      addons: {apt: {packages: [cabal-install-1.22,ghc-7.10.1],sources: [hvr-ghc]}}
+    - env: CABALVER=1.22 GHCVER=7.10.2
+      addons: {apt: {packages: [cabal-install-1.22,ghc-7.10.2],sources: [hvr-ghc]}}
+    - env: CABALVER=1.22 GHCVER=7.10.3
+      addons: {apt: {packages: [cabal-install-1.22,ghc-7.10.3],sources: [hvr-ghc]}}
+    - env: CABALVER=head GHCVER=head
+      addons: {apt: {packages: [cabal-install-head,ghc-head],  sources: [hvr-ghc]}}
+    - env: STACK=STACK
+      addons: {apt: {packages: [stack]}}
+
+  allow_failures:
+   - env: CABALVER=head GHCVER=head
+
+before_install:
+ - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
 
 install:
- - sudo apt-get update
- - if [ -n "$STACK" ]; then sudo apt-get install libgmp-dev; fi
  - |
     set -e
     if [ -z "$STACK" ]; then
-      sudo add-apt-repository -y ppa:hvr/ghc
-      sudo apt-get update
-      time sudo apt-get install cabal-install-$CABALVER ghc-$GHCVER
       export PATH=/home/travis/.cabal/bin:/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
 
       echo "$(ghc --version) [$(ghc --print-project-git-commit-id 2> /dev/null || echo '?')]"
       cabal update
 
     else
-      wget -q -O- http://download.fpcomplete.com/ubuntu/fpco.key | sudo apt-key add -
-      echo 'deb http://download.fpcomplete.com/ubuntu/precise stable main'|sudo tee /etc/apt/sources.list.d/fpco.list
-      sudo apt-get update
-      sudo apt-get install stack -y
+      stack update
+      stack upgrade
     fi
 
 script:
@@ -40,13 +44,13 @@ script:
     set -e
     if [ -n "$STACK" ]; then
       echo -e "\033[0;32mstack setup.\033[0m"
-      sudo stack setup -v
+      stack setup -v
 
       echo -e "\033[0;32mstack build.\033[0m"
-      sudo stack build -v
+      stack build -v
 
       echo -e "\033[0;32mstack test.\033[0m"
-      sudo stack test
+      stack test
     fi
 
  - |
@@ -76,4 +80,3 @@ script:
       echo -e "\033[0;32mcabal install tarball.\033[0m"
       cabal install --force-reinstalls dist/*-*.tar.gz
     fi
-
