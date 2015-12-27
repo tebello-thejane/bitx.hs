@@ -22,8 +22,6 @@ matrix:
       addons: {apt: {packages: [cabal-install-head,ghc-head],  sources: [hvr-ghc]}}
     - env: STACK=STACK ARGS=""
       addons: {apt: {packages: [libgmp-dev]}}
-    - env: STACK=STACK ARGS="--resolver lts-2"
-      addons: {apt: {packages: [libgmp-dev]}}
     - env: STACK=STACK ARGS="--resolver lts-3"
       addons: {apt: {packages: [libgmp-dev]}}
     - env: STACK=STACK ARGS="--resolver lts"
@@ -97,3 +95,4 @@ script:
 cache:
   directories:
   - $HOME/.stack
+  - $HOME/.cabal
