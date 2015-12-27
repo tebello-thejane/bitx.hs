@@ -20,7 +20,15 @@ matrix:
       addons: {apt: {packages: [cabal-install-1.22,ghc-7.10.3],sources: [hvr-ghc]}}
     - env: CABALVER=head GHCVER=head
       addons: {apt: {packages: [cabal-install-head,ghc-head],  sources: [hvr-ghc]}}
-    - env: STACK=STACK
+    - env: STACK=STACK ARGS=""
+      addons: {apt: {packages: [libgmp-dev]}}
+    - env: STACK=STACK ARGS="--resolver lts-2"
+      addons: {apt: {packages: [libgmp-dev]}}
+    - env: STACK=STACK ARGS="--resolver lts-3"
+      addons: {apt: {packages: [libgmp-dev]}}
+    - env: STACK=STACK ARGS="--resolver lts"
+      addons: {apt: {packages: [libgmp-dev]}}
+    - env: STACK=STACK ARGS="--resolver nightly"
       addons: {apt: {packages: [libgmp-dev]}}
 
   allow_failures:
@@ -39,7 +47,7 @@ install:
       cabal update
 
     else
-      curl -o stack.tar.gz -L https://www.stackage.org/stack/linux-x86_64
+      travis_retry curl -o stack.tar.gz -L https://www.stackage.org/stack/linux-x86_64
       mkdir ./stack
       tar -xf stack.tar.gz -C ./stack --strip-components=1
       export PATH=$PATH:./stack/
@@ -53,13 +61,13 @@ script:
     set -e
     if [ -n "$STACK" ]; then
       echo -e "\033[0;32mstack setup.\033[0m"
-      stack setup
+      stack $ARGS --no-terminal setup
 
       echo -e "\033[0;32mstack build.\033[0m"
-      stack build
+      stack $ARGS --no-terminal build
 
       echo -e "\033[0;32mstack test.\033[0m"
-      stack test
+      stack $ARGS --no-terminal test
 
     else
       cabal --version
@@ -86,3 +94,6 @@ script:
       echo -e "\033[0;32mcabal install tarball.\033[0m"
       cabal install --force-reinstalls dist/*-*.tar.gz
     fi
+cache:
+  directories:
+  - $HOME/.stack
