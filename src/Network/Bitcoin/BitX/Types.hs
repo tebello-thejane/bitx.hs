@@ -123,7 +123,8 @@ module Network.Bitcoin.BitX.Types
     HasExpiresAt(..),
     HasDiscarded(..),
     HasExercised(..),
-    HasName(..)
+    HasName(..),
+    HasIsBuy(..)
   ) where
 
 import Data.Aeson (FromJSON(..))
@@ -176,6 +177,8 @@ data CcyPair =
     | MYRXBT -- ^ Malaysian Ringgit vs. Bitcoin
     | XBTNGN -- ^ Bitcoin vs. Nigerian Naira
     | NGNXBT -- ^ Nigerian Naira vs. Bitcoin
+    | XBTIDR -- ^ Bitcoin vs. Indonesian Rupiah
+    | IDRXBT -- ^ Indonesian Rupiah vs. Bitcoin
   deriving (Show, Generic, Eq)
 
 -- | The state of a single market, identified by the currency pair.
@@ -242,7 +245,8 @@ makeFields ''Orderbook
 data Trade = Trade {
     tradeTimestamp :: UTCTime,
     tradeVolume :: Scientific,
-    tradePrice :: Int
+    tradePrice :: Int,
+    tradeIsBuy :: Bool
     } deriving (Eq, Show)
 
 makeFields ''Trade

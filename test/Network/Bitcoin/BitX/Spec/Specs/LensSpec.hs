@@ -56,10 +56,11 @@ _orderbook = do
 
 _trade :: Maybe Int
 _trade = do
-    let x = BitX.Trade (posixSecondsToUTCTime 0) 0 0
+    let x = BitX.Trade (posixSecondsToUTCTime 0) 0 0 False
     let _ = x ^. BitX.timestamp
     let _ = x ^. BitX.volume
     let _ = x ^. BitX.price
+    let _ = x ^. BitX.isBuy
     Nothing
 
 _bitXAuth :: Maybe Int
@@ -88,7 +89,7 @@ _privateOrder = do
 
 _privateOrderWithTrades :: Maybe Int
 _privateOrderWithTrades = do
-    let x = BitX.PrivateOrderWithTrades 0 0 (posixSecondsToUTCTime 0) (posixSecondsToUTCTime 0) 0 0 0 0 "" XBTZAR PENDING ASK [BitX.Trade (posixSecondsToUTCTime 0) 0 0]
+    let x = BitX.PrivateOrderWithTrades 0 0 (posixSecondsToUTCTime 0) (posixSecondsToUTCTime 0) 0 0 0 0 "" XBTZAR PENDING ASK [BitX.Trade (posixSecondsToUTCTime 0) 0 0 False]
     let _ = x ^. BitX.base
     let _ = x ^. BitX.counter
     let _ = x ^. BitX.creationTimestamp

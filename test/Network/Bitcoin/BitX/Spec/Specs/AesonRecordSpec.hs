@@ -64,16 +64,12 @@ spec =
              orderbookAsks = [orderInner]}
     it "Trade is parsed properly" $
       recordAesCheck
-        "{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327.00\"}"
+        "{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327.00\", \"is_buy\": true}"
         Trade
             {tradeTimestamp = posixSecondsToUTCTime 1431811395.699,
              tradeVolume = 6754.09,
-             tradePrice = 5327}
-    it "PublicTrades is parsed properly" $
-      recordAesCheck
-        "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\
-            \ \"price\":\"5327.00\"}],\"currency\":\"ZAR\"}"
-        [tradeInner]
+             tradePrice = 5327,
+             tradeIsBuy = True}
     it "PrivateOrder is parsed properly" $
       recordAesCheck
         "{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
@@ -106,7 +102,7 @@ spec =
         ("57983" :: OrderID)
     it "PublicTrades is parsed properly" $
       recordAesCheck
-        "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327.00\"}], \
+        "{\"trades\":[{\"timestamp\":1431811395699,\"volume\":\"6754.09\",\"price\":\"5327.00\",\"is_buy\":false}], \
             \ \"currency\":\"ZAR\"}"
          [tradeInner]
     it "RequestSuccess is parsed properly" $
@@ -119,7 +115,7 @@ spec =
             \ \"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
             \ \"limit_price\":765.00,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
             \ \"state\":\"COMPLETE\",\"type\":\"BID\", \"trades\":[{\"timestamp\":1431811395699, \
-            \ \"volume\":\"6754.09\",\"price\":\"5327.00\"}]}"
+            \ \"volume\":\"6754.09\",\"price\":\"5327.00\",\"is_buy\":false}]}"
         PrivateOrderWithTrades
             {privateOrderWithTradesBase = 568.7,
              privateOrderWithTradesCounter = 3764.2,
@@ -188,7 +184,8 @@ tradeInner =
     Trade {
          tradeTimestamp = posixSecondsToUTCTime 1431811395.699,
          tradeVolume = 6754.09,
-         tradePrice = 5327}
+         tradePrice = 5327,
+         tradeIsBuy = False}
 
 privateOrderInner :: PrivateOrder
 privateOrderInner =
