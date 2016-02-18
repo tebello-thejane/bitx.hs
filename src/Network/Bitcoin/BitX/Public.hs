@@ -47,7 +47,9 @@ module Network.Bitcoin.BitX.Public
 
 import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
+import Network.Bitcoin.BitX.Types.Internal
 import Network.Bitcoin.BitX.Response
+import Data.Time.Clock (UTCTime)
 
 {- | Returns the latest ticker indicators. -}
 
@@ -69,5 +71,6 @@ getOrderBook cyp = simpleBitXGet_ $ "orderbook?pair=" ++ show cyp
 
 {- | Returns a list of the most recent trades -}
 
-getTrades :: CcyPair -> IO (BitXAPIResponse [Trade])
-getTrades cyp = simpleBitXGet_ $ "trades?pair=" ++ show cyp
+getTrades :: Maybe UTCTime -> CcyPair -> IO (BitXAPIResponse [Trade])
+getTrades   Nothing    cyp = simpleBitXGet_ $ "trades?pair=" ++ show cyp
+getTrades (Just since) cyp = simpleBitXGet_ $ "trades?pair=" ++ show cyp ++ "since=" ++ show (timeToTimestamp since)

@@ -6,7 +6,8 @@ module Network.Bitcoin.BitX.Types.Internal
     BitXAesRecordConvert(..),
     POSTEncodeable(..),
     Transaction_(..),
-    pendingTransactionsToTransactions
+    pendingTransactionsToTransactions,
+    timeToTimestamp
     )
 where
 
@@ -18,7 +19,7 @@ import qualified Data.Text as Txt
 import qualified Data.Text.Encoding as Txt
 import Data.Text (Text)
 import Data.Time.Clock (UTCTime)
-import Data.Time.Clock.POSIX (posixSecondsToUTCTime)
+import Data.Time.Clock.POSIX (posixSecondsToUTCTime, utcTimeToPOSIXSeconds)
 import Lens.Micro ((^.))
 #if __GLASGOW_HASKELL__ >= 710
 -- base 4.8+ (GHC 7.10+) re-exports Monoid and its functions/constants
@@ -41,8 +42,14 @@ timestampParse_ = posixSecondsToUTCTime
     . ( / 1000)
     . (fromIntegral :: Integer -> Scientific)
 
---class (FromJSON aes) => BitXAesRecordConvert recd aes | recd -> aes where
---    aesToRec :: aes -> recd
+timeToTimestamp :: UTCTime -> Integer
+timeToTimestamp = truncate . (* 1000). utcTimeToPOSIXSeconds
+
+--TODO: add a quickcheck for this instead
+-- |
+-- >>> timeToTimestamp . timestampParse_ $ 42034098087654
+-- 42034098087654
+--
 
 class FromJSON (Aes recd) => BitXAesRecordConvert recd where
     type Aes recd
@@ -54,9 +61,6 @@ class POSTEncodeable recd where
 
 showableToBytestring_ :: Show a => a -> ByteString
 showableToBytestring_ = Txt.encodeUtf8 . Txt.pack . show
-
---realToDecimalByteString_ :: Real a => a -> ByteString
---realToDecimalByteString_ k = pack . reverse . dropWhile (== '0') . reverse $ (showFFloat (Just 6) . (fromRational :: Rational -> Double) . toRational $ k) ""
 
 -- | Wrappers around Scientific and Int, and FromJSON instance, to facilitate automatic JSON instances
 
