@@ -67,6 +67,7 @@ library
                        time,
                        bytestring,
                        network,
+                       QuickCheck >= 2.8,
                        split >= 0.2.0.0,
                        scientific,
                        http-client >= 0.4.6.1,
