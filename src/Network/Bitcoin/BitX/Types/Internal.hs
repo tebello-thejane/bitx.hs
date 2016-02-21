@@ -1,5 +1,5 @@
 {-# LANGUAGE QuasiQuotes, OverloadedStrings, TemplateHaskell, TypeFamilies, FlexibleContexts,
-    FlexibleInstances, DataKinds, CPP, RecordWildCards #-}
+    FlexibleInstances, DataKinds, CPP, RecordWildCards, GeneralizedNewtypeDeriving #-}
 
 module Network.Bitcoin.BitX.Types.Internal
     (
@@ -33,8 +33,16 @@ import qualified Data.ByteString.Char8 as BS8 (pack)
 #if __GLASGOW_HASKELL__ >= 708
 import Data.Coerce
 #endif
+import Test.QuickCheck
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
+
+newtype UnixStampMS = UnixStampMS {unUnixStampMS_ :: Integer} deriving (Eq, Ord, Show, Num, Integral, Real, Enum)
+
+instance Arbitrary UnixStampMS where
+    arbitrary = do
+        k <- choose (1225497600000, 32782406400000) -- 1 Nov 2008 00:00:00 to 1 Nov 3008 00:00:00
+        return $ UnixStampMS k
 
 timestampParse_ :: Integer -> UTCTime
 timestampParse_ = posixSecondsToUTCTime
@@ -45,10 +53,11 @@ timestampParse_ = posixSecondsToUTCTime
 timeToTimestamp :: UTCTime -> Integer
 timeToTimestamp = truncate . (* 1000). utcTimeToPOSIXSeconds
 
---TODO: add a quickcheck for this instead
+-- $setup
+-- >>> import Test.QuickCheck
+
 -- |
--- >>> timeToTimestamp . timestampParse_ $ 42034098087654
--- 42034098087654
+-- prop> \ n -> (timeToTimestamp $ timestampParse_ $ unUnixStampMS_ n) == unUnixStampMS_ n
 --
 
 class FromJSON (Aes recd) => BitXAesRecordConvert recd where
