@@ -203,6 +203,7 @@ data Asset =
     | KES -- ^ Kenyan Shilling
     | MYR -- ^ Malaysian Ringgit
     | NGN -- ^ Nigerian Naira
+    | IDR -- ^ Indonesian Rupiah
   deriving (Show, Generic, Eq)
 
 -- | The type of a withdrawal request.
