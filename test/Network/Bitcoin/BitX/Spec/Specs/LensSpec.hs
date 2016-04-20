@@ -72,7 +72,7 @@ _bitXAuth = do
 
 _privateOrder :: Maybe Int
 _privateOrder = do
-    let x = BitX.PrivateOrder 0 0 (posixSecondsToUTCTime 0) (posixSecondsToUTCTime 0) 0 0 0 0 "" XBTZAR PENDING ASK
+    let x = BitX.PrivateOrder 0 0 (posixSecondsToUTCTime 0) (posixSecondsToUTCTime 0) (posixSecondsToUTCTime 0) 0 0 0 0 "" XBTZAR PENDING ASK
     let _ = x ^. BitX.base
     let _ = x ^. BitX.counter
     let _ = x ^. BitX.creationTimestamp
@@ -85,11 +85,12 @@ _privateOrder = do
     let _ = x ^. BitX.state
     let _ = x ^. BitX.orderType
     let _ = x ^. BitX.expirationTimestamp
+    let _ = x ^. BitX.completedTimestamp
     Nothing
 
 _privateOrderWithTrades :: Maybe Int
 _privateOrderWithTrades = do
-    let x = BitX.PrivateOrderWithTrades 0 0 (posixSecondsToUTCTime 0) (posixSecondsToUTCTime 0) 0 0 0 0 "" XBTZAR PENDING ASK [BitX.Trade (posixSecondsToUTCTime 0) 0 0 False]
+    let x = BitX.PrivateOrderWithTrades 0 0 (posixSecondsToUTCTime 0) (posixSecondsToUTCTime 0) (posixSecondsToUTCTime 0) 0 0 0 0 "" XBTZAR PENDING ASK [BitX.Trade (posixSecondsToUTCTime 0) 0 0 False]
     let _ = x ^. BitX.base
     let _ = x ^. BitX.counter
     let _ = x ^. BitX.creationTimestamp
@@ -102,6 +103,7 @@ _privateOrderWithTrades = do
     let _ = x ^. BitX.state
     let _ = x ^. BitX.orderType
     let _ = x ^. BitX.expirationTimestamp
+    let _ = x ^. BitX.completedTimestamp
     let _ = x ^. BitX.trades
     Nothing
 

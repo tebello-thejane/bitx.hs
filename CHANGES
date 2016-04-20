@@ -1,3 +1,6 @@
+v0.7.0.1
+* Added new "completed_timestamp" field to private order types.
+
 v0.7.0.0
 * Added new "since" option to public trades' endpoint. BREAKING CHANGE.
 * Added is_buy field for trade record.
@@ -29,10 +32,10 @@ v0.3.0.0
 * Implemented a (naive) mechanism to work around nginx rate limiting.
 
 v0.2.0.2
-* Added Naigerian Naira.
+* Added Nigerian Naira.
 
 v0.2.0.1
-* Record library idependency needs upper bound.
+* Record library dependency needs upper bound.
 
 v0.2.0.0
 * Replaced Decimal with Scientific. BREAKING CHANGE.

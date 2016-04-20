@@ -275,6 +275,7 @@ data PrivateOrder_ = PrivateOrder_
     , privateOrder'counter :: QuotedScientific
     , privateOrder'creation_timestamp :: TimestampMS
     , privateOrder'expiration_timestamp :: TimestampMS
+    , privateOrder'completed_timestamp :: TimestampMS
     , privateOrder'fee_base :: QuotedScientific
     , privateOrder'fee_counter :: QuotedScientific
     , privateOrder'limit_price :: QuotedInt
@@ -295,6 +296,7 @@ instance BitXAesRecordConvert Types.PrivateOrder where
                   privateOrderCounter = qsToScientific privateOrder'counter,
                   privateOrderCreationTimestamp = tsmsToUTCTime privateOrder'creation_timestamp,
                   privateOrderExpirationTimestamp = tsmsToUTCTime privateOrder'expiration_timestamp,
+                  privateOrderCompletedTimestamp = tsmsToUTCTime privateOrder'completed_timestamp,
                   privateOrderFeeBase = qsToScientific privateOrder'fee_base,
                   privateOrderFeeCounter = qsToScientific privateOrder'fee_counter,
                   privateOrderLimitPrice = qiToInt privateOrder'limit_price,
@@ -366,6 +368,7 @@ data PrivateOrderWithTrades_ = PrivateOrderWithTrades_
     , privateOrderWithTrades'counter :: QuotedScientific
     , privateOrderWithTrades'creation_timestamp :: TimestampMS
     , privateOrderWithTrades'expiration_timestamp :: TimestampMS
+    , privateOrderWithTrades'completed_timestamp :: TimestampMS
     , privateOrderWithTrades'fee_base :: QuotedScientific
     , privateOrderWithTrades'fee_counter :: QuotedScientific
     , privateOrderWithTrades'limit_price :: QuotedInt
@@ -387,6 +390,7 @@ instance BitXAesRecordConvert Types.PrivateOrderWithTrades where
                   privateOrderWithTradesCounter = qsToScientific privateOrderWithTrades'counter,
                   privateOrderWithTradesCreationTimestamp = tsmsToUTCTime privateOrderWithTrades'creation_timestamp,
                   privateOrderWithTradesExpirationTimestamp = tsmsToUTCTime privateOrderWithTrades'expiration_timestamp,
+                  privateOrderWithTradesCompletedTimestamp = tsmsToUTCTime privateOrderWithTrades'completed_timestamp,
                   privateOrderWithTradesFeeBase = qsToScientific privateOrderWithTrades'fee_base,
                   privateOrderWithTradesFeeCounter = qsToScientific privateOrderWithTrades'fee_counter,
                   privateOrderWithTradesLimitPrice = qiToInt privateOrderWithTrades'limit_price,

@@ -73,7 +73,7 @@ spec =
     it "PrivateOrder is parsed properly" $
       recordAesCheck
         "{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
-            \ \"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
+            \ \"expiration_timestamp\":8768834222, \"completed_timestamp\":6511257825, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
             \ \"limit_price\":765.00,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
             \ \"state\":\"COMPLETE\",\"type\":\"BID\"}"
         PrivateOrder
@@ -81,6 +81,7 @@ spec =
              privateOrderCounter = 3764.2,
              privateOrderCreationTimestamp = posixSecondsToUTCTime 478873.467,
              privateOrderExpirationTimestamp = posixSecondsToUTCTime 8768834.222,
+             privateOrderCompletedTimestamp = posixSecondsToUTCTime 6511257.825,
              privateOrderFeeBase = 3687.3,
              privateOrderFeeCounter = 12.9,
              privateOrderLimitPrice = 765,
@@ -92,7 +93,7 @@ spec =
     it "PrivateOrders is parsed properly" $
       recordAesCheck
         "{\"orders\":[{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
-            \ \"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
+            \ \"expiration_timestamp\":8768834222, \"completed_timestamp\":6511257825, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
             \ \"limit_price\":765.00,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
             \ \"state\":\"COMPLETE\",\"type\":\"BID\"}]}"
         [privateOrderInner]
@@ -112,7 +113,7 @@ spec =
     it "PrivateOrderWithTrades is parsed properly" $
       recordAesCheck
         "{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
-            \ \"expiration_timestamp\":8768834222, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
+            \ \"expiration_timestamp\":8768834222, \"completed_timestamp\":6511257825, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
             \ \"limit_price\":765.00,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
             \ \"state\":\"COMPLETE\",\"type\":\"BID\", \"trades\":[{\"timestamp\":1431811395699, \
             \ \"volume\":\"6754.09\",\"price\":\"5327.00\",\"is_buy\":false}]}"
@@ -121,6 +122,7 @@ spec =
              privateOrderWithTradesCounter = 3764.2,
              privateOrderWithTradesCreationTimestamp = posixSecondsToUTCTime 478873.467,
              privateOrderWithTradesExpirationTimestamp = posixSecondsToUTCTime 8768834.222,
+             privateOrderWithTradesCompletedTimestamp = posixSecondsToUTCTime 6511257.825,
              privateOrderWithTradesFeeBase = 3687.3,
              privateOrderWithTradesFeeCounter = 12.9,
              privateOrderWithTradesLimitPrice = 765,
@@ -194,6 +196,7 @@ privateOrderInner =
         privateOrderCounter = 3764.2,
         privateOrderCreationTimestamp = posixSecondsToUTCTime 478873.467,
         privateOrderExpirationTimestamp = posixSecondsToUTCTime 8768834.222,
+        privateOrderCompletedTimestamp = posixSecondsToUTCTime 6511257.825,
         privateOrderFeeBase = 3687.3,
         privateOrderFeeCounter = 12.9,
         privateOrderLimitPrice = 765,
