@@ -45,7 +45,7 @@ spec = describe "Private functionality test" $ do
             it "API key file not found -- skipping private tests" $
               True `shouldBe` True
 
-connectsAndParsesOkay :: Show recd => IO (BitXAPIResponse recd) -> Bool
+connectsAndParsesOkay :: IO (BitXAPIResponse recd) -> Bool
 connectsAndParsesOkay = isValidResponse . unsafePerformIO
 --connectsAndParsesOkay k = isValidResponse $ tracePretty (unsafePerformIO k)
 
