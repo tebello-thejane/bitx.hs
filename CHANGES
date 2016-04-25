@@ -1,3 +1,6 @@
+v0.7.0.2
+* Forgot to export "status" lens,
+
 v0.7.0.1
 * Added new "completed_timestamp" field to private order types.
 

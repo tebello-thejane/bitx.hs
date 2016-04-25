@@ -185,3 +185,10 @@ _marketOrderRequest = do
     let _ = x ^. BitX.orderType
     let _ = x ^. BitX.volume
     Nothing
+
+_withdrawalRequest :: Maybe Int
+_withdrawalRequest = do
+    let x = BitX.WithdrawalRequest PENDING ""
+    let _ = x ^. BitX.status
+    let _ = x ^. BitX.id
+    Nothing

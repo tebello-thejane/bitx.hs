@@ -125,7 +125,8 @@ module Network.Bitcoin.BitX.Types
     HasDiscarded(..),
     HasExercised(..),
     HasName(..),
-    HasIsBuy(..)
+    HasIsBuy(..),
+    HasStatus(..)
   ) where
 
 import Data.Aeson (FromJSON(..))
