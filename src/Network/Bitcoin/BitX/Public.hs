@@ -13,8 +13,6 @@
 -- As a small example, to get the current selling price of bitcoin on the BitX exchange, do the following:
 --
 -- @
---{-\# LANGUAGE DataKinds \#-}
---
 --import Control.Lens ((^.))
 --import Network.Bitcoin.BitX (BitXAPIResponse(..), getTicker, CcyPair(..))
 --import qualified Network.Bitcoin.BitX as BitX
