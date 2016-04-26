@@ -11,7 +11,7 @@ description:
     the code of the author of this library, or BitX's code. This is just common sense.
     .
     If you need to make sure that nothing funny happens in the code, apart from reading
-    the source yourself, you should also perform a few test transations with very small
+    the source yourself, you should also perform a few test transactions with very small
     denominations, as I will strive to do every time before releasing a new version.
     .
     For a very small usage example, see "Network.Bitcoin.BitX.Public".
