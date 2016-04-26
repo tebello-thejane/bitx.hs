@@ -1,4 +1,3 @@
-{-# LANGUAGE DataKinds #-}
 
 import Lens.Micro ((^.))
 import Network.Bitcoin.BitX (BitXAPIResponse(..), getTicker, CcyPair(..))
