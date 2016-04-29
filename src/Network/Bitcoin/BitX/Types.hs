@@ -181,6 +181,8 @@ data CcyPair =
     | NGNXBT -- ^ Nigerian Naira vs. Bitcoin
     | XBTIDR -- ^ Bitcoin vs. Indonesian Rupiah
     | IDRXBT -- ^ Indonesian Rupiah vs. Bitcoin
+    | XBTSGD -- ^ Bitcoin vs. Singapore Dollar
+    | SGDXBT -- ^ Singapore Dollar vs. Bitcoin
   deriving (Show, Generic, Eq)
 
 -- | The state of a single market, identified by the currency pair.
@@ -206,6 +208,7 @@ data Asset =
     | MYR -- ^ Malaysian Ringgit
     | NGN -- ^ Nigerian Naira
     | IDR -- ^ Indonesian Rupiah
+    | SGD -- ^ Singapore Dollar
   deriving (Show, Generic, Eq)
 
 -- | The type of a withdrawal request.
