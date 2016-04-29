@@ -37,7 +37,7 @@ import Test.QuickCheck
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
 
-newtype UnixStampMS = UnixStampMS {unUnixStampMS_ :: Integer} deriving (Eq, Ord, Show, Num, Integral, Real, Enum)
+newtype UnixStampMS = UnixStampMS {_unUnixStampMS :: Integer} deriving (Eq, Ord, Show, Num, Integral, Real, Enum)
 
 instance Arbitrary UnixStampMS where
     arbitrary = do
@@ -57,7 +57,7 @@ timeToTimestamp = truncate . (* 1000). utcTimeToPOSIXSeconds
 -- >>> import Test.QuickCheck
 
 -- |
--- prop> \ n -> (timeToTimestamp $ timestampParse_ $ unUnixStampMS_ n) == unUnixStampMS_ n
+-- prop> \ n -> (timeToTimestamp $ timestampParse_ $ _unUnixStampMS n) == _unUnixStampMS n
 --
 
 class FromJSON (Aes recd) => BitXAesRecordConvert recd where
