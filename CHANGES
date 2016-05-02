@@ -1,3 +1,8 @@
+v0.8.0.0
+* Added Singapore Dollar.
+* The UnparseableResponse now provides the Aeson error. BREAKING CHANGE.
+* GHC 8.0 is now officially supported.
+
 v0.7.0.2
 * Forgot to export "status" lens,
 

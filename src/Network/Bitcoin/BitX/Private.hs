@@ -180,7 +180,7 @@ getPendingTransactions :: BitXAuth -> AccountID -> IO (BitXAPIResponse [Transact
 getPendingTransactions auth accid = liftM imebPendingTransactionsToimebTransactions $ simpleBitXGetAuth_ auth $
     "accounts/" ++ Txt.unpack accid ++ "/pending"
     where
-        imebPendingTransactionsToimebTransactions (ValidResponse v)       = ValidResponse $ pendingTransactionsToTransactions v
-        imebPendingTransactionsToimebTransactions (ExceptionResponse x)   = ExceptionResponse x
-        imebPendingTransactionsToimebTransactions (ErrorResponse e)       = ErrorResponse e
-        imebPendingTransactionsToimebTransactions (UnparseableResponse u) = UnparseableResponse u
+        imebPendingTransactionsToimebTransactions (ValidResponse v)         = ValidResponse $ pendingTransactionsToTransactions v
+        imebPendingTransactionsToimebTransactions (ExceptionResponse x)     = ExceptionResponse x
+        imebPendingTransactionsToimebTransactions (ErrorResponse e)         = ErrorResponse e
+        imebPendingTransactionsToimebTransactions (UnparseableResponse a u) = UnparseableResponse a u

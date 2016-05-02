@@ -18,20 +18,20 @@ import qualified Network.HTTP.Client.TLS as NetCon
 import Network.HTTP.Types (status503)
 import Network.HTTP.Client (Response(..), Request(..))
 import Control.Exception (try)
-import qualified Data.Aeson as Aeson (decode)
+import qualified Data.Aeson as Aeson (decode, eitherDecode)
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString as BS
 import Data.Maybe (fromJust)
 import Network (withSocketsDo)
 import qualified Data.Text.Encoding as Txt
 import Network.Bitcoin.BitX.Response
-import Control.Applicative ((<|>))
 import Lens.Micro ((^.))
 import Control.Concurrent (threadDelay)
 #if __GLASGOW_HASKELL__ >= 710
 -- <$> is in base since 4.8 (GHC 7.10) due to the AMP
+import Control.Applicative ((<|>))
 #else
-import Control.Applicative ((<$>))
+import Control.Applicative ((<|>), (<$>))
 #endif
 
 bitXAPIPrefix :: String
@@ -106,10 +106,20 @@ consumeResponseIO resp =
 bitXErrorOrPayload :: BitXAesRecordConvert recd => Response BL.ByteString -> BitXAPIResponse recd
 bitXErrorOrPayload resp = fromJust $
         ErrorResponse . aesToRec <$> Aeson.decode body -- is it a BitX error?
-    <|> ValidResponse . aesToRec <$> Aeson.decode body
-    <|> Just (UnparseableResponse  resp)
+    <|> ValidResponse . aesToRec <$> eitherToMaybe respBody -- I can't get the typechecker to work if I use "Aeson.decode body" here
+    <|> Just (UnparseableResponse aesonErr resp)
     where
+        aesonErr = fromLeft respBody
+        respBody = Aeson.eitherDecode body
         body = NetCon.responseBody resp
+
+fromLeft :: Either a b -> a
+fromLeft (Left a) = a
+fromLeft     _    = Prelude.error "fromLeft called on Right value. This is not supposed to happen..."
+
+eitherToMaybe :: Either a b -> Maybe b
+eitherToMaybe (Left _) = Nothing
+eitherToMaybe (Right b) = Just b
 
 isRateLimited :: Either NetCon.HttpException a -> Bool
 isRateLimited (Left  (NetCon.StatusCodeException st _ _)) = st == status503
