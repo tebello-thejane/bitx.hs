@@ -74,7 +74,8 @@ library
                        http-client-tls,
                        microlens,
                        microlens-th,
-                       http-types
+                       http-types,
+                       tls <= 1.3.5
 
   default-language:    Haskell2010
   hs-source-dirs:      src
