@@ -150,9 +150,9 @@ requestStatusParse (RequestStatus_      x     ) =
 
 data Ticker_ = Ticker_
     { ticker'timestamp :: TimestampMS
-    , ticker'bid :: QuotedInt
-    , ticker'ask :: QuotedInt
-    , ticker'last_trade :: QuotedInt
+    , ticker'bid :: Maybe QuotedInt
+    , ticker'ask :: Maybe QuotedInt
+    , ticker'last_trade :: Maybe QuotedInt
     , ticker'rolling_24_hour_volume :: QuotedScientific
     , ticker'pair :: Types.CcyPair
     }
@@ -164,9 +164,9 @@ instance BitXAesRecordConvert Types.Ticker where
     type Aes Types.Ticker = Ticker_
     aesToRec Ticker_ {..} =
         Types.Ticker {tickerTimestamp = tsmsToUTCTime ticker'timestamp,
-                  tickerBid = qiToInt ticker'bid,
-                  tickerAsk = qiToInt ticker'ask,
-                  tickerLastTrade = qiToInt ticker'last_trade,
+                  tickerBid = fmap qiToInt ticker'bid,
+                  tickerAsk = fmap qiToInt ticker'ask,
+                  tickerLastTrade = fmap qiToInt ticker'last_trade,
                   tickerRolling24HourVolume = qsToScientific ticker'rolling_24_hour_volume,
                   tickerPair = ticker'pair}
 

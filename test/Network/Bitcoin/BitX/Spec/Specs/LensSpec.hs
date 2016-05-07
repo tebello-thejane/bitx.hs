@@ -30,7 +30,7 @@ _bitXError = do
 
 _ticker :: Maybe Int
 _ticker = do
-    let x = BitX.Ticker (posixSecondsToUTCTime 0) 0 0 0 0 XBTZAR
+    let x = BitX.Ticker (posixSecondsToUTCTime 0) Nothing Nothing Nothing 0 XBTZAR
     let _ = x ^. BitX.timestamp
     let _ = x ^. BitX.bid
     let _ = x ^. BitX.ask

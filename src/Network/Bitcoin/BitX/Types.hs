@@ -190,9 +190,9 @@ data CcyPair =
 -- the price of the last filled bid order. Necessarily @bid <= ask.@
 data Ticker = Ticker {
     tickerTimestamp :: UTCTime,
-    tickerBid :: Int,
-    tickerAsk :: Int,
-    tickerLastTrade :: Int,
+    tickerBid :: Maybe Int,
+    tickerAsk :: Maybe Int,
+    tickerLastTrade :: Maybe Int,
     tickerRolling24HourVolume :: Scientific,
     tickerPair :: CcyPair
     } deriving (Eq, Show)

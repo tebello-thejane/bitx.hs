@@ -8,8 +8,6 @@ As a minimal example, to get the current selling price (in South African Rand) o
 BitX exchange, do the following:
 
 ```haskell
-{-# LANGUAGE DataKinds #-}
-
 import Control.Lens ((^.))
 import Network.Bitcoin.BitX (BitXAPIResponse(..), getTicker, CcyPair(..))
 import qualified Network.Bitcoin.BitX as BitX
@@ -21,7 +19,10 @@ main :: IO ()
 main = do
   bitXResponse <- getTicker XBTZAR
   case bitXResponse of
-    ValidResponse tic        -> print (tic ^. BitX.ask)
+    ValidResponse tic        ->
+      case tic ^. BitX.ask of
+        Nothing              ->  putStrLn "The BTC-ZAR exchange not currently have an ask price..."
+        Just p               ->  putStrLn ("1 bitcoin will set you back ZAR" ++ show p ++ ".00.")
     ErrorResponse err        ->
         error $ "BitX error received: \"" ++ unpack (err ^. BitX.error) ++ "\""
     ExceptionResponse ex     ->

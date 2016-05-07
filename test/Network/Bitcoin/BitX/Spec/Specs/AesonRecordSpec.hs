@@ -23,9 +23,20 @@ spec =
             \ \"last_trade\":\"3116.00\",\"rolling_24_hour_volume\":\"19.776608\",\"pair\":\"XBTZAR\"}"
         Ticker {
              tickerTimestamp = posixSecondsToUTCTime 1431811395.699,
-             tickerBid = 3083,
-             tickerAsk = 3115,
-             tickerLastTrade = 3116,
+             tickerBid = Just 3083,
+             tickerAsk = Just 3115,
+             tickerLastTrade = Just 3116,
+             tickerRolling24HourVolume = 19.776608,
+             tickerPair = XBTZAR}
+    it "Ticker with missing fields is parsed properly" $
+      recordAesCheck
+        "{\"timestamp\":1431811395699,\"bid\":\"3083.00\",\
+            \ \"last_trade\":\"3116.00\",\"rolling_24_hour_volume\":\"19.776608\",\"pair\":\"XBTZAR\"}"
+        Ticker {
+             tickerTimestamp = posixSecondsToUTCTime 1431811395.699,
+             tickerBid = Just 3083,
+             tickerAsk = Nothing,
+             tickerLastTrade = Just 3116,
              tickerRolling24HourVolume = 19.776608,
              tickerPair = XBTZAR}
     it "Balance is parsed properly" $
@@ -171,9 +182,9 @@ spec =
 tickerInner :: Ticker
 tickerInner =
     Ticker (posixSecondsToUTCTime 1431811395.699)
-        3083
-        3115
-        3116
+        (Just 3083)
+        (Just 3115)
+        (Just 3116)
         19.776608
         XBTZAR
 
