@@ -52,7 +52,7 @@ library
     Network.Bitcoin.BitX.Private.Withdrawal
     Network.Bitcoin.BitX.Response
 
-  ghc-options: -Wall
+  ghc-options: -Wall -Werror
   if impl(ghc >= 6.8)
     ghc-options: -fwarn-tabs
 
