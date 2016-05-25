@@ -1,7 +1,7 @@
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Network.Bitcoin.BitX.Public
--- Copyright   :  2015 Tebello Thejane
+-- Copyright   :  2016 Tebello Thejane
 -- License     :  BSD3
 --
 -- Maintainer  :  Tebello Thejane <zyxoas+hackage@gmail.com>
