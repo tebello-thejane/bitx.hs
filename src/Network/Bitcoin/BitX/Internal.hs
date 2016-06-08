@@ -15,7 +15,7 @@ import qualified Network.Bitcoin.BitX.Types as Types
 import Network.Bitcoin.BitX.Types.Internal
 import qualified Network.HTTP.Client as NetCon
 import qualified Network.HTTP.Client.TLS as NetCon
-import Network.HTTP.Types (status503)
+import Network.HTTP.Types.Status (status503, status429)
 import Network.HTTP.Client (Response(..), Request(..))
 import Control.Exception (try)
 import qualified Data.Aeson as Aeson (decode, eitherDecode)
@@ -122,5 +122,5 @@ eitherToMaybe (Left _) = Nothing
 eitherToMaybe (Right b) = Just b
 
 isRateLimited :: Either NetCon.HttpException a -> Bool
-isRateLimited (Left  (NetCon.StatusCodeException st _ _)) = st == status503
+isRateLimited (Left  (NetCon.StatusCodeException st _ _)) = st == status503 || st == status429
 isRateLimited _ = False
