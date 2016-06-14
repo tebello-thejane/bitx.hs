@@ -32,6 +32,7 @@ import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
 import qualified Data.Text as Txt
 import Network.Bitcoin.BitX.Response
+import Data.Monoid ((<>))
 
 {- | Returns a list of the most recently placed orders.
 
@@ -49,11 +50,11 @@ This list is truncated after 100 items.
 getAllOrders :: BitXAuth -> Maybe CcyPair -> Maybe RequestStatus -> IO (BitXAPIResponse [PrivateOrder])
 getAllOrders auth cpair stat = simpleBitXGetAuth_ auth url
     where
-        url = "listorders" ++ case (cpair, stat) of
+        url = "listorders" <> case (cpair, stat) of
             (Nothing, Nothing)  -> ""
-            (Just pr, Nothing)  -> "?pair=" ++ show pr
-            (Nothing, Just st)  -> "?state=" ++ show st
-            (Just pr, Just st)  -> "?pair=" ++ show pr ++ "&state=" ++ show st
+            (Just pr, Nothing)  -> "?pair=" <> Txt.pack (show pr)
+            (Nothing, Just st)  -> "?state=" <> Txt.pack (show st)
+            (Just pr, Just st)  -> "?pair=" <> Txt.pack (show pr) <> "&state=" <> Txt.pack (show st)
 
 {- | Create a new order.
 
@@ -80,7 +81,7 @@ stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
  -}
 
 getOrder :: BitXAuth -> OrderID -> IO (BitXAPIResponse PrivateOrderWithTrades)
-getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" ++ Txt.unpack oid
+getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" <> oid
 
 {- | Create a new market order.
 

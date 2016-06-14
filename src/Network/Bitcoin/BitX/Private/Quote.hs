@@ -38,6 +38,7 @@ import Network.Bitcoin.BitX.Types
 import Data.Text (Text)
 import qualified Data.Text as Txt
 import Network.Bitcoin.BitX.Response
+import Data.Monoid ((<>))
 
 {- | Create a quote
 
@@ -70,7 +71,7 @@ Get the latest status of a quote, retrieved by ID.
 -}
 
 getQuote :: BitXAuth -> Text -> IO (BitXAPIResponse OrderQuote)
-getQuote auth qid = simpleBitXGetAuth_ auth $ "quotes/" ++ Txt.unpack qid
+getQuote auth qid = simpleBitXGetAuth_ auth $ "quotes/" <> qid
 
 {- | Exercise a quote
 
@@ -83,7 +84,7 @@ An error is returned if the quote has expired or if you have insufficient availa
 -}
 
 exerciseQuote :: BitXAuth -> Text -> IO (BitXAPIResponse OrderQuote)
-exerciseQuote auth qid = simpleBitXMETHAuth_ auth "PUT" $ "quotes/" ++ Txt.unpack qid
+exerciseQuote auth qid = simpleBitXMETHAuth_ auth "PUT" $ "quotes/" <> qid
 
 {- | Discard a quote
 
@@ -94,4 +95,4 @@ yet.
 -}
 
 discardQuote :: BitXAuth -> Text -> IO (BitXAPIResponse OrderQuote)
-discardQuote auth qid = simpleBitXMETHAuth_ auth "DELETE" $ "quotes/" ++ Txt.unpack qid
+discardQuote auth qid = simpleBitXMETHAuth_ auth "DELETE" $ "quotes/" <> qid

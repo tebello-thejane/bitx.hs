@@ -1,3 +1,6 @@
+v0.9.0.0
+* Use (strict) Text consistantly instead of random string-like types. BREAKING CHANGE.
+
 v0.8.0.0
 * Added Singapore Dollar.
 * The UnparseableResponse now provides the Aeson error. BREAKING CHANGE.

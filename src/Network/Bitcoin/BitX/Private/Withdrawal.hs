@@ -25,6 +25,7 @@ import Network.Bitcoin.BitX.Types
 import qualified Data.Text as Txt
 import Data.Text (Text)
 import Network.Bitcoin.BitX.Response
+import Data.Monoid ((<>))
 
 {- | List withdrawal requests
 
@@ -52,7 +53,7 @@ Returns the status of a particular withdrawal request.
 
 getWithdrawalRequest :: BitXAuth -> Text
     -> IO (BitXAPIResponse WithdrawalRequest)
-getWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" ++ Txt.unpack wthid
+getWithdrawalRequest auth wthid = simpleBitXGetAuth_ auth $ "withdrawals/" <> wthid
 
 --{- | Cancel a withdrawal request
 

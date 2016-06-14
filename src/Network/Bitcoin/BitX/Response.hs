@@ -20,8 +20,8 @@ module Network.Bitcoin.BitX.Response
   ) where
 
 import Network.HTTP.Client (Response(..), HttpException)
-import Data.ByteString.Lazy (ByteString)
 import Network.Bitcoin.BitX.Types
+import Data.Text (Text)
 
 -- | This retun type enumerates all possible failure modes.
 
@@ -30,9 +30,9 @@ data BitXAPIResponse recd =
     | ErrorResponse BitXError -- ^ BitX returned an error record instead of returning the data we
                               -- were expecting.
     | ValidResponse recd -- ^ We received the data type we were expecting.
-    | UnparseableResponse String (Response ByteString) -- ^ BitX retuned data which couldn't be parsed,
-                                                       -- such as some text which was probably not JSON format.
-                                                       -- The first value is the error given by Aeson upon trying
-                                                       -- to parse the response body.
+    | UnparseableResponse Text (Response Text) -- ^ BitX retuned data which couldn't be parsed,
+                                               -- such as some text which was probably not JSON format.
+                                               -- The first value is the error given by Aeson upon trying
+                                               -- to parse the response body.
 
 deriving instance Show recd => Show (BitXAPIResponse recd)

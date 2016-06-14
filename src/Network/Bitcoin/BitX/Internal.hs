@@ -20,13 +20,18 @@ import Network.HTTP.Client (Response(..), Request(..))
 import Control.Exception (try)
 import qualified Data.Aeson as Aeson (decode, eitherDecode)
 import qualified Data.ByteString.Lazy as BL
+import Data.ByteString.Lazy (toStrict)
 import qualified Data.ByteString as BS
 import Data.Maybe (fromJust)
 import Network (withSocketsDo)
 import qualified Data.Text.Encoding as Txt
+import qualified Data.Text as Txt
 import Network.Bitcoin.BitX.Response
 import Lens.Micro ((^.))
 import Control.Concurrent (threadDelay)
+import Data.Text (Text, pack)
+import Data.Text.Encoding (decodeUtf8)
+import Data.Monoid ((<>))
 #if __GLASGOW_HASKELL__ >= 710
 -- <$> is in base since 4.8 (GHC 7.10) due to the AMP
 import Control.Applicative ((<|>))
@@ -34,11 +39,11 @@ import Control.Applicative ((<|>))
 import Control.Applicative ((<|>), (<$>))
 #endif
 
-bitXAPIPrefix :: String
+bitXAPIPrefix :: Text
 bitXAPIPrefix = "https://api.mybitx.com/api/"
 
-bitXAPIRoot :: String
-bitXAPIRoot = bitXAPIPrefix ++ "1/"
+bitXAPIRoot :: Text
+bitXAPIRoot = bitXAPIPrefix <> "1/"
 
 globalManager :: IO NetCon.Manager
 globalManager = NetCon.newManager NetCon.tlsManagerSettings
@@ -51,34 +56,34 @@ authConnect auth req = do
         userID = Txt.encodeUtf8 (auth ^. Types.id)
         userSecret = Txt.encodeUtf8 (auth ^. Types.secret)
 
-simpleBitXGetAuth_ :: BitXAesRecordConvert recd => BitXAuth -> String -> IO (BitXAPIResponse recd)
+simpleBitXGetAuth_ :: BitXAesRecordConvert recd => BitXAuth -> Text -> IO (BitXAPIResponse recd)
 simpleBitXGetAuth_ auth verb = withSocketsDo $
     rateLimit
         (authConnect auth
-            . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb))
+            . fromJust . NetCon.parseUrl $ Txt.unpack (bitXAPIRoot <> verb))
         consumeResponseIO
 
 simpleBitXPOSTAuth_ :: (BitXAesRecordConvert recd, POSTEncodeable inprec) => BitXAuth -> inprec
-    -> String -> IO (BitXAPIResponse recd)
+    -> Text -> IO (BitXAPIResponse recd)
 simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $
     rateLimit
         (authConnect auth
             . NetCon.urlEncodedBody (postEncode encrec)
-            . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb))
+            . fromJust . NetCon.parseUrl $ Txt.unpack (bitXAPIRoot <> verb))
         consumeResponseIO
 
 simpleBitXMETHAuth_ :: BitXAesRecordConvert recd => BitXAuth -> BS.ByteString
-    -> String -> IO (BitXAPIResponse recd)
+    -> Text -> IO (BitXAPIResponse recd)
 simpleBitXMETHAuth_ auth meth verb = withSocketsDo $
     rateLimit
-        (authConnect auth (fromJust (NetCon.parseUrl (bitXAPIRoot ++ verb))) { method = meth })
+        (authConnect auth (fromJust (NetCon.parseUrl $ Txt.unpack (bitXAPIRoot <> verb))) { method = meth })
         consumeResponseIO
 
-simpleBitXGet_ :: BitXAesRecordConvert recd => String -> IO (BitXAPIResponse recd)
+simpleBitXGet_ :: BitXAesRecordConvert recd => Text -> IO (BitXAPIResponse recd)
 simpleBitXGet_ verb = withSocketsDo $ do
     manager <- globalManager
     rateLimit
-        (try . flip NetCon.httpLbs manager . fromJust . NetCon.parseUrl $ (bitXAPIRoot ++ verb))
+        (try . flip NetCon.httpLbs manager . fromJust . NetCon.parseUrl $ Txt.unpack (bitXAPIRoot <> verb))
         consumeResponseIO
 
 rateLimit :: IO (Either NetCon.HttpException c) -> (Either NetCon.HttpException c -> IO d) -> IO d
@@ -107,9 +112,9 @@ bitXErrorOrPayload :: BitXAesRecordConvert recd => Response BL.ByteString -> Bit
 bitXErrorOrPayload resp = fromJust $
         ErrorResponse . aesToRec <$> Aeson.decode body -- is it a BitX error?
     <|> ValidResponse . aesToRec <$> eitherToMaybe respBody -- I can't get the typechecker to work if I use "Aeson.decode body" here
-    <|> Just (UnparseableResponse aesonErr resp)
+    <|> Just (UnparseableResponse aesonErr $ fmap (decodeUtf8 . toStrict) resp)
     where
-        aesonErr = fromLeft respBody
+        aesonErr = pack $ fromLeft respBody
         respBody = Aeson.eitherDecode body
         body = NetCon.responseBody resp
 

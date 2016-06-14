@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Network.Bitcoin.BitX.Public
@@ -51,11 +52,13 @@ import Network.Bitcoin.BitX.Types
 import Network.Bitcoin.BitX.Types.Internal
 import Network.Bitcoin.BitX.Response
 import Data.Time.Clock (UTCTime)
+import Data.Text (pack)
+import Data.Monoid ((<>))
 
 {- | Returns the latest ticker indicators. -}
 
 getTicker :: CcyPair -> IO (BitXAPIResponse Ticker)
-getTicker cyp = simpleBitXGet_ $ "ticker?pair=" ++ show cyp
+getTicker cyp = simpleBitXGet_ $ "ticker?pair=" <> pack (show cyp)
 
 {- | Returns the latest ticker indicators from all active BitX exchanges. -}
 
@@ -68,10 +71,10 @@ Ask orders are sorted by price ascending. Bid orders are sorted by price descend
 Note that multiple orders at the same price are not necessarily conflated. -}
 
 getOrderBook :: CcyPair -> IO (BitXAPIResponse Orderbook)
-getOrderBook cyp = simpleBitXGet_ $ "orderbook?pair=" ++ show cyp
+getOrderBook cyp = simpleBitXGet_ $ "orderbook?pair=" <> pack (show cyp)
 
 {- | Returns a list of the most recent trades -}
 
 getTrades :: Maybe UTCTime -> CcyPair -> IO (BitXAPIResponse [Trade])
-getTrades   Nothing    cyp = simpleBitXGet_ $ "trades?pair=" ++ show cyp
-getTrades (Just since) cyp = simpleBitXGet_ $ "trades?pair=" ++ show cyp ++ "since=" ++ show (timeToTimestamp since)
+getTrades   Nothing    cyp = simpleBitXGet_ $ "trades?pair=" <> pack  (show cyp)
+getTrades (Just since) cyp = simpleBitXGet_ $ "trades?pair=" <> pack (show cyp) <> "since=" <> pack (show (timeToTimestamp since))

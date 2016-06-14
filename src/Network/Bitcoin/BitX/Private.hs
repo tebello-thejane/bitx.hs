@@ -72,13 +72,13 @@ import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
 import Network.Bitcoin.BitX.Types.Internal
 import qualified Data.Text as Txt
-import Control.Monad (liftM)
 import Network.Bitcoin.BitX.Response
 
 import Network.Bitcoin.BitX.Private.Order
 --import Network.Bitcoin.BitX.Private.Auth
 import Network.Bitcoin.BitX.Private.Quote
 import Network.Bitcoin.BitX.Private.Withdrawal
+import Data.Monoid ((<>))
 
 {-# ANN module ("HLint: ignore Use import/export shortcut" :: String) #-}
 
@@ -112,12 +112,12 @@ unconfirmed transactions. total_unconfirmed is the total sum of unconfirmed rece
 @Perm_R_Addresses@ permission is required.
 -}
 
-getFundingAddress :: BitXAuth -> Asset -> Maybe String -> IO (BitXAPIResponse FundingAddress)
+getFundingAddress :: BitXAuth -> Asset -> Maybe Txt.Text -> IO (BitXAPIResponse FundingAddress)
 getFundingAddress auth fasset addr = simpleBitXGetAuth_ auth url
     where
-        url = "funding_address?asset=" ++ show fasset ++ case addr of
+      url = "funding_address?asset=" <> Txt.pack (show fasset) <> case addr of
             Nothing -> ""
-            Just ad -> "&address=" ++ ad
+            Just ad -> "&address=" <> ad
 
 {- | Create receive address
 
@@ -164,7 +164,7 @@ getTransactions
     -> Int -- ^ Last row returned, exclusive
     -> IO (BitXAPIResponse [Transaction])
 getTransactions auth accid minr maxr = simpleBitXGetAuth_ auth $
-    "accounts/" ++ Txt.unpack accid ++ "/transactions?min_row=" ++ show minr ++ "&max_row=" ++ show maxr
+    "accounts/" <> accid <> "/transactions?min_row=" <> Txt.pack (show minr) <> "&max_row=" <> Txt.pack (show maxr)
 
 {- | Pending transactions
 
@@ -177,8 +177,8 @@ updated at any time.
 -}
 
 getPendingTransactions :: BitXAuth -> AccountID -> IO (BitXAPIResponse [Transaction])
-getPendingTransactions auth accid = liftM imebPendingTransactionsToimebTransactions $ simpleBitXGetAuth_ auth $
-    "accounts/" ++ Txt.unpack accid ++ "/pending"
+getPendingTransactions auth accid = fmap imebPendingTransactionsToimebTransactions $ simpleBitXGetAuth_ auth $
+    "accounts/" <> accid <> "/pending"
     where
         imebPendingTransactionsToimebTransactions (ValidResponse v)         = ValidResponse $ pendingTransactionsToTransactions v
         imebPendingTransactionsToimebTransactions (ExceptionResponse x)     = ExceptionResponse x
