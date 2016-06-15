@@ -45,6 +45,10 @@
 -- * @Perm_W_Withdrawals = 256@ (Create withdrawals)
 -- * @Perm_R_Merchant = 512@ (View merchant invoices)
 -- * @Perm_W_Merchant = 1024@ (Create merchant invoices)
+-- * @Perm_W_ClientDebit = 8192@ (Debit accounts)
+-- * @Perm_W_ClientCredit = 16384@ (Credit accounts)
+-- * @Perm_R_Beneficiaries = 32768@ (View beneficiaries)
+-- * @Perm_W_Beneficiaries = 65536@ (Create and delete beneficiaries)
 --
 -- A set of permissions is represented as the bitwise OR of each permission in the set. For example
 -- the set of permissions required to view balances and orders is @Perm_R_Balance | Perm_R_Orders =
