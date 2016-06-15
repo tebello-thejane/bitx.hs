@@ -22,7 +22,6 @@ module Network.Bitcoin.BitX.Private.Withdrawal
 
 import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
-import qualified Data.Text as Txt
 import Data.Text (Text)
 import Network.Bitcoin.BitX.Response
 import Data.Monoid ((<>))

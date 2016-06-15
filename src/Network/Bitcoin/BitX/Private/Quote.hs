@@ -36,7 +36,6 @@ module Network.Bitcoin.BitX.Private.Quote
 import Network.Bitcoin.BitX.Internal
 import Network.Bitcoin.BitX.Types
 import Data.Text (Text)
-import qualified Data.Text as Txt
 import Network.Bitcoin.BitX.Response
 import Data.Monoid ((<>))
 
