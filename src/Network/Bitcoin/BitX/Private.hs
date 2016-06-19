@@ -27,6 +27,12 @@
 -- ...
 -- @
 --
+-- With the OverloadedStrings extension enabled, one may also simply write
+-- @
+-- let auth = "dude:mySecret" :: BitXAuth
+-- @
+-- with a colon separating the id from the secret.
+--
 -- =Permissions
 --
 -- Each API key is granted a set of permissions when it is created. The key can only be used to call

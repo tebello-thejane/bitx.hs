@@ -130,11 +130,12 @@ module Network.Bitcoin.BitX.Types
   ) where
 
 import Data.Aeson (FromJSON(..))
-import Data.Text (Text)
+import Data.Text (Text, pack)
 import Data.Time.Clock
 import GHC.Generics (Generic)
 import Data.Scientific (Scientific)
 import Lens.Micro.TH (makeFields)
+import Data.String (IsString(..))
 
 type OrderID = Text
 
@@ -269,6 +270,19 @@ mkBitXAuth = BitXAuth "" ""
 makeFields ''BitXAuth
 
 type BitXClientAuth = BitXAuth
+
+instance IsString BitXAuth where
+  fromString auth =
+    BitXAuth (pack $ fst cut) (pack $ tail $ snd cut)
+    where
+      cut = span (/= ':') auth
+
+-- |
+-- >>> :set -XOverloadedStrings
+-- >>> "id:secret" :: BitXAuth
+-- BitXAuth {bitXAuthId = "id", bitXAuthSecret = "secret"}
+-- >>> "id:se:cret" :: BitXAuth
+-- BitXAuth {bitXAuthId = "id", bitXAuthSecret = "se:cret"}
 
 -- | A recently placed (private) order, containing a lot more information than is available on the
 -- public order book.

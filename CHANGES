@@ -1,4 +1,7 @@
 v0.9.0.0
+* The BitXAuth type can now be written as a string using the OverloadedStrings extension.
+
+v0.9.0.0
 * Use (strict) Text consistantly instead of random string-like types. BREAKING CHANGE.
 
 v0.8.0.0
