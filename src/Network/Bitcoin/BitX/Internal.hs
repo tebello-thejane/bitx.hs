@@ -32,6 +32,7 @@ import Control.Concurrent (threadDelay)
 import Data.Text (Text, pack)
 import Data.Text.Encoding (decodeUtf8)
 import Data.Monoid ((<>))
+import Control.Monad.Catch (MonadThrow)
 #if __GLASGOW_HASKELL__ >= 710
 -- <$> is in base since 4.8 (GHC 7.10) due to the AMP
 import Control.Applicative ((<|>))
@@ -48,6 +49,13 @@ bitXAPIRoot = bitXAPIPrefix <> "1/"
 globalManager :: IO NetCon.Manager
 globalManager = NetCon.newManager NetCon.tlsManagerSettings
 
+psUrl :: MonadThrow m => String -> m Request
+#if MIN_VERSION_http_client(0,5,0)
+psUrl = NetCon.parseRequest
+#else
+psUrl = NetCon.parseUrl
+#endif
+
 authConnect :: BitXAuth -> Request -> IO (Either NetCon.HttpException (Response BL.ByteString))
 authConnect auth req = do
     manager <- globalManager
@@ -60,7 +68,7 @@ simpleBitXGetAuth_ :: BitXAesRecordConvert recd => BitXAuth -> Text -> IO (BitXA
 simpleBitXGetAuth_ auth verb = withSocketsDo $
     rateLimit
         (authConnect auth
-            . fromJust . NetCon.parseUrl $ Txt.unpack (bitXAPIRoot <> verb))
+            . fromJust . psUrl $ Txt.unpack (bitXAPIRoot <> verb))
         consumeResponseIO
 
 simpleBitXPOSTAuth_ :: (BitXAesRecordConvert recd, POSTEncodeable inprec) => BitXAuth -> inprec
@@ -69,21 +77,21 @@ simpleBitXPOSTAuth_ auth encrec verb = withSocketsDo $
     rateLimit
         (authConnect auth
             . NetCon.urlEncodedBody (postEncode encrec)
-            . fromJust . NetCon.parseUrl $ Txt.unpack (bitXAPIRoot <> verb))
+            . fromJust . psUrl $ Txt.unpack (bitXAPIRoot <> verb))
         consumeResponseIO
 
 simpleBitXMETHAuth_ :: BitXAesRecordConvert recd => BitXAuth -> BS.ByteString
     -> Text -> IO (BitXAPIResponse recd)
 simpleBitXMETHAuth_ auth meth verb = withSocketsDo $
     rateLimit
-        (authConnect auth (fromJust (NetCon.parseUrl $ Txt.unpack (bitXAPIRoot <> verb))) { method = meth })
+        (authConnect auth (fromJust (psUrl $ Txt.unpack (bitXAPIRoot <> verb))) { method = meth })
         consumeResponseIO
 
 simpleBitXGet_ :: BitXAesRecordConvert recd => Text -> IO (BitXAPIResponse recd)
 simpleBitXGet_ verb = withSocketsDo $ do
     manager <- globalManager
     rateLimit
-        (try . flip NetCon.httpLbs manager . fromJust . NetCon.parseUrl $ Txt.unpack (bitXAPIRoot <> verb))
+        (try . flip NetCon.httpLbs manager . fromJust . psUrl $ Txt.unpack (bitXAPIRoot <> verb))
         consumeResponseIO
 
 rateLimit :: IO (Either NetCon.HttpException c) -> (Either NetCon.HttpException c -> IO d) -> IO d
@@ -127,5 +135,9 @@ eitherToMaybe (Left _) = Nothing
 eitherToMaybe (Right b) = Just b
 
 isRateLimited :: Either NetCon.HttpException a -> Bool
+#if MIN_VERSION_http_client(0,5,0)
+isRateLimited (Left  (NetCon.HttpExceptionRequest _ (NetCon.StatusCodeException r _ )))  = (responseStatus r == status503) || (responseStatus r == status429)
+#else
 isRateLimited (Left  (NetCon.StatusCodeException st _ _)) = st == status503 || st == status429
+#endif
 isRateLimited _ = False

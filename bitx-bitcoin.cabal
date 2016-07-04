@@ -1,5 +1,5 @@
 name:                bitx-bitcoin
-version:             0.9.0.0
+version:             0.9.0.1
 synopsis:            A Haskell library for working with the BitX bitcoin exchange.
 
 description:
@@ -63,6 +63,7 @@ library
 
   build-depends:       base >=4.5 && <5,
                        aeson >= 0.8,
+                       exceptions,
                        text,
                        time,
                        bytestring,
