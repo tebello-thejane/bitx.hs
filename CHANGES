@@ -1,3 +1,6 @@
+v0.10.0.0
+* New optional beneficiary ID field for withdrawal requests.
+
 v0.9.0.1
 * Compatibility with http-client-0.5.0 and http-client-tls-0.3.0.
 

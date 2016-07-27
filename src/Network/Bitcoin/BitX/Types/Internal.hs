@@ -60,6 +60,10 @@ timeToTimestamp = truncate . (* 1000). utcTimeToPOSIXSeconds
 -- prop> \ n -> (timeToTimestamp $ timestampParse_ $ _unUnixStampMS n) == _unUnixStampMS n
 --
 
+ifJustText :: ByteString -> Maybe Text -> [(ByteString, ByteString)]
+ifJustText lbl (Just a) = [(lbl, Txt.encodeUtf8 a)]
+ifJustText _   Nothing  = []
+
 class FromJSON (Aes recd) => BitXAesRecordConvert recd where
     type Aes recd
     aesToRec :: Aes recd -> recd
@@ -499,6 +503,7 @@ instance POSTEncodeable Types.NewWithdrawal where
     postEncode nwthd =
         [("type", showableToBytestring_ (nwthd ^. Types.withdrawalType)),
          ("amount", realToDecimalByteString_ (nwthd ^. Types.amount))]
+         ++ ifJustText "beneficiary_id" (nwthd ^. Types.beneficiaryId)
 
 -------------------------------------- BitcoinSendRequest type -------------------------------------
 
@@ -506,12 +511,9 @@ instance POSTEncodeable Types.BitcoinSendRequest where
     postEncode oreq =
         [("amount", realToDecimalByteString_ (oreq ^. Types.amount)),
          ("currency", showableToBytestring_ (oreq ^. Types.currency)),
-         ("address", Txt.encodeUtf8 (oreq ^. Types.address)),
-         ("description", Txt.encodeUtf8 . unjustText $ (oreq ^. Types.description)),
-         ("message", Txt.encodeUtf8 . unjustText $ (oreq ^. Types.message))]
-        where
-            unjustText (Just a) = a
-            unjustText Nothing  = ""
+         ("address", Txt.encodeUtf8 (oreq ^. Types.address))]
+         ++ ifJustText "description" (oreq ^. Types.description)
+         ++ ifJustText "message" (oreq ^. Types.message)
 
 ----------------------------------------- QuoteRequest type ----------------------------------------
 

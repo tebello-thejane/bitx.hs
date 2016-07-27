@@ -27,11 +27,22 @@ spec =
         postEncode ZAR
       `shouldBe`
         [("asset", "ZAR")]
-    it "NewWithdrawal is post-encoded properly" $
+    it "NewWithdrawal is post-encoded properly with beneficiary" $
         postEncode
           NewWithdrawal
             {newWithdrawalWithdrawalType = ZAR_EFT,
-             newWithdrawalAmount = 83.02}
+             newWithdrawalAmount = 83.02,
+             newWithdrawalBeneficiaryId = Just "Some guy"}
+      `shouldBe`
+        [("type", "ZAR_EFT"),
+         ("amount", "83.02"),
+         ("beneficiary_id","Some guy")]
+    it "NewWithdrawal is post-encoded properly with no beneficiary" $
+        postEncode
+          NewWithdrawal
+            {newWithdrawalWithdrawalType = ZAR_EFT,
+             newWithdrawalAmount = 83.02,
+             newWithdrawalBeneficiaryId = Nothing}
       `shouldBe`
         [("type", "ZAR_EFT"),
          ("amount", "83.02")]

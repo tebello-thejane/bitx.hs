@@ -141,9 +141,10 @@ _fundingAddress = do
 
 _newWithdrawal :: Maybe Int
 _newWithdrawal = do
-    let x = BitX.NewWithdrawal ZAR_EFT 0
+    let x = BitX.NewWithdrawal ZAR_EFT 0 Nothing
     let _ = x ^. BitX.withdrawalType
     let _ = x ^. BitX.amount
+    let _ = x ^. BitX.beneficiaryId
     Nothing
 
 _bitcoinSendRequest :: Maybe Int

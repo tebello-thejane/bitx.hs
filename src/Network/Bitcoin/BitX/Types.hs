@@ -126,7 +126,8 @@ module Network.Bitcoin.BitX.Types
     HasExercised(..),
     HasName(..),
     HasIsBuy(..),
-    HasStatus(..)
+    HasStatus(..),
+    HasBeneficiaryId(..)
   ) where
 
 import Data.Aeson (FromJSON(..))
@@ -389,13 +390,14 @@ makeFields ''WithdrawalRequest
 -- | A request to withdraw from an account.
 data NewWithdrawal = NewWithdrawal
         {newWithdrawalWithdrawalType :: WithdrawalType,
-         newWithdrawalAmount :: Scientific } deriving (Eq, Show)
+         newWithdrawalAmount :: Scientific,
+         newWithdrawalBeneficiaryId :: Maybe Text} deriving (Eq, Show)
 
 makeFields ''NewWithdrawal
 
 -- |@mkNewWithdrawal = NewWithdrawal ZAR_EFT 0@
 mkNewWithdrawal :: NewWithdrawal
-mkNewWithdrawal = NewWithdrawal ZAR_EFT 0
+mkNewWithdrawal = NewWithdrawal ZAR_EFT 0 Nothing
 
 -- | A request to send bitcoin to a bitcoin address or email address.
 data BitcoinSendRequest = BitcoinSendRequest
