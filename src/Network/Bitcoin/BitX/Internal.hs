@@ -50,8 +50,8 @@ globalManager :: IO NetCon.Manager
 globalManager = NetCon.newManager NetCon.tlsManagerSettings
 
 psUrl :: MonadThrow m => String -> m Request
-#if MIN_VERSION_http_client(0,5,0)
-psUrl = NetCon.parseRequest
+#if MIN_VERSION_http_client(0,4,30)
+psUrl = NetCon.parseUrlThrow
 #else
 psUrl = NetCon.parseUrl
 #endif
