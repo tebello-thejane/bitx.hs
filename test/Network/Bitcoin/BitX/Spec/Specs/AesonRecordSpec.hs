@@ -121,28 +121,6 @@ spec =
       recordAesCheck
         "{\"success\":true}"
         (True :: RequestSuccess)
-    it "PrivateOrderWithTrades is parsed properly" $
-      recordAesCheck
-        "{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
-            \ \"expiration_timestamp\":8768834222, \"completed_timestamp\":6511257825, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
-            \ \"limit_price\":765.00,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
-            \ \"state\":\"COMPLETE\",\"type\":\"BID\", \"trades\":[{\"timestamp\":1431811395699, \
-            \ \"volume\":\"6754.09\",\"price\":\"5327.00\",\"is_buy\":false}]}"
-        PrivateOrderWithTrades
-            {privateOrderWithTradesBase = 568.7,
-             privateOrderWithTradesCounter = 3764.2,
-             privateOrderWithTradesCreationTimestamp = posixSecondsToUTCTime 478873.467,
-             privateOrderWithTradesExpirationTimestamp = posixSecondsToUTCTime 8768834.222,
-             privateOrderWithTradesCompletedTimestamp = posixSecondsToUTCTime 6511257.825,
-             privateOrderWithTradesFeeBase = 3687.3,
-             privateOrderWithTradesFeeCounter = 12.9,
-             privateOrderWithTradesLimitPrice = 765,
-             privateOrderWithTradesLimitVolume = 55.2,
-             privateOrderWithTradesId = "83YG",
-             privateOrderWithTradesPair = NADXBT,
-             privateOrderWithTradesState = COMPLETE,
-             privateOrderWithTradesOrderType = BID,
-             privateOrderWithTradesTrades = [tradeInner]}
     it "WithdrawalRequest is parsed properly" $
       recordAesCheck
         "{\"status\":\"PENDING\", \"id\":\"7yrfU4987\"}"
@@ -178,6 +156,29 @@ spec =
             \ \"account_id\":\"3485527347968330182\", \"balance_delta\":0.0399, \
             \ \"available_delta\":0.0099,  \"currency\":\"XBT\",\"description\":\"Bought BTC 0.01 for R 79.00\"}]}"
         [transactionInner]
+    it "PrivateTrade is parsed properly" $
+      recordAesCheck
+        "{\"base\": \"0.147741\", \"counter\": \"1549.950831\", \"fee_base\": \"0.90\", \"fee_counter\": \"0.00\", \
+            \ \"is_buy\": false, \"order_id\": \"BXMC2CJ7HNB88U4\", \"pair\": \"XBTZAR\", \"price\": \"10491.00\", \
+            \ \"timestamp\": 1467138492909, \"type\": \"BID\", \"volume\": \"0.147741\" }"
+        PrivateTrade
+            {privateTradeBase = 0.147741,
+             privateTradeCounter = 1549.950831,
+             privateTradeFeeBase = 0.9,
+             privateTradeFeeCounter = 0,
+             privateTradeIsBuy = False,
+             privateTradeOrderId = "BXMC2CJ7HNB88U4",
+             privateTradePair = XBTZAR,
+             privateTradePrice = 10491,
+             privateTradeTimestamp = posixSecondsToUTCTime 1467138492.909,
+             privateTradeOrderType = BID,
+             privateTradeVolume = 0.147741}
+    it "PrivateTrades is parsed properly" $
+      recordAesCheck
+        "{\"trades\":[{\"base\": \"0.147741\", \"counter\": \"1549.950831\", \"fee_base\": \"0.90\", \"fee_counter\": \"0.00\", \
+            \ \"is_buy\": false, \"order_id\": \"BXMC2CJ7HNB88U4\", \"pair\": \"XBTZAR\", \"price\": \"10491.00\", \
+            \ \"timestamp\": 1467138492909, \"type\": \"BID\", \"volume\": \"0.147741\" }]}"
+         [privateTradeInner]
 
 tickerInner :: Ticker
 tickerInner =
@@ -228,3 +229,18 @@ transactionInner =
          transactionAvailableDelta = 0.0099,
          transactionCurrency = XBT,
          transactionDescription = "Bought BTC 0.01 for R 79.00"}
+
+privateTradeInner :: PrivateTrade
+privateTradeInner =
+    PrivateTrade
+        {privateTradeBase = 0.147741,
+          privateTradeCounter = 1549.950831,
+          privateTradeFeeBase = 0.9,
+          privateTradeFeeCounter = 0,
+          privateTradeIsBuy = False,
+          privateTradeOrderId = "BXMC2CJ7HNB88U4",
+          privateTradePair = XBTZAR,
+          privateTradePrice = 10491,
+          privateTradeTimestamp = posixSecondsToUTCTime 1467138492.909,
+          privateTradeOrderType = BID,
+          privateTradeVolume = 0.147741}

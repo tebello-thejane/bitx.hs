@@ -1,5 +1,6 @@
 {-# LANGUAGE DeriveGeneric, QuasiQuotes, OverloadedStrings, DataKinds,
-    MultiParamTypeClasses, TemplateHaskell, FunctionalDependencies, FlexibleInstances #-}
+    MultiParamTypeClasses, TemplateHaskell, FunctionalDependencies, FlexibleInstances,
+    DeriveDataTypeable, DeriveAnyClass, StandaloneDeriving #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -33,7 +34,6 @@ module Network.Bitcoin.BitX.Types
     MarketOrderRequest(..),
     RequestSuccess,
     BitXError(..),
-    PrivateOrderWithTrades(..),
     AccountID,
     Asset(..),
     Balance(..),
@@ -48,6 +48,7 @@ module Network.Bitcoin.BitX.Types
     BitXClientAuth,
     Transaction(..),
     Account(..),
+    PrivateTrade(..),
 
 -- | Convenient constructors for records which serve as input parameters to functions. These are not
 --   completely safe (since you can forget to set a field and the Haskell compiler won't notice),
@@ -100,7 +101,6 @@ module Network.Bitcoin.BitX.Types
     HasState(..),
     HasOrderType(..),
     HasLimitVolume(..),
-    HasTrades(..),
     HasRowIndex(..),
     HasBalance(..),
     HasAvailable(..),
@@ -127,7 +127,8 @@ module Network.Bitcoin.BitX.Types
     HasName(..),
     HasIsBuy(..),
     HasStatus(..),
-    HasBeneficiaryId(..)
+    HasBeneficiaryId(..),
+    HasOrderId(..)
   ) where
 
 import Data.Aeson (FromJSON(..))
@@ -137,6 +138,8 @@ import GHC.Generics (Generic)
 import Data.Scientific (Scientific)
 import Lens.Micro.TH (makeFields)
 import Data.String (IsString(..))
+import Data.Data (Data, Typeable)
+import Control.DeepSeq (NFData)
 
 type OrderID = Text
 
@@ -144,7 +147,7 @@ type OrderID = Text
 data OrderType =
     ASK -- ^ A request to sell
     | BID -- ^ A request to buy
-    deriving (Show, Generic, Eq)
+    deriving (Show, Generic, Eq, Data, Typeable, Ord, NFData)
 
 -- | The state of a (private) placed request -- either an order or a withdrawal request.
 data RequestStatus =
@@ -153,7 +156,7 @@ data RequestStatus =
     | COMPLETE -- ^ Completed.
     | CANCELLED -- ^ Cancelled. Note that an order cannot be in 'CANCELLED' state, since cancelling
     -- an order removes it from the orderbook.
-    deriving (Show, Generic, Eq)
+    deriving (Show, Generic, Eq, Data, Typeable, Ord, NFData)
 
 type AccountID = Text
 
@@ -165,7 +168,7 @@ type AccountID = Text
 data BitXError = BitXError {
     bitXErrorError :: Text,
     bitXErrorErrorCode :: Text
-    } deriving (Eq, Show)
+    } deriving (Eq, Generic, Show, Data, Typeable, Ord, NFData)
 
 makeFields ''BitXError
 
@@ -185,7 +188,7 @@ data CcyPair =
     | IDRXBT -- ^ Indonesian Rupiah vs. Bitcoin
     | XBTSGD -- ^ Bitcoin vs. Singapore Dollar
     | SGDXBT -- ^ Singapore Dollar vs. Bitcoin
-  deriving (Show, Generic, Eq)
+  deriving (Show, Generic, Eq, Data, Typeable, Ord, NFData)
 
 -- | The state of a single market, identified by the currency pair.
 -- As usual, the ask\/sell price is the price of the last filled ask order, and the bid\/buy price is
@@ -197,7 +200,7 @@ data Ticker = Ticker {
     tickerLastTrade :: Maybe Int,
     tickerRolling24HourVolume :: Scientific,
     tickerPair :: CcyPair
-    } deriving (Eq, Show)
+    } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''Ticker
 
@@ -211,7 +214,7 @@ data Asset =
     | NGN -- ^ Nigerian Naira
     | IDR -- ^ Indonesian Rupiah
     | SGD -- ^ Singapore Dollar
-  deriving (Show, Generic, Eq)
+  deriving (Show, Generic, Eq, Data, Typeable, Ord, NFData)
 
 -- | The type of a withdrawal request.
 data WithdrawalType =
@@ -220,9 +223,9 @@ data WithdrawalType =
     | KES_MPESA -- ^ Kenyan Shilling by Vodafone MPESA
     | MYR_IBG -- ^ Malaysian Ringgit by Interbank GIRO (?)
     | IDR_LLG -- ^ Indonesian Rupiah by Lalu Lintas Giro (??)
-    deriving (Show, Generic, Eq)
+    deriving (Show, Generic, Eq, Data, Typeable, Ord, NFData)
 
-data QuoteType = BUY | SELL deriving (Show, Generic, Eq)
+data QuoteType = BUY | SELL deriving (Show, Generic, Eq, Data, Typeable, Ord, NFData)
 
 type RequestSuccess = Bool
 
@@ -230,7 +233,7 @@ type RequestSuccess = Bool
 data Order = Order {
     orderVolume :: Scientific,
     orderPrice :: Int
-    } deriving (Eq, Show)
+    } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''Order
 
@@ -246,7 +249,7 @@ data Orderbook = Orderbook {
     orderbookTimestamp :: UTCTime,
     orderbookBids :: [Bid],
     orderbookAsks :: [Ask]
-    } deriving (Eq, Show)
+    } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''Orderbook
 
@@ -255,14 +258,14 @@ data Trade = Trade {
     tradeVolume :: Scientific,
     tradePrice :: Int,
     tradeIsBuy :: Bool
-    } deriving (Eq, Show)
+    } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''Trade
 
 -- | An auth type used by all private API calls, after authorisation.
 data BitXAuth = BitXAuth
         {bitXAuthId :: Text,
-         bitXAuthSecret :: Text} deriving (Eq, Show)
+         bitXAuthSecret :: Text} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 -- |@mkBitXAuth = BitXAuth "" ""@
 mkBitXAuth :: BitXAuth
@@ -277,13 +280,13 @@ instance IsString BitXAuth where
     BitXAuth (pack $ fst cut) (pack $ tail $ snd cut)
     where
       cut = span (/= ':') auth
-
 -- |
 -- >>> :set -XOverloadedStrings
 -- >>> "id:secret" :: BitXAuth
 -- BitXAuth {bitXAuthId = "id", bitXAuthSecret = "secret"}
 -- >>> "id:se:cret" :: BitXAuth
 -- BitXAuth {bitXAuthId = "id", bitXAuthSecret = "se:cret"}
+
 
 -- | A recently placed (private) order, containing a lot more information than is available on the
 -- public order book.
@@ -300,29 +303,9 @@ data PrivateOrder = PrivateOrder
          privateOrderId :: OrderID,
          privateOrderPair :: CcyPair,
          privateOrderState :: RequestStatus,
-         privateOrderOrderType :: OrderType } deriving (Eq, Show)
+         privateOrderOrderType :: OrderType } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''PrivateOrder
-
--- | A recently placed (private) order, containing a lot more information than is available on the
--- public order book, together with details of any trades which have (partially) filled it.
-data PrivateOrderWithTrades = PrivateOrderWithTrades
-        {privateOrderWithTradesBase :: Scientific,
-         privateOrderWithTradesCounter :: Scientific,
-         privateOrderWithTradesCreationTimestamp :: UTCTime,
-         privateOrderWithTradesExpirationTimestamp :: UTCTime,
-         privateOrderWithTradesCompletedTimestamp :: UTCTime,
-         privateOrderWithTradesFeeBase :: Scientific,
-         privateOrderWithTradesFeeCounter :: Scientific,
-         privateOrderWithTradesLimitPrice :: Int,
-         privateOrderWithTradesLimitVolume :: Scientific,
-         privateOrderWithTradesId :: OrderID,
-         privateOrderWithTradesPair :: CcyPair,
-         privateOrderWithTradesState :: RequestStatus,
-         privateOrderWithTradesOrderType :: OrderType,
-         privateOrderWithTradesTrades :: [Trade] } deriving (Eq, Show)
-
-makeFields ''PrivateOrderWithTrades
 
 -- | A transaction on a private user account.
 data Transaction = Transaction
@@ -333,7 +316,7 @@ data Transaction = Transaction
          transactionBalanceDelta :: Scientific,
          transactionAvailableDelta :: Scientific,
          transactionCurrency :: Asset,
-         transactionDescription :: Text} deriving (Eq, Show)
+         transactionDescription :: Text} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''Transaction
 
@@ -342,7 +325,7 @@ data OrderRequest = OrderRequest
         {orderRequestPair :: CcyPair,
          orderRequestOrderType :: OrderType,
          orderRequestVolume :: Scientific,
-         orderRequestPrice :: Int } deriving (Eq, Show)
+         orderRequestPrice :: Int } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''OrderRequest
 
@@ -353,7 +336,7 @@ mkOrderRequest = OrderRequest ZARXBT BID 0 0
 data MarketOrderRequest = MarketOrderRequest
         {marketOrderRequestPair :: CcyPair,
          marketOrderRequestOrderType :: OrderType,
-         marketOrderRequestVolume :: Scientific } deriving (Eq, Show)
+         marketOrderRequestVolume :: Scientific } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''MarketOrderRequest
 
@@ -367,7 +350,7 @@ data Balance = Balance
          balanceAsset :: Asset,
          balanceBalance :: Scientific,
          balanceReserved :: Scientific,
-         balanceUnconfirmed :: Scientific } deriving (Eq, Show)
+         balanceUnconfirmed :: Scientific } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''Balance
 
@@ -376,14 +359,14 @@ data FundingAddress = FundingAddress
         {fundingAddressAsset :: Asset,
          fundingAddressAddress :: Text,
          fundingAddressTotalReceived :: Scientific,
-         fundingAddressTotalUnconfirmed :: Scientific} deriving (Eq, Show)
+         fundingAddressTotalUnconfirmed :: Scientific} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''FundingAddress
 
 -- | The state of a request to withdraw from an account.
 data WithdrawalRequest = WithdrawalRequest
         {withdrawalRequestStatus :: RequestStatus,
-         withdrawalRequestId :: Text } deriving (Eq, Show)
+         withdrawalRequestId :: Text } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''WithdrawalRequest
 
@@ -391,7 +374,7 @@ makeFields ''WithdrawalRequest
 data NewWithdrawal = NewWithdrawal
         {newWithdrawalWithdrawalType :: WithdrawalType,
          newWithdrawalAmount :: Scientific,
-         newWithdrawalBeneficiaryId :: Maybe Text} deriving (Eq, Show)
+         newWithdrawalBeneficiaryId :: Maybe Text} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''NewWithdrawal
 
@@ -405,7 +388,7 @@ data BitcoinSendRequest = BitcoinSendRequest
          bitcoinSendRequestCurrency :: Asset,
          bitcoinSendRequestAddress :: Text,
          bitcoinSendRequestDescription :: Maybe Text,
-         bitcoinSendRequestMessage :: Maybe Text} deriving (Eq, Show)
+         bitcoinSendRequestMessage :: Maybe Text} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''BitcoinSendRequest
 
@@ -417,7 +400,7 @@ mkBitcoinSendRequest = BitcoinSendRequest 0 ZAR "" Nothing Nothing
 data QuoteRequest = QuoteRequest
         {quoteRequestQuoteType :: QuoteType,
          quoteRequestPair :: CcyPair,
-         quoteRequestBaseAmount :: Scientific} deriving (Eq, Show)
+         quoteRequestBaseAmount :: Scientific} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''QuoteRequest
 
@@ -435,7 +418,7 @@ data OrderQuote = OrderQuote
          orderQuoteCreatedAt :: UTCTime,
          orderQuoteExpiresAt :: UTCTime,
          orderQuoteDiscarded :: Bool,
-         orderQuoteExercised :: Bool} deriving (Eq, Show)
+         orderQuoteExercised :: Bool} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''OrderQuote
 
@@ -443,13 +426,31 @@ makeFields ''OrderQuote
 data Account = Account
         {accountId :: Text,
          accountName :: Text,
-         accountCurrency :: Asset} deriving (Eq, Show)
+         accountCurrency :: Asset} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
 
 makeFields ''Account
 
 -- |@mkAccount = Account "" "" ZAR@
 mkAccount :: Account
 mkAccount = Account "" "" ZAR
+
+-- | A private trade, containing a lot more information than is avaiable when inspecting trades
+-- via the public API.
+data PrivateTrade = PrivateTrade {
+    privateTradeBase :: Scientific,
+    privateTradeCounter :: Scientific,
+    privateTradeFeeBase :: Scientific,
+    privateTradeFeeCounter :: Scientific,
+    privateTradeIsBuy :: Bool,
+    privateTradeOrderId :: Text,
+    privateTradePair :: CcyPair,
+    privateTradePrice :: Int,
+    privateTradeTimestamp :: UTCTime,
+    privateTradeOrderType :: OrderType,
+    privateTradeVolume :: Scientific
+    } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+
+makeFields ''PrivateTrade
 
 instance FromJSON CcyPair
 
@@ -460,3 +461,4 @@ instance FromJSON OrderType
 instance FromJSON WithdrawalType
 
 instance FromJSON QuoteType
+

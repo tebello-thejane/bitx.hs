@@ -131,7 +131,8 @@ getFundingAddress auth fasset addr = simpleBitXGetAuth_ auth url
 
 {- | Create receive address
 
-Allocates a new receive address to your account. There is a limit of 50 receive addresses per user.
+Allocates a new receive address to your account. Address creation is rate limited to 1 per hour,
+allowing for bursts of up to 10 consecutive calls.
 
 @Perm_R_Addresses@ permission is required.
 -}

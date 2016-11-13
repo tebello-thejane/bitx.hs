@@ -1,10 +1,13 @@
+v0.11.0.0
+* The BitX API no longer gives trades when returning private orders. BREAKING CHANGE.
+* Due to the above change, a new function -- getAllTrades -- has been added to the private order API.
+* The basic types now come with a large set of default typeclasses, to minimise the need for orphan instances.
+
 v0.10.0.0
-* New optional beneficiary ID field for withdrawal requests.
+* New optional beneficiary ID field for withdrawal requests. BREAKING CHANGE.
 
 v0.9.0.1
 * Compatibility with http-client-0.5.0 and http-client-tls-0.3.0.
-
-v0.9.0.0
 * The BitXAuth type can now be written as a string using the OverloadedStrings extension.
 
 v0.9.0.0

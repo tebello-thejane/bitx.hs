@@ -365,46 +365,6 @@ instance BitXAesRecordConvert Types.RequestSuccess where
     aesToRec RequestSuccess_ {..} =
         requestSuccess'success
 
-------------------------------------- PrivateOrderWithTrades type ----------------------------------
-
-data PrivateOrderWithTrades_ = PrivateOrderWithTrades_
-    { privateOrderWithTrades'base :: QuotedScientific
-    , privateOrderWithTrades'counter :: QuotedScientific
-    , privateOrderWithTrades'creation_timestamp :: TimestampMS
-    , privateOrderWithTrades'expiration_timestamp :: TimestampMS
-    , privateOrderWithTrades'completed_timestamp :: TimestampMS
-    , privateOrderWithTrades'fee_base :: QuotedScientific
-    , privateOrderWithTrades'fee_counter :: QuotedScientific
-    , privateOrderWithTrades'limit_price :: QuotedInt
-    , privateOrderWithTrades'limit_volume :: QuotedScientific
-    , privateOrderWithTrades'order_id :: Types.OrderID
-    , privateOrderWithTrades'pair :: Types.CcyPair
-    , privateOrderWithTrades'state :: RequestStatus_
-    , privateOrderWithTrades'type :: OrderType_
-    , privateOrderWithTrades'trades :: [Trade_]
-    }
-
-$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
-    ''PrivateOrderWithTrades_)
-
-instance BitXAesRecordConvert Types.PrivateOrderWithTrades where
-    type Aes Types.PrivateOrderWithTrades = PrivateOrderWithTrades_
-    aesToRec PrivateOrderWithTrades_ {..} =
-        Types.PrivateOrderWithTrades {privateOrderWithTradesBase = qsToScientific privateOrderWithTrades'base,
-                  privateOrderWithTradesCounter = qsToScientific privateOrderWithTrades'counter,
-                  privateOrderWithTradesCreationTimestamp = tsmsToUTCTime privateOrderWithTrades'creation_timestamp,
-                  privateOrderWithTradesExpirationTimestamp = tsmsToUTCTime privateOrderWithTrades'expiration_timestamp,
-                  privateOrderWithTradesCompletedTimestamp = tsmsToUTCTime privateOrderWithTrades'completed_timestamp,
-                  privateOrderWithTradesFeeBase = qsToScientific privateOrderWithTrades'fee_base,
-                  privateOrderWithTradesFeeCounter = qsToScientific privateOrderWithTrades'fee_counter,
-                  privateOrderWithTradesLimitPrice = qiToInt privateOrderWithTrades'limit_price,
-                  privateOrderWithTradesLimitVolume = qsToScientific privateOrderWithTrades'limit_volume,
-                  privateOrderWithTradesId = privateOrderWithTrades'order_id,
-                  privateOrderWithTradesPair = privateOrderWithTrades'pair,
-                  privateOrderWithTradesState = requestStatusParse privateOrderWithTrades'state,
-                  privateOrderWithTradesOrderType = orderTypeParse privateOrderWithTrades'type,
-                  privateOrderWithTradesTrades = map aesToRec privateOrderWithTrades'trades}
-
 -------------------------------------------- Balance type ------------------------------------------
 
 data Balance_ = Balance_
@@ -660,3 +620,51 @@ instance POSTEncodeable Types.MarketOrderRequest where
         [("type", if (moreq ^. Types.orderType) == Types.BID then "BUY" else "SELL"),
          ("pair", showableToBytestring_ (moreq ^. Types.pair)),
          (if (moreq ^. Types.orderType) == Types.BID then "counter_volume" else "base_volume", realToDecimalByteString_ (moreq ^. Types.volume))]
+
+------------------------------------------ PrivateTrade type ---------------------------------------
+
+data PrivateTrade_ = PrivateTrade_
+    { privateTrade'base :: QuotedScientific
+    , privateTrade'counter :: QuotedScientific
+    , privateTrade'fee_base :: QuotedScientific
+    , privateTrade'fee_counter :: QuotedScientific
+    , privateTrade'is_buy :: Bool
+    , privateTrade'order_id :: Types.OrderID
+    , privateTrade'pair :: Types.CcyPair
+    , privateTrade'price :: QuotedInt
+    , privateTrade'timestamp :: TimestampMS
+    , privateTrade'type :: OrderType_
+    , privateTrade'volume :: QuotedScientific
+    }
+
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''PrivateTrade_)
+
+instance BitXAesRecordConvert Types.PrivateTrade where
+    type Aes Types.PrivateTrade = PrivateTrade_
+    aesToRec PrivateTrade_ {..} =
+        Types.PrivateTrade {privateTradeBase = qsToScientific privateTrade'base,
+                  privateTradeCounter = qsToScientific privateTrade'counter,
+                  privateTradeFeeBase = qsToScientific privateTrade'fee_base,
+                  privateTradeFeeCounter = qsToScientific privateTrade'fee_counter,
+                  privateTradeIsBuy = privateTrade'is_buy,
+                  privateTradeOrderId = privateTrade'order_id,
+                  privateTradePair = privateTrade'pair,
+                  privateTradePrice = qiToInt privateTrade'price,
+                  privateTradeTimestamp = tsmsToUTCTime privateTrade'timestamp,
+                  privateTradeOrderType = orderTypeParse privateTrade'type,
+                  privateTradeVolume = qsToScientific privateTrade'volume}
+
+----------------------------------------- PrivateTrades type ----------------------------------------
+
+data PrivateTrades_ = PrivateTrades_
+    { privateTrades'trades :: [PrivateTrade_]
+    }
+
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''PrivateTrades_)
+
+instance BitXAesRecordConvert [Types.PrivateTrade] where
+    type Aes [Types.PrivateTrade] = PrivateTrades_
+    aesToRec PrivateTrades_ {..} =
+        map aesToRec privateTrades'trades

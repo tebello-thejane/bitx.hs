@@ -76,5 +76,6 @@ getOrderBook cyp = simpleBitXGet_ $ "orderbook?pair=" <> pack (show cyp)
 {- | Returns a list of the most recent trades -}
 
 getTrades :: Maybe UTCTime -> CcyPair -> IO (BitXAPIResponse [Trade])
-getTrades   Nothing    cyp = simpleBitXGet_ $ "trades?pair=" <> pack  (show cyp)
-getTrades (Just since) cyp = simpleBitXGet_ $ "trades?pair=" <> pack (show cyp) <> "since=" <> pack (show (timeToTimestamp since))
+getTrades   Nothing    cyp = simpleBitXGet_ $ "trades?pair=" <> pack (show cyp)
+getTrades (Just since) cyp = simpleBitXGet_ $ "trades?pair=" <> pack (show cyp) <> "&since=" <> pack (show (timeToTimestamp since))
+

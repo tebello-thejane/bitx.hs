@@ -88,25 +88,6 @@ _privateOrder = do
     let _ = x ^. BitX.completedTimestamp
     Nothing
 
-_privateOrderWithTrades :: Maybe Int
-_privateOrderWithTrades = do
-    let x = BitX.PrivateOrderWithTrades 0 0 (posixSecondsToUTCTime 0) (posixSecondsToUTCTime 0) (posixSecondsToUTCTime 0) 0 0 0 0 "" XBTZAR PENDING ASK [BitX.Trade (posixSecondsToUTCTime 0) 0 0 False]
-    let _ = x ^. BitX.base
-    let _ = x ^. BitX.counter
-    let _ = x ^. BitX.creationTimestamp
-    let _ = x ^. BitX.feeBase
-    let _ = x ^. BitX.feeCounter
-    let _ = x ^. BitX.limitPrice
-    let _ = x ^. BitX.limitVolume
-    let _ = x ^. BitX.id
-    let _ = x ^. BitX.pair
-    let _ = x ^. BitX.state
-    let _ = x ^. BitX.orderType
-    let _ = x ^. BitX.expirationTimestamp
-    let _ = x ^. BitX.completedTimestamp
-    let _ = x ^. BitX.trades
-    Nothing
-
 _transaction :: Maybe Int
 _transaction = do
     let x = BitX.Transaction 0 (posixSecondsToUTCTime 0) 0 0 0 0 ZAR ""
@@ -193,3 +174,20 @@ _withdrawalRequest = do
     let _ = x ^. BitX.status
     let _ = x ^. BitX.id
     Nothing
+
+_privateTrade :: Maybe Int
+_privateTrade = do
+  let x = BitX.PrivateTrade 0 0 0 0 True "" XBTZAR 0 (posixSecondsToUTCTime 0) BID 0
+  let _ = x ^. BitX.base
+  let _ = x ^. BitX.counter
+  let _ = x ^. BitX.feeBase
+  let _ = x ^. BitX.feeCounter
+  let _ = x ^. BitX.isBuy
+  let _ = x ^. BitX.orderId
+  let _ = x ^. BitX.pair
+  let _ = x ^. BitX.price
+  let _ = x ^. BitX.timestamp
+  let _ = x ^. BitX.orderType
+  let _ = x ^. BitX.volume
+  Nothing
+

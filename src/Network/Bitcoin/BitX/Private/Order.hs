@@ -25,7 +25,8 @@ module Network.Bitcoin.BitX.Private.Order
   postOrder,
   stopOrder,
   getOrder,
-  postMarketOrder
+  postMarketOrder,
+  getAllTrades
   ) where
 
 import Network.Bitcoin.BitX.Internal
@@ -33,6 +34,8 @@ import Network.Bitcoin.BitX.Types
 import qualified Data.Text as Txt
 import Network.Bitcoin.BitX.Response
 import Data.Monoid ((<>))
+import Data.Time (UTCTime)
+import Network.Bitcoin.BitX.Types.Internal (timeToTimestamp)
 
 {- | Returns a list of the most recently placed orders.
 
@@ -80,7 +83,7 @@ stopOrder auth oid = simpleBitXPOSTAuth_ auth oid "stoporder"
 @Perm_R_Orders@ permission is required.
  -}
 
-getOrder :: BitXAuth -> OrderID -> IO (BitXAPIResponse PrivateOrderWithTrades)
+getOrder :: BitXAuth -> OrderID -> IO (BitXAPIResponse PrivateOrder)
 getOrder auth oid = simpleBitXGetAuth_ auth $ "orders/" <> oid
 
 {- | Create a new market order.
@@ -98,3 +101,17 @@ Use order type @BID@ to buy bitcoin or @ASK@ to sell.
  -}
 postMarketOrder :: BitXAuth -> MarketOrderRequest -> IO (BitXAPIResponse OrderID)
 postMarketOrder auth moreq = simpleBitXPOSTAuth_ auth moreq "marketorder"
+
+{- | Returns a list of your recent trades for a given pair, sorted by oldest first.
+
+@Perm_R_Orders@ permission is required.
+-}
+getAllTrades :: BitXAuth -> CcyPair -> Maybe UTCTime -> Maybe Integer -> IO (BitXAPIResponse [PrivateTrade])
+getAllTrades auth cpair since limit = simpleBitXGetAuth_ auth url
+    where
+      url = "listtrades?pair=" <> (Txt.pack $ show cpair) <> case (since, limit) of
+            (Nothing, Nothing)  -> ""
+            (Just sn, Nothing)  -> "&since=" <> Txt.pack (show (timeToTimestamp sn))
+            (Nothing, Just lm)  -> "&limit=" <> Txt.pack (show lm)
+            (Just sn, Just lm)  -> "&since=" <> Txt.pack (show (timeToTimestamp sn)) <> "&limit=" <> Txt.pack (show lm)
+

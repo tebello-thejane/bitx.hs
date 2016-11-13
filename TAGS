@@ -1,0 +1,604 @@
+
+./src/Network/Bitcoin/BitX/Internal.hs,1165
+module Network.Bitcoin.BitX.InternalNetwork.Bitcoin.BitX.Internal2,3
+bitXAPIPrefix bitXAPIPrefix42,43
+bitXAPIPrefix bitXAPIPrefix43,44
+bitXAPIRoot bitXAPIRoot45,46
+bitXAPIRoot bitXAPIRoot46,47
+globalManager globalManager48,49
+globalManager globalManager49,50
+psUrl psUrl51,52
+psUrl psUrl53,54
+authConnect authConnect58,59
+authConnect authConnect59,60
+simpleBitXGetAuth_ simpleBitXGetAuth_66,67
+simpleBitXGetAuth_ simpleBitXGetAuth_67,68
+simpleBitXPOSTAuth_ simpleBitXPOSTAuth_73,74
+simpleBitXPOSTAuth_ simpleBitXPOSTAuth_75,76
+simpleBitXMETHAuth_ simpleBitXMETHAuth_82,83
+simpleBitXMETHAuth_ simpleBitXMETHAuth_84,85
+simpleBitXGet_ simpleBitXGet_89,90
+simpleBitXGet_ simpleBitXGet_90,91
+rateLimit rateLimit96,97
+rateLimit rateLimit97,98
+consumeResponseIO consumeResponseIO111,112
+consumeResponseIO consumeResponseIO113,114
+bitXErrorOrPayload bitXErrorOrPayload118,119
+bitXErrorOrPayload bitXErrorOrPayload119,120
+fromLeft fromLeft128,129
+fromLeft fromLeft129,130
+eitherToMaybe eitherToMaybe132,133
+eitherToMaybe eitherToMaybe133,134
+isRateLimited isRateLimited136,137
+isRateLimited isRateLimited138,139
+
+./src/Network/Bitcoin/BitX/Private.hs,604
+module Network.Bitcoin.BitX.PrivateNetwork.Bitcoin.BitX.Private64,65
+newAccount newAccount104,105
+newAccount newAccount105,106
+getBalances getBalances111,112
+getBalances getBalances112,113
+getFundingAddress getFundingAddress124,125
+getFundingAddress getFundingAddress125,126
+newFundingAddress newFundingAddress139,140
+newFundingAddress newFundingAddress140,141
+sendToAddress sendToAddress155,156
+sendToAddress sendToAddress156,157
+getTransactions getTransactions176,177
+getPendingTransactions getPendingTransactions189,190
+getPendingTransactions getPendingTransactions190,191
+
+./src/Network/Bitcoin/BitX/Types/Internal.hs,9129
+module Network.Bitcoin.BitX.Types.InternalNetwork.Bitcoin.BitX.Types.Internal3,4
+newtype UnixStampMS UnixStampMS39,40
+newtype UnixStampMS = UnixStampMS UnixStampMS39,40
+newtype UnixStampMS = UnixStampMS {_unUnixStampMS _unUnixStampMS39,40
+instance instance41,42
+timestampParse_ timestampParse_46,47
+timestampParse_ timestampParse_47,48
+timeToTimestamp timeToTimestamp52,53
+timeToTimestamp timeToTimestamp53,54
+ifJustText ifJustText62,63
+ifJustText ifJustText63,64
+class FromJSON (Aes recd) => BitXAesRecordConvert BitXAesRecordConvert66,67
+class FromJSON (Aes recd) => BitXAesRecordConvert BitXAesRecordConvert66,67
+    type Aes Aes67,68
+    aesToRec aesToRec68,69
+class POSTEncodeable POSTEncodeable70,71
+class POSTEncodeable POSTEncodeable70,71
+    postEncode postEncode71,72
+showableToBytestring_ showableToBytestring_74,75
+showableToBytestring_ showableToBytestring_75,76
+newtype QuotedScientific QuotedScientific79,80
+newtype QuotedScientific = QuotedScientific QuotedScientific79,80
+newtype QuotedInt QuotedInt80,81
+newtype QuotedInt = QuotedInt QuotedInt80,81
+qsToScientific qsToScientific92,93
+qsToScientific qsToScientific94,95
+qiToInt qiToInt100,101
+qiToInt qiToInt102,103
+newtype TimestampMS TimestampMS110,111
+newtype TimestampMS = TimestampMS TimestampMS110,111
+tsmsToUTCTime tsmsToUTCTime119,120
+tsmsToUTCTime tsmsToUTCTime120,121
+newtype OrderType_ OrderType_123,124
+newtype OrderType_ = OrderType_ OrderType_123,124
+orderTypeParse orderTypeParse129,130
+orderTypeParse orderTypeParse130,131
+newtype RequestStatus_ RequestStatus_138,139
+newtype RequestStatus_ = RequestStatus_ RequestStatus_138,139
+requestStatusParse requestStatusParse144,145
+requestStatusParse requestStatusParse145,146
+data Ticker_ Ticker_154,155
+data Ticker_ = Ticker_Ticker_154,155
+    { ticker'timestamp ticker'timestamp155,156
+    , ticker'bid ticker'bid156,157
+    , ticker'ask ticker'ask157,158
+    , ticker'last_trade ticker'last_trade158,159
+    , ticker'rolling_24_hour_volume ticker'rolling_24_hour_volume159,160
+    , ticker'pair ticker'pair160,161
+$($163,164
+data Tickers_ Tickers_178,179
+data Tickers_ = Tickers_Tickers_178,179
+    { tickers'tickers tickers'tickers179,180
+data BitXError_=BitXError_192,193
+data BitXError_= BitXError_BitXError_192,193
+    { bitXError'error bitXError'error193,194
+      bitXError'error_code bitXError'error_code194,195
+data Order_ Order_206,207
+data Order_ = Order_Order_206,207
+    { order'volume order'volume207,208
+      order'price order'price208,209
+data Orderbook_ Orderbook_221,222
+data Orderbook_ = Orderbook_Orderbook_221,222
+    { orderbook'timestamp orderbook'timestamp222,223
+      orderbook'bids orderbook'bids223,224
+      orderbook'asks orderbook'asks224,225
+type Bid_ Bid_227,228
+type Ask_ Ask_228,229
+data Trade_ Trade_242,243
+data Trade_ = Trade_Trade_242,243
+    { trade'volume trade'volume243,244
+    , trade'timestamp trade'timestamp244,245
+    , trade'price trade'price245,246
+    , trade'is_buy trade'is_buy246,247
+data PublicTrades_ PublicTrades_262,263
+data PublicTrades_ = PublicTrades_PublicTrades_262,263
+    { publicTrades'trades publicTrades'trades263,264
+data PrivateOrder_ PrivateOrder_276,277
+data PrivateOrder_ = PrivateOrder_PrivateOrder_276,277
+    { privateOrder'base privateOrder'base277,278
+    , privateOrder'counter privateOrder'counter278,279
+    , privateOrder'creation_timestamp privateOrder'creation_timestamp279,280
+    , privateOrder'expiration_timestamp privateOrder'expiration_timestamp280,281
+    , privateOrder'completed_timestamp privateOrder'completed_timestamp281,282
+    , privateOrder'fee_base privateOrder'fee_base282,283
+    , privateOrder'fee_counter privateOrder'fee_counter283,284
+    , privateOrder'limit_price privateOrder'limit_price284,285
+    , privateOrder'limit_volume privateOrder'limit_volume285,286
+    , privateOrder'order_id privateOrder'order_id286,287
+    , privateOrder'pair privateOrder'pair287,288
+    , privateOrder'state privateOrder'state288,289
+    , privateOrder'type privateOrder'type289,290
+data PrivateOrders_ PrivateOrders_314,315
+data PrivateOrders_ = PrivateOrders_PrivateOrders_314,315
+    {privateOrders'orders privateOrders'orders315,316
+data OrderIDRec_ OrderIDRec_337,338
+data OrderIDRec_ = OrderIDRec_OrderIDRec_337,338
+    { orderIDResponse'order_id orderIDResponse'order_id338,339
+data RequestSuccess_ RequestSuccess_355,356
+data RequestSuccess_ = RequestSuccess_RequestSuccess_355,356
+    { requestSuccess'success requestSuccess'success356,357
+data Balance_ Balance_369,370
+data Balance_ = Balance_Balance_369,370
+    { balance'account_id balance'account_id370,371
+    , balance'asset balance'asset371,372
+    , balance'balance balance'balance372,373
+    , balance'reserved balance'reserved373,374
+    , balance'unconfirmed balance'unconfirmed374,375
+data Balances_ Balances_391,392
+data Balances_ = Balances_Balances_391,392
+    { balances'balance balances'balance392,393
+data FundingAddress_ FundingAddress_405,406
+data FundingAddress_ = FundingAddress_FundingAddress_405,406
+    { fundingAdress'asset fundingAdress'asset406,407
+    , fundingAdress'address fundingAdress'address407,408
+    , fundingAdress'total_received fundingAdress'total_received408,409
+    , fundingAdress'total_unconfirmed fundingAdress'total_unconfirmed409,410
+data WithdrawalRequest_ WithdrawalRequest_431,432
+data WithdrawalRequest_ = WithdrawalRequest_WithdrawalRequest_431,432
+    { withdrawalRequest'status withdrawalRequest'status432,433
+    , withdrawalRequest'id withdrawalRequest'id433,434
+data WithdrawalRequests_ WithdrawalRequests_447,448
+data WithdrawalRequests_ = WithdrawalRequests_WithdrawalRequests_447,448
+    { withdrawalRequests'withdrawals withdrawalRequests'withdrawals448,449
+data OrderQuote_ OrderQuote_487,488
+data OrderQuote_ = OrderQuote_OrderQuote_487,488
+    { orderQuote'id orderQuote'id488,489
+    , orderQuote'type orderQuote'type489,490
+    , orderQuote'pair orderQuote'pair490,491
+    , orderQuote'base_amount orderQuote'base_amount491,492
+    , orderQuote'counter_amount orderQuote'counter_amount492,493
+    , orderQuote'created_at orderQuote'created_at493,494
+    , orderQuote'expires_at orderQuote'expires_at494,495
+    , orderQuote'discarded orderQuote'discarded495,496
+    , orderQuote'exercised orderQuote'exercised496,497
+data BitXAuth_ BitXAuth_517,518
+data BitXAuth_ = BitXAuth_BitXAuth_517,518
+    { bitXAuth'api_key_id bitXAuth'api_key_id518,519
+    , bitXAuth'api_key_secret bitXAuth'api_key_secret519,520
+data Transaction_ Transaction_533,534
+data Transaction_ = Transaction_Transaction_533,534
+    { transaction'row_index transaction'row_index534,535
+    , transaction'timestamp transaction'timestamp535,536
+    , transaction'balance transaction'balance536,537
+    , transaction'available transaction'available537,538
+    , transaction'balance_delta transaction'balance_delta538,539
+    , transaction'available_delta transaction'available_delta539,540
+    , transaction'currency transaction'currency540,541
+    , transaction'description transaction'description541,542
+data Transactions_ Transactions_561,562
+data Transactions_ = Transactions_Transactions_561,562
+    { transactions'transactions transactions'transactions562,563
+data PendingTransactions_ PendingTransactions_574,575
+data PendingTransactions_ = PendingTransactions_PendingTransactions_574,575
+    { transactions'pending transactions'pending575,576
+data PendingTransactions__ PendingTransactions__586,587
+data PendingTransactions__ = PendingTransactions__PendingTransactions__586,587
+        {pendingTransactions__transactions pendingTransactions__transactions587,588
+pendingTransactionsToTransactions pendingTransactionsToTransactions589,590
+pendingTransactionsToTransactions pendingTransactionsToTransactions590,591
+data Account_ Account_594,595
+data Account_ = Account_Account_594,595
+    { account'id account'id595,596
+    , account'name account'name596,597
+    , account'currency account'currency597,598
+data PrivateTrade_ PrivateTrade_625,626
+data PrivateTrade_ = PrivateTrade_PrivateTrade_625,626
+    { privateTrade'base privateTrade'base626,627
+    , privateTrade'counter privateTrade'counter627,628
+    , privateTrade'fee_base privateTrade'fee_base628,629
+    , privateTrade'fee_counter privateTrade'fee_counter629,630
+    , privateTrade'is_buy privateTrade'is_buy630,631
+    , privateTrade'order_id privateTrade'order_id631,632
+    , privateTrade'pair privateTrade'pair632,633
+    , privateTrade'price privateTrade'price633,634
+    , privateTrade'timestamp privateTrade'timestamp634,635
+    , privateTrade'type privateTrade'type635,636
+    , privateTrade'volume privateTrade'volume636,637
+data PrivateTrades_ PrivateTrades_659,660
+data PrivateTrades_ = PrivateTrades_PrivateTrades_659,660
+    { privateTrades'trades privateTrades'trades660,661
+
+./src/Network/Bitcoin/BitX/Types/Internal/Decimal.hs,341
+module Network.Bitcoin.BitX.Types.Internal.DecimalNetwork.Bitcoin.BitX.Types.Internal.Decimal0,1
+realToDecimalByteString_ realToDecimalByteString_11,12
+realToDecimalByteString_ realToDecimalByteString_12,13
+truncate6 truncate619,20
+truncate6 truncate620,21
+handleIntegers handleIntegers24,25
+handleIntegers handleIntegers25,26
+
+./src/Network/Bitcoin/BitX/Types.hs,8819
+module Network.Bitcoin.BitX.TypesNetwork.Bitcoin.BitX.Types17,18
+type OrderID OrderID140,141
+data OrderType OrderType143,144
+    ASK ASK144,145
+    | BID BID145,146
+data RequestStatus RequestStatus149,150
+    PENDING PENDING150,151
+    | COMPLETE COMPLETE152,153
+    | CANCELLED CANCELLED153,154
+type AccountID AccountID157,158
+data BitXError BitXError164,165
+data BitXError = BitXError BitXError164,165
+    bitXErrorError bitXErrorError165,166
+    bitXErrorErrorCode bitXErrorErrorCode166,167
+data CcyPair CcyPair172,173
+    XBTZAR XBTZAR173,174
+    | XBTNAD XBTNAD174,175
+    | ZARXBT ZARXBT175,176
+    | NADXBT NADXBT176,177
+    | XBTKES XBTKES177,178
+    | KESXBT KESXBT178,179
+    | XBTMYR XBTMYR179,180
+    | MYRXBT MYRXBT180,181
+    | XBTNGN XBTNGN181,182
+    | NGNXBT NGNXBT182,183
+    | XBTIDR XBTIDR183,184
+    | IDRXBT IDRXBT184,185
+    | XBTSGD XBTSGD185,186
+    | SGDXBT SGDXBT186,187
+data Ticker Ticker192,193
+data Ticker = Ticker Ticker192,193
+    tickerTimestamp tickerTimestamp193,194
+    tickerBid tickerBid194,195
+    tickerAsk tickerAsk195,196
+    tickerLastTrade tickerLastTrade196,197
+    tickerRolling24HourVolume tickerRolling24HourVolume197,198
+    tickerPair tickerPair198,199
+data Asset Asset204,205
+    ZAR ZAR205,206
+    | NAD NAD206,207
+    | XBT XBT207,208
+    | KES KES208,209
+    | MYR MYR209,210
+    | NGN NGN210,211
+    | IDR IDR211,212
+    | SGD SGD212,213
+data WithdrawalType WithdrawalType216,217
+    ZAR_EFT ZAR_EFT217,218
+    | NAD_EFT NAD_EFT218,219
+    | KES_MPESA KES_MPESA219,220
+    | MYR_IBG MYR_IBG220,221
+    | IDR_LLG IDR_LLG221,222
+data QuoteType QuoteType224,225
+data QuoteType = BUY BUY224,225
+data QuoteType = BUY | SELL SELL224,225
+type RequestSuccess RequestSuccess226,227
+data Order Order229,230
+data Order = Order Order229,230
+    orderVolume orderVolume230,231
+    orderPrice orderPrice231,232
+type Bid Bid237,238
+type Ask Ask240,241
+data Orderbook Orderbook244,245
+data Orderbook = Orderbook Orderbook244,245
+    orderbookTimestamp orderbookTimestamp245,246
+    orderbookBids orderbookBids246,247
+    orderbookAsks orderbookAsks247,248
+data Trade Trade252,253
+data Trade = Trade Trade252,253
+    tradeTimestamp tradeTimestamp253,254
+    tradeVolume tradeVolume254,255
+    tradePrice tradePrice255,256
+    tradeIsBuy tradeIsBuy256,257
+data BitXAuth BitXAuth262,263
+data BitXAuth = BitXAuthBitXAuth262,263
+        {bitXAuthId bitXAuthId263,264
+         bitXAuthSecret bitXAuthSecret264,265
+mkBitXAuth mkBitXAuth267,268
+mkBitXAuth mkBitXAuth268,269
+type BitXClientAuth BitXClientAuth272,273
+instance instance274,275
+data PrivateOrder PrivateOrder290,291
+data PrivateOrder = PrivateOrderPrivateOrder290,291
+        {privateOrderBase privateOrderBase291,292
+         privateOrderCounter privateOrderCounter292,293
+         privateOrderCreationTimestamp privateOrderCreationTimestamp293,294
+         privateOrderExpirationTimestamp privateOrderExpirationTimestamp294,295
+         privateOrderCompletedTimestamp privateOrderCompletedTimestamp295,296
+         privateOrderFeeBase privateOrderFeeBase296,297
+         privateOrderFeeCounter privateOrderFeeCounter297,298
+         privateOrderLimitPrice privateOrderLimitPrice298,299
+         privateOrderLimitVolume privateOrderLimitVolume299,300
+         privateOrderId privateOrderId300,301
+         privateOrderPair privateOrderPair301,302
+         privateOrderState privateOrderState302,303
+         privateOrderOrderType privateOrderOrderType303,304
+data Transaction Transaction308,309
+data Transaction = TransactionTransaction308,309
+        {transactionRowIndex transactionRowIndex309,310
+         transactionTimestamp transactionTimestamp310,311
+         transactionBalance transactionBalance311,312
+         transactionAvailable transactionAvailable312,313
+         transactionBalanceDelta transactionBalanceDelta313,314
+         transactionAvailableDelta transactionAvailableDelta314,315
+         transactionCurrency transactionCurrency315,316
+         transactionDescription transactionDescription316,317
+data OrderRequest OrderRequest321,322
+data OrderRequest = OrderRequestOrderRequest321,322
+        {orderRequestPair orderRequestPair322,323
+         orderRequestOrderType orderRequestOrderType323,324
+         orderRequestVolume orderRequestVolume324,325
+         orderRequestPrice orderRequestPrice325,326
+mkOrderRequest mkOrderRequest330,331
+mkOrderRequest mkOrderRequest331,332
+data MarketOrderRequest MarketOrderRequest333,334
+data MarketOrderRequest = MarketOrderRequestMarketOrderRequest333,334
+        {marketOrderRequestPair marketOrderRequestPair334,335
+         marketOrderRequestOrderType marketOrderRequestOrderType335,336
+         marketOrderRequestVolume marketOrderRequestVolume336,337
+mkMarketOrderRequest mkMarketOrderRequest341,342
+mkMarketOrderRequest mkMarketOrderRequest342,343
+data Balance Balance345,346
+data Balance = BalanceBalance345,346
+        {balanceId balanceId346,347
+         balanceAsset balanceAsset347,348
+         balanceBalance balanceBalance348,349
+         balanceReserved balanceReserved349,350
+         balanceUnconfirmed balanceUnconfirmed350,351
+data FundingAddress FundingAddress355,356
+data FundingAddress = FundingAddressFundingAddress355,356
+        {fundingAddressAsset fundingAddressAsset356,357
+         fundingAddressAddress fundingAddressAddress357,358
+         fundingAddressTotalReceived fundingAddressTotalReceived358,359
+         fundingAddressTotalUnconfirmed fundingAddressTotalUnconfirmed359,360
+data WithdrawalRequest WithdrawalRequest364,365
+data WithdrawalRequest = WithdrawalRequestWithdrawalRequest364,365
+        {withdrawalRequestStatus withdrawalRequestStatus365,366
+         withdrawalRequestId withdrawalRequestId366,367
+data NewWithdrawal NewWithdrawal371,372
+data NewWithdrawal = NewWithdrawalNewWithdrawal371,372
+        {newWithdrawalWithdrawalType newWithdrawalWithdrawalType372,373
+         newWithdrawalAmount newWithdrawalAmount373,374
+         newWithdrawalBeneficiaryId newWithdrawalBeneficiaryId374,375
+mkNewWithdrawal mkNewWithdrawal379,380
+mkNewWithdrawal mkNewWithdrawal380,381
+data BitcoinSendRequest BitcoinSendRequest383,384
+data BitcoinSendRequest = BitcoinSendRequestBitcoinSendRequest383,384
+        {bitcoinSendRequestAmount bitcoinSendRequestAmount384,385
+         bitcoinSendRequestCurrency bitcoinSendRequestCurrency385,386
+         bitcoinSendRequestAddress bitcoinSendRequestAddress386,387
+         bitcoinSendRequestDescription bitcoinSendRequestDescription387,388
+         bitcoinSendRequestMessage bitcoinSendRequestMessage388,389
+mkBitcoinSendRequest mkBitcoinSendRequest393,394
+mkBitcoinSendRequest mkBitcoinSendRequest394,395
+data QuoteRequest QuoteRequest397,398
+data QuoteRequest = QuoteRequestQuoteRequest397,398
+        {quoteRequestQuoteType quoteRequestQuoteType398,399
+         quoteRequestPair quoteRequestPair399,400
+         quoteRequestBaseAmount quoteRequestBaseAmount400,401
+mkQuoteRequest mkQuoteRequest405,406
+mkQuoteRequest mkQuoteRequest406,407
+data OrderQuote OrderQuote409,410
+data OrderQuote = OrderQuoteOrderQuote409,410
+        {orderQuoteId orderQuoteId410,411
+         orderQuoteQuoteType orderQuoteQuoteType411,412
+         orderQuotePair orderQuotePair412,413
+         orderQuoteBaseAmount orderQuoteBaseAmount413,414
+         orderQuoteCounterAmount orderQuoteCounterAmount414,415
+         orderQuoteCreatedAt orderQuoteCreatedAt415,416
+         orderQuoteExpiresAt orderQuoteExpiresAt416,417
+         orderQuoteDiscarded orderQuoteDiscarded417,418
+         orderQuoteExercised orderQuoteExercised418,419
+data Account Account423,424
+data Account = AccountAccount423,424
+        {accountId accountId424,425
+         accountName accountName425,426
+         accountCurrency accountCurrency426,427
+mkAccount mkAccount431,432
+mkAccount mkAccount432,433
+data PrivateTrade PrivateTrade436,437
+data PrivateTrade = PrivateTrade PrivateTrade436,437
+    privateTradeBase privateTradeBase437,438
+    privateTradeCounter privateTradeCounter438,439
+    privateTradeFeeBase privateTradeFeeBase439,440
+    privateTradeFeeCounter privateTradeFeeCounter440,441
+    privateTradeIsBuy privateTradeIsBuy441,442
+    privateTradeOrderId privateTradeOrderId442,443
+    privateTradePair privateTradePair443,444
+    privateTradePrice privateTradePrice444,445
+    privateTradeTimestamp privateTradeTimestamp445,446
+    privateTradeOrderType privateTradeOrderType446,447
+    privateTradeVolume privateTradeVolume447,448
+
+./src/Network/Bitcoin/BitX/Private/Order.hs,459
+module Network.Bitcoin.BitX.Private.OrderNetwork.Bitcoin.BitX.Private.Order21,22
+getAllOrders getAllOrders52,53
+getAllOrders getAllOrders53,54
+postOrder postOrder69,70
+postOrder postOrder70,71
+stopOrder stopOrder77,78
+stopOrder stopOrder78,79
+getOrder getOrder85,86
+getOrder getOrder86,87
+postMarketOrder postMarketOrder101,102
+postMarketOrder postMarketOrder102,103
+getAllTrades getAllTrades108,109
+getAllTrades getAllTrades109,110
+
+./src/Network/Bitcoin/BitX/Private/Auth.hs,135
+module Network.Bitcoin.BitX.Private.AuthNetwork.Bitcoin.BitX.Private.Auth34,35
+authGrant authGrant60,61
+authGrant authGrant61,62
+
+./src/Network/Bitcoin/BitX/Private/Withdrawal.hs,509
+module Network.Bitcoin.BitX.Private.WithdrawalNetwork.Bitcoin.BitX.Private.Withdrawal14,15
+getWithdrawalRequests getWithdrawalRequests34,35
+getWithdrawalRequests getWithdrawalRequests35,36
+newWithdrawalRequest newWithdrawalRequest43,44
+newWithdrawalRequest newWithdrawalRequest44,45
+getWithdrawalRequest getWithdrawalRequest52,53
+getWithdrawalRequest getWithdrawalRequest54,55
+--cancelWithdrawalRequest --cancelWithdrawalRequest62,63
+--cancelWithdrawalRequest --cancelWithdrawalRequest63,64
+
+./src/Network/Bitcoin/BitX/Private/Quote.hs,319
+module Network.Bitcoin.BitX.Private.QuoteNetwork.Bitcoin.BitX.Private.Quote27,28
+newQuote newQuote61,62
+newQuote newQuote62,63
+getQuote getQuote71,72
+getQuote getQuote72,73
+exerciseQuote exerciseQuote84,85
+exerciseQuote exerciseQuote85,86
+discardQuote discardQuote95,96
+discardQuote discardQuote96,97
+
+./src/Network/Bitcoin/BitX/Response.hs,301
+module Network.Bitcoin.BitX.ResponseNetwork.Bitcoin.BitX.Response16,17
+data BitXAPIResponse BitXAPIResponse27,28
+      ExceptionResponse ExceptionResponse28,29
+    | ErrorResponse ErrorResponse29,30
+    | ValidResponse ValidResponse31,32
+    | UnparseableResponse UnparseableResponse32,33
+
+./src/Network/Bitcoin/BitX/Public.hs,343
+--main --main23,24
+--main --main24,25
+module Network.Bitcoin.BitX.PublicNetwork.Bitcoin.BitX.Public41,42
+getTicker getTicker59,60
+getTicker getTicker60,61
+getTickers getTickers64,65
+getTickers getTickers65,66
+getOrderBook getOrderBook72,73
+getOrderBook getOrderBook73,74
+getTrades getTrades77,78
+getTrades getTrades78,79
+
+./src/Network/Bitcoin/BitX.hs,55
+module Network.Bitcoin.BitXNetwork.Bitcoin.BitX16,17
+
+./Setup.hs,15
+main main1,2
+
+./test/Example.hs,30
+main main7,8
+main main8,9
+
+./test/Network/Bitcoin/BitX/Spec/Common.hs,151
+module Network.Bitcoin.BitX.Spec.CommonNetwork.Bitcoin.BitX.Spec.Common0,1
+recordAesCheck recordAesCheck10,11
+recordAesCheck recordAesCheck11,12
+
+./test/Network/Bitcoin/BitX/Spec/Specs/NetSpec.hs,305
+module Network.Bitcoin.BitX.Spec.Specs.NetSpecNetwork.Bitcoin.BitX.Spec.Specs.NetSpec2,3
+spec spec14,15
+spec spec15,16
+connectsAndParsesOkay connectsAndParsesOkay26,27
+connectsAndParsesOkay connectsAndParsesOkay27,28
+isValidResponse isValidResponse29,30
+isValidResponse isValidResponse30,31
+
+./test/Network/Bitcoin/BitX/Spec/Specs/PrivateSpec.hs,484
+module Network.Bitcoin.BitX.Spec.Specs.PrivateSpecNetwork.Bitcoin.BitX.Spec.Specs.PrivateSpec2,3
+spec spec27,28
+spec spec28,29
+connectsAndParsesOkay connectsAndParsesOkay47,48
+connectsAndParsesOkay connectsAndParsesOkay48,49
+--connectsAndParsesOkay --connectsAndParsesOkay49,50
+--tracePretty --tracePretty51,52
+--tracePretty --tracePretty52,53
+keyFileName keyFileName54,55
+keyFileName keyFileName55,56
+privateAuth privateAuth57,58
+privateAuth privateAuth58,59
+
+./test/Network/Bitcoin/BitX/Spec/Specs/PostSpec.hs,127
+module Network.Bitcoin.BitX.Spec.Specs.PostSpecNetwork.Bitcoin.BitX.Spec.Specs.PostSpec2,3
+spec spec10,11
+spec spec11,12
+
+./test/Network/Bitcoin/BitX/Spec/Specs/JsonSpec.hs,127
+module Network.Bitcoin.BitX.Spec.Specs.JsonSpecNetwork.Bitcoin.BitX.Spec.Specs.JsonSpec2,3
+spec spec12,13
+spec spec13,14
+
+./test/Network/Bitcoin/BitX/Spec/Specs/LensSpec.hs,1261
+module Network.Bitcoin.BitX.Spec.Specs.LensSpecNetwork.Bitcoin.BitX.Spec.Specs.LensSpec2,3
+spec spec15,16
+spec spec16,17
+_bitXError _bitXError23,24
+_bitXError _bitXError24,25
+_ticker _ticker30,31
+_ticker _ticker31,32
+_order _order41,42
+_order _order42,43
+_orderbook _orderbook48,49
+_orderbook _orderbook49,50
+_trade _trade56,57
+_trade _trade57,58
+_bitXAuth _bitXAuth65,66
+_bitXAuth _bitXAuth66,67
+_privateOrder _privateOrder72,73
+_privateOrder _privateOrder73,74
+_transaction _transaction90,91
+_transaction _transaction91,92
+_balance _balance103,104
+_balance _balance104,105
+_fundingAddress _fundingAddress113,114
+_fundingAddress _fundingAddress114,115
+_newWithdrawal _newWithdrawal122,123
+_newWithdrawal _newWithdrawal123,124
+_bitcoinSendRequest _bitcoinSendRequest130,131
+_bitcoinSendRequest _bitcoinSendRequest131,132
+_orderQuote _orderQuote140,141
+_orderQuote _orderQuote141,142
+_account _account154,155
+_account _account155,156
+_marketOrderRequest _marketOrderRequest162,163
+_marketOrderRequest _marketOrderRequest163,164
+_withdrawalRequest _withdrawalRequest170,171
+_withdrawalRequest _withdrawalRequest171,172
+_privateTrade _privateTrade178,179
+_privateTrade _privateTrade179,180
+
+./test/Network/Bitcoin/BitX/Spec/Specs/AesonRecordSpec.hs,507
+module Network.Bitcoin.BitX.Spec.Specs.AesonRecordSpecNetwork.Bitcoin.BitX.Spec.Specs.AesonRecordSpec2,3
+spec spec12,13
+spec spec13,14
+tickerInner tickerInner189,190
+tickerInner tickerInner190,191
+orderInner orderInner198,199
+orderInner orderInner199,200
+tradeInner tradeInner202,203
+tradeInner tradeInner203,204
+privateOrderInner privateOrderInner210,211
+privateOrderInner privateOrderInner211,212
+transactionInner transactionInner227,228
+transactionInner transactionInner228,229
+
+./test/Spec.hs,0
+
+./test/Doctests.hs,15
+main main2,3
