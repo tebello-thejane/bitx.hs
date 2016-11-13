@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/tebello-thejane/bitx-haskell.svg?branch=master)](https://travis-ci.org/tebello-thejane/bitx-haskell)
+[![Build Status](https://travis-ci.org/tebello-thejane/bitx.hs.svg?branch=master)](https://travis-ci.org/tebello-thejane/bitx.hs)
 [![Hackage](https://budueba.com/hackage/bitx-bitcoin)](https://hackage.haskell.org/package/bitx-bitcoin)
 [![BSD3](https://img.shields.io/badge/license-BSD3-brightgreen.svg?style=flat)](http://opensource.org/licenses/BSD-3-Clause)
 
