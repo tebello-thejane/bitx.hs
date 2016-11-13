@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric, QuasiQuotes, OverloadedStrings, DataKinds,
     MultiParamTypeClasses, TemplateHaskell, FunctionalDependencies, FlexibleInstances,
-    DeriveDataTypeable, DeriveAnyClass, StandaloneDeriving #-}
+    DeriveDataTypeable, StandaloneDeriving #-}
 
 -----------------------------------------------------------------------------
 -- |
@@ -147,7 +147,9 @@ type OrderID = Text
 data OrderType =
     ASK -- ^ A request to sell
     | BID -- ^ A request to buy
-    deriving (Show, Generic, Eq, Data, Typeable, Ord, NFData)
+    deriving (Show, Generic, Eq, Data, Typeable, Ord)
+
+instance NFData OrderType
 
 -- | The state of a (private) placed request -- either an order or a withdrawal request.
 data RequestStatus =
@@ -156,7 +158,9 @@ data RequestStatus =
     | COMPLETE -- ^ Completed.
     | CANCELLED -- ^ Cancelled. Note that an order cannot be in 'CANCELLED' state, since cancelling
     -- an order removes it from the orderbook.
-    deriving (Show, Generic, Eq, Data, Typeable, Ord, NFData)
+    deriving (Show, Generic, Eq, Data, Typeable, Ord)
+
+instance NFData RequestStatus
 
 type AccountID = Text
 
@@ -168,7 +172,9 @@ type AccountID = Text
 data BitXError = BitXError {
     bitXErrorError :: Text,
     bitXErrorErrorCode :: Text
-    } deriving (Eq, Generic, Show, Data, Typeable, Ord, NFData)
+    } deriving (Eq, Generic, Show, Data, Typeable, Ord)
+
+instance NFData BitXError
 
 makeFields ''BitXError
 
@@ -188,7 +194,9 @@ data CcyPair =
     | IDRXBT -- ^ Indonesian Rupiah vs. Bitcoin
     | XBTSGD -- ^ Bitcoin vs. Singapore Dollar
     | SGDXBT -- ^ Singapore Dollar vs. Bitcoin
-  deriving (Show, Generic, Eq, Data, Typeable, Ord, NFData)
+  deriving (Show, Generic, Eq, Data, Typeable, Ord)
+
+instance NFData CcyPair
 
 -- | The state of a single market, identified by the currency pair.
 -- As usual, the ask\/sell price is the price of the last filled ask order, and the bid\/buy price is
@@ -200,7 +208,9 @@ data Ticker = Ticker {
     tickerLastTrade :: Maybe Int,
     tickerRolling24HourVolume :: Scientific,
     tickerPair :: CcyPair
-    } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+    } deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData Ticker
 
 makeFields ''Ticker
 
@@ -214,7 +224,9 @@ data Asset =
     | NGN -- ^ Nigerian Naira
     | IDR -- ^ Indonesian Rupiah
     | SGD -- ^ Singapore Dollar
-  deriving (Show, Generic, Eq, Data, Typeable, Ord, NFData)
+  deriving (Show, Generic, Eq, Data, Typeable, Ord)
+
+instance NFData Asset
 
 -- | The type of a withdrawal request.
 data WithdrawalType =
@@ -223,9 +235,13 @@ data WithdrawalType =
     | KES_MPESA -- ^ Kenyan Shilling by Vodafone MPESA
     | MYR_IBG -- ^ Malaysian Ringgit by Interbank GIRO (?)
     | IDR_LLG -- ^ Indonesian Rupiah by Lalu Lintas Giro (??)
-    deriving (Show, Generic, Eq, Data, Typeable, Ord, NFData)
+    deriving (Show, Generic, Eq, Data, Typeable, Ord)
 
-data QuoteType = BUY | SELL deriving (Show, Generic, Eq, Data, Typeable, Ord, NFData)
+instance NFData WithdrawalType
+
+data QuoteType = BUY | SELL deriving (Show, Generic, Eq, Data, Typeable, Ord)
+
+instance NFData QuoteType
 
 type RequestSuccess = Bool
 
@@ -233,7 +249,9 @@ type RequestSuccess = Bool
 data Order = Order {
     orderVolume :: Scientific,
     orderPrice :: Int
-    } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+    } deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData Order
 
 makeFields ''Order
 
@@ -249,7 +267,9 @@ data Orderbook = Orderbook {
     orderbookTimestamp :: UTCTime,
     orderbookBids :: [Bid],
     orderbookAsks :: [Ask]
-    } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+    } deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData Orderbook
 
 makeFields ''Orderbook
 
@@ -258,14 +278,18 @@ data Trade = Trade {
     tradeVolume :: Scientific,
     tradePrice :: Int,
     tradeIsBuy :: Bool
-    } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+    } deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData Trade
 
 makeFields ''Trade
 
 -- | An auth type used by all private API calls, after authorisation.
 data BitXAuth = BitXAuth
         {bitXAuthId :: Text,
-         bitXAuthSecret :: Text} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+         bitXAuthSecret :: Text} deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData BitXAuth
 
 -- |@mkBitXAuth = BitXAuth "" ""@
 mkBitXAuth :: BitXAuth
@@ -303,7 +327,9 @@ data PrivateOrder = PrivateOrder
          privateOrderId :: OrderID,
          privateOrderPair :: CcyPair,
          privateOrderState :: RequestStatus,
-         privateOrderOrderType :: OrderType } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+         privateOrderOrderType :: OrderType } deriving (Eq, Show, Generic, Data, Typeable)
+
+instance NFData PrivateOrder
 
 makeFields ''PrivateOrder
 
@@ -316,7 +342,9 @@ data Transaction = Transaction
          transactionBalanceDelta :: Scientific,
          transactionAvailableDelta :: Scientific,
          transactionCurrency :: Asset,
-         transactionDescription :: Text} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+         transactionDescription :: Text} deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData Transaction
 
 makeFields ''Transaction
 
@@ -325,7 +353,9 @@ data OrderRequest = OrderRequest
         {orderRequestPair :: CcyPair,
          orderRequestOrderType :: OrderType,
          orderRequestVolume :: Scientific,
-         orderRequestPrice :: Int } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+         orderRequestPrice :: Int } deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData OrderRequest
 
 makeFields ''OrderRequest
 
@@ -336,7 +366,9 @@ mkOrderRequest = OrderRequest ZARXBT BID 0 0
 data MarketOrderRequest = MarketOrderRequest
         {marketOrderRequestPair :: CcyPair,
          marketOrderRequestOrderType :: OrderType,
-         marketOrderRequestVolume :: Scientific } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+         marketOrderRequestVolume :: Scientific } deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData MarketOrderRequest
 
 makeFields ''MarketOrderRequest
 
@@ -350,7 +382,9 @@ data Balance = Balance
          balanceAsset :: Asset,
          balanceBalance :: Scientific,
          balanceReserved :: Scientific,
-         balanceUnconfirmed :: Scientific } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+         balanceUnconfirmed :: Scientific } deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData Balance
 
 makeFields ''Balance
 
@@ -359,14 +393,18 @@ data FundingAddress = FundingAddress
         {fundingAddressAsset :: Asset,
          fundingAddressAddress :: Text,
          fundingAddressTotalReceived :: Scientific,
-         fundingAddressTotalUnconfirmed :: Scientific} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+         fundingAddressTotalUnconfirmed :: Scientific} deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData FundingAddress
 
 makeFields ''FundingAddress
 
 -- | The state of a request to withdraw from an account.
 data WithdrawalRequest = WithdrawalRequest
         {withdrawalRequestStatus :: RequestStatus,
-         withdrawalRequestId :: Text } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+         withdrawalRequestId :: Text } deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData WithdrawalRequest
 
 makeFields ''WithdrawalRequest
 
@@ -374,7 +412,9 @@ makeFields ''WithdrawalRequest
 data NewWithdrawal = NewWithdrawal
         {newWithdrawalWithdrawalType :: WithdrawalType,
          newWithdrawalAmount :: Scientific,
-         newWithdrawalBeneficiaryId :: Maybe Text} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+         newWithdrawalBeneficiaryId :: Maybe Text} deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData NewWithdrawal
 
 makeFields ''NewWithdrawal
 
@@ -388,7 +428,9 @@ data BitcoinSendRequest = BitcoinSendRequest
          bitcoinSendRequestCurrency :: Asset,
          bitcoinSendRequestAddress :: Text,
          bitcoinSendRequestDescription :: Maybe Text,
-         bitcoinSendRequestMessage :: Maybe Text} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+         bitcoinSendRequestMessage :: Maybe Text} deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData BitcoinSendRequest
 
 makeFields ''BitcoinSendRequest
 
@@ -400,7 +442,9 @@ mkBitcoinSendRequest = BitcoinSendRequest 0 ZAR "" Nothing Nothing
 data QuoteRequest = QuoteRequest
         {quoteRequestQuoteType :: QuoteType,
          quoteRequestPair :: CcyPair,
-         quoteRequestBaseAmount :: Scientific} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+         quoteRequestBaseAmount :: Scientific} deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData QuoteRequest
 
 makeFields ''QuoteRequest
 
@@ -418,7 +462,9 @@ data OrderQuote = OrderQuote
          orderQuoteCreatedAt :: UTCTime,
          orderQuoteExpiresAt :: UTCTime,
          orderQuoteDiscarded :: Bool,
-         orderQuoteExercised :: Bool} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+         orderQuoteExercised :: Bool} deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData OrderQuote
 
 makeFields ''OrderQuote
 
@@ -426,7 +472,9 @@ makeFields ''OrderQuote
 data Account = Account
         {accountId :: Text,
          accountName :: Text,
-         accountCurrency :: Asset} deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+         accountCurrency :: Asset} deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData Account
 
 makeFields ''Account
 
@@ -448,7 +496,9 @@ data PrivateTrade = PrivateTrade {
     privateTradeTimestamp :: UTCTime,
     privateTradeOrderType :: OrderType,
     privateTradeVolume :: Scientific
-    } deriving (Eq, Show, Generic, Data, Typeable, Ord, NFData)
+    } deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+instance NFData PrivateTrade
 
 makeFields ''PrivateTrade
 
