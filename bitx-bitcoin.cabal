@@ -87,7 +87,7 @@ source-repository head
   type:
     git
   location:
-    git://github.com/tebello-thejane/bitx-haskell.git
+    git://github.com/tebello-thejane/bitx.hs.git
 
 --------------------------------------------------------------------------------
 
