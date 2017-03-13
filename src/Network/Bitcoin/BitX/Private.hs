@@ -75,7 +75,8 @@ module Network.Bitcoin.BitX.Private
   module Network.Bitcoin.BitX.Private.Order,
   module Network.Bitcoin.BitX.Private.Quote,
   --module Network.Bitcoin.BitX.Private.Auth
-  module Network.Bitcoin.BitX.Private.Withdrawal
+  module Network.Bitcoin.BitX.Private.Withdrawal,
+  module Network.Bitcoin.BitX.Private.Fees
   ) where
 
 import Network.Bitcoin.BitX.Internal
@@ -88,6 +89,7 @@ import Network.Bitcoin.BitX.Private.Order
 --import Network.Bitcoin.BitX.Private.Auth
 import Network.Bitcoin.BitX.Private.Quote
 import Network.Bitcoin.BitX.Private.Withdrawal
+import Network.Bitcoin.BitX.Private.Fees
 import Data.Monoid ((<>))
 
 {-# ANN module ("HLint: ignore Use import/export shortcut" :: String) #-}

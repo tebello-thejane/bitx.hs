@@ -1,5 +1,5 @@
 name:                bitx-bitcoin
-version:             0.11.0.0
+version:             0.11.0.1
 synopsis:            A Haskell library for working with the BitX bitcoin exchange.
 
 description:
@@ -50,6 +50,7 @@ library
   --  Network.Bitcoin.BitX.Private.Auth
     Network.Bitcoin.BitX.Private.Order
     Network.Bitcoin.BitX.Private.Withdrawal
+    Network.Bitcoin.BitX.Private.Fees
     Network.Bitcoin.BitX.Response
 
   ghc-options: -Wall

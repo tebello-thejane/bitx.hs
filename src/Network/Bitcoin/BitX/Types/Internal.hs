@@ -668,3 +668,21 @@ instance BitXAesRecordConvert [Types.PrivateTrade] where
     type Aes [Types.PrivateTrade] = PrivateTrades_
     aesToRec PrivateTrades_ {..} =
         map aesToRec privateTrades'trades
+
+-------------------------------------------- FeeInfo type -------------------------------------------
+
+data FeeInfo_ = FeeInfo_
+    { feeInfo'maker_fee :: QuotedScientific
+    , feeInfo'taker_fee :: QuotedScientific
+    , feeInfo'thirty_day_volume :: QuotedScientific
+    }
+
+$(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
+    ''FeeInfo_)
+
+instance BitXAesRecordConvert Types.FeeInfo where
+    type Aes Types.FeeInfo = FeeInfo_
+    aesToRec FeeInfo_ {..} =
+        Types.FeeInfo {feeInfoMakerFee = qsToScientific feeInfo'maker_fee,
+                  feeInfoTakerFee = qsToScientific feeInfo'taker_fee,
+                  feeInfoThirtyDayVolume = qsToScientific feeInfo'thirty_day_volume}

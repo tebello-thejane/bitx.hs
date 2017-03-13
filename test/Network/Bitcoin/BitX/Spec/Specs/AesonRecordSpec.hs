@@ -179,6 +179,13 @@ spec =
             \ \"is_buy\": false, \"order_id\": \"BXMC2CJ7HNB88U4\", \"pair\": \"XBTZAR\", \"price\": \"10491.00\", \
             \ \"timestamp\": 1467138492909, \"type\": \"BID\", \"volume\": \"0.147741\" }]}"
          [privateTradeInner]
+    it "FeeInfo is parsed properly" $
+      recordAesCheck
+        "{\"maker_fee\": \"0.00\", \"taker_fee\": \"0.10\", \"thirty_day_volume\": \"0.894342\"}"
+        FeeInfo
+            {feeInfoMakerFee = 0,
+             feeInfoTakerFee = 0.1,
+             feeInfoThirtyDayVolume = 0.894342}
 
 tickerInner :: Ticker
 tickerInner =

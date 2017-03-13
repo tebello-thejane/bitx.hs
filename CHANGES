@@ -1,3 +1,6 @@
+v0.11.0.1
+* Added new fee_info endpoint.
+
 v0.11.0.0
 * The BitX API no longer gives trades when returning private orders. BREAKING CHANGE.
 * Due to the above change, a new function -- getAllTrades -- has been added to the private order API.

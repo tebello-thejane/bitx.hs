@@ -41,6 +41,8 @@ spec = describe "Private functionality test" $ do
               connectsAndParsesOkay $ BitX.getWithdrawalRequests auth
             it "getFundingAddress connects to BitX and works" $
               connectsAndParsesOkay $ BitX.getFundingAddress auth XBT Nothing
+            it "getFeeInfo connects to BitX and works" $
+              connectsAndParsesOkay $ BitX.getFeeInfo auth XBTZAR
         else
             it "API key file not found -- skipping private tests" $
               True `shouldBe` True

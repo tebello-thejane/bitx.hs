@@ -49,6 +49,7 @@ module Network.Bitcoin.BitX.Types
     Transaction(..),
     Account(..),
     PrivateTrade(..),
+    FeeInfo(..),
 
 -- | Convenient constructors for records which serve as input parameters to functions. These are not
 --   completely safe (since you can forget to set a field and the Haskell compiler won't notice),
@@ -128,7 +129,10 @@ module Network.Bitcoin.BitX.Types
     HasIsBuy(..),
     HasStatus(..),
     HasBeneficiaryId(..),
-    HasOrderId(..)
+    HasOrderId(..),
+    HasMakerFee(..),
+    HasTakerFee(..),
+    HasThirtyDayVolume(..)
   ) where
 
 import Data.Aeson (FromJSON(..))
@@ -501,6 +505,15 @@ data PrivateTrade = PrivateTrade {
 instance NFData PrivateTrade
 
 makeFields ''PrivateTrade
+
+-- | Fee information
+data FeeInfo = FeeInfo {
+    feeInfoMakerFee :: Scientific,
+    feeInfoTakerFee :: Scientific,
+    feeInfoThirtyDayVolume :: Scientific
+  } deriving (Eq, Show, Generic, Data, Typeable, Ord)
+
+makeFields ''FeeInfo
 
 instance FromJSON CcyPair
 

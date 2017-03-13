@@ -23,6 +23,7 @@ module Network.Bitcoin.BitX
     --module Network.Bitcoin.BitX.Private.Auth,
     module Network.Bitcoin.BitX.Private.Order,
     module Network.Bitcoin.BitX.Private.Withdrawal,
+    module Network.Bitcoin.BitX.Private.Fees,
     module Network.Bitcoin.BitX.Response,
     BitXAesRecordConvert(..),
     POSTEncodeable(..)
@@ -36,6 +37,7 @@ import Network.Bitcoin.BitX.Private.Quote
 --import Network.Bitcoin.BitX.Private.Auth
 import Network.Bitcoin.BitX.Private.Order
 import Network.Bitcoin.BitX.Private.Withdrawal
+import Network.Bitcoin.BitX.Private.Fees
 import Network.Bitcoin.BitX.Types.Internal
 import Network.Bitcoin.BitX.Response
 

@@ -191,3 +191,10 @@ _privateTrade = do
   let _ = x ^. BitX.volume
   Nothing
 
+_feeInfo :: Maybe Int
+_feeInfo = do
+  let x = BitX.FeeInfo 0 0 0
+  let _ = x ^. BitX.makerFee
+  let _ = x ^. BitX.takerFee
+  let _ = x ^. BitX.thirtyDayVolume
+  Nothing
