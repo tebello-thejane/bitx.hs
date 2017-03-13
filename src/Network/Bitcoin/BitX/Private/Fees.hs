@@ -13,7 +13,7 @@
 -- Retrieving fee information.
 --
 -- The BitX fee structure is cummulative-volume-based. The sole endpoint in
--- this packagereturns the user's current fee structure and 30-day volume.
+-- this package returns the user's current fee structure and 30-day volume.
 --
 -----------------------------------------------------------------------------
 
