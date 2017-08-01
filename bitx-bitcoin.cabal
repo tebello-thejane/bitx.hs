@@ -3,12 +3,13 @@ version:             0.11.0.1
 synopsis:            A Haskell library for working with the BitX bitcoin exchange.
 
 description:
-    Haskell bindings to the BitX REST API, as described here: <https://bitx.co/api>.
+    Haskell bindings to the Luno (formerly BitX) REST API, as described here:
+    <https://www.luno.com/en/api>.
     .
     Note that since this library interfaces directly with a financial API, great care
     must be taken in its use. In particular, the author cannot be held accountable for any
     financial losses as a result of programming error, whether that error is in your code,
-    the code of the author of this library, or BitX's code. This is just common sense.
+    the code of the author of this library, or Luno's code. This is just common sense.
     .
     If you need to make sure that nothing funny happens in the code, apart from reading
     the source yourself, you should also perform a few test transactions with very small

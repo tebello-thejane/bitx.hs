@@ -2,10 +2,10 @@
 [![Hackage](https://budueba.com/hackage/bitx-bitcoin)](https://hackage.haskell.org/package/bitx-bitcoin)
 [![BSD3](https://img.shields.io/badge/license-BSD3-brightgreen.svg?style=flat)](http://opensource.org/licenses/BSD-3-Clause)
 
-(Hopefully useful) Haskell bindings to the [BitX](https://bitx.co/) bitcoin exchange's [API](https://bitx.co/api).
+(Hopefully useful) Haskell bindings to the [Luno](https://www.luno.com/) (formerly BitX) bitcoin exchange's [API](https://www.luno.com/en/api).
 
 As a minimal example, to get the current selling price (in South African Rand) of bitcoin on the
-BitX exchange, do the following:
+Luno exchange, do the following:
 
 ```haskell
 import Control.Lens ((^.))
