@@ -85,7 +85,7 @@ spec =
       recordAesCheck
         "{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
             \ \"expiration_timestamp\":8768834222, \"completed_timestamp\":6511257825, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
-            \ \"limit_price\":765.00,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
+            \ \"limit_price\":765.00,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"XBTMYR\",\
             \ \"state\":\"COMPLETE\",\"type\":\"BID\"}"
         PrivateOrder
             {privateOrderBase = 568.7,
@@ -98,14 +98,14 @@ spec =
              privateOrderLimitPrice = 765,
              privateOrderLimitVolume = 55.2,
              privateOrderId = "83YG",
-             privateOrderPair = NADXBT,
+             privateOrderPair = XBTMYR,
              privateOrderState = COMPLETE,
              privateOrderOrderType = BID}
     it "PrivateOrders is parsed properly" $
       recordAesCheck
         "{\"orders\":[{\"base\":\"568.7\", \"counter\":3764.2,\"creation_timestamp\":478873467, \
             \ \"expiration_timestamp\":8768834222, \"completed_timestamp\":6511257825, \"fee_base\":\"3687.3\", \"fee_counter\":12.9,\
-            \ \"limit_price\":765.00,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"NADXBT\",\
+            \ \"limit_price\":765.00,\"limit_volume\":55.2,\"order_id\":\"83YG\",\"pair\":\"XBTMYR\",\
             \ \"state\":\"COMPLETE\",\"type\":\"BID\"}]}"
         [privateOrderInner]
     it "OrderID is parsed properly" $
@@ -221,7 +221,7 @@ privateOrderInner =
         privateOrderLimitPrice = 765,
         privateOrderLimitVolume = 55.2,
         privateOrderId = "83YG",
-        privateOrderPair = NADXBT,
+        privateOrderPair = XBTMYR,
         privateOrderState = COMPLETE,
         privateOrderOrderType = BID}
 

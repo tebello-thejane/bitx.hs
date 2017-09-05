@@ -185,19 +185,9 @@ makeFields ''BitXError
 -- | A currency pair
 data CcyPair =
     XBTZAR -- ^ Bitcoin vs. ZAR
-    | XBTNAD -- ^ Bitcoin vs. Namibian Dollar
-    | ZARXBT -- ^ ZAR vs. Namibian Dollar
-    | NADXBT -- ^ Namibian Dollar vs. Bitcoin
-    | XBTKES -- ^ Bitcoin vs. Kenyan Shilling
-    | KESXBT -- ^ Kenyan Shilling vs Bitcoin
     | XBTMYR -- ^ Bitcoin vs. Malaysian Ringgit
-    | MYRXBT -- ^ Malaysian Ringgit vs. Bitcoin
     | XBTNGN -- ^ Bitcoin vs. Nigerian Naira
-    | NGNXBT -- ^ Nigerian Naira vs. Bitcoin
     | XBTIDR -- ^ Bitcoin vs. Indonesian Rupiah
-    | IDRXBT -- ^ Indonesian Rupiah vs. Bitcoin
-    | XBTSGD -- ^ Bitcoin vs. Singapore Dollar
-    | SGDXBT -- ^ Singapore Dollar vs. Bitcoin
   deriving (Show, Generic, Eq, Data, Typeable, Ord)
 
 instance NFData CcyPair
@@ -221,13 +211,9 @@ makeFields ''Ticker
 -- | A trade-able asset. Essentially, a currency.
 data Asset =
     ZAR -- ^ South African Rand
-    | NAD -- ^ Namibian Dollar
     | XBT -- ^ Bitcoin
-    | KES -- ^ Kenyan Shilling
     | MYR -- ^ Malaysian Ringgit
-    | NGN -- ^ Nigerian Naira
     | IDR -- ^ Indonesian Rupiah
-    | SGD -- ^ Singapore Dollar
   deriving (Show, Generic, Eq, Data, Typeable, Ord)
 
 instance NFData Asset
@@ -363,9 +349,9 @@ instance NFData OrderRequest
 
 makeFields ''OrderRequest
 
--- |@mkOrderRequest = OrderRequest ZARXBT BID 0 0@
+-- |@mkOrderRequest = OrderRequest XBTZAR BID 0 0@
 mkOrderRequest :: OrderRequest
-mkOrderRequest = OrderRequest ZARXBT BID 0 0
+mkOrderRequest = OrderRequest XBTZAR BID 0 0
 
 data MarketOrderRequest = MarketOrderRequest
         {marketOrderRequestPair :: CcyPair,
@@ -376,9 +362,9 @@ instance NFData MarketOrderRequest
 
 makeFields ''MarketOrderRequest
 
--- |@mkMarketOrderRequest = MarketOrderRequest ZARXBT BID 0@
+-- |@mkMarketOrderRequest = MarketOrderRequest XBTZAR BID 0@
 mkMarketOrderRequest :: MarketOrderRequest
-mkMarketOrderRequest = MarketOrderRequest ZARXBT BID 0
+mkMarketOrderRequest = MarketOrderRequest XBTZAR BID 0
 
 -- | The current balance of a private account.
 data Balance = Balance
@@ -452,9 +438,9 @@ instance NFData QuoteRequest
 
 makeFields ''QuoteRequest
 
--- |@mkQuoteRequest = QuoteRequest BUY ZARXBT 0@
+-- |@mkQuoteRequest = QuoteRequest BUY XBTZAR 0@
 mkQuoteRequest :: QuoteRequest
-mkQuoteRequest = QuoteRequest BUY ZARXBT 0
+mkQuoteRequest = QuoteRequest BUY XBTZAR 0
 
 -- | A temporarily locked-in quote.
 data OrderQuote = OrderQuote

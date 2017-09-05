@@ -64,11 +64,11 @@ spec =
         postEncode
           QuoteRequest
             {quoteRequestQuoteType = BUY,
-             quoteRequestPair = XBTKES,
+             quoteRequestPair = XBTMYR,
              quoteRequestBaseAmount = 566.76}
       `shouldBe`
         [("type", "BUY"),
-         ("pair", "XBTKES"),
+         ("pair", "XBTMYR"),
          ("base_amount", "566.76")]
     it "MarketOrderRequest for buy is post-encoded properly" $
         postEncode

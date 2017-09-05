@@ -22,7 +22,7 @@ spec =
     it "getOrderBook connects to BitX and works" $
       connectsAndParsesOkay $ getOrderBook XBTZAR
     it "getTrades connects to BitX and works" $
-      connectsAndParsesOkay $ getTrades Nothing XBTKES
+      connectsAndParsesOkay $ getTrades Nothing XBTMYR
 
 connectsAndParsesOkay :: IO (BitXAPIResponse recd) -> Bool
 connectsAndParsesOkay = isValidResponse . unsafePerformIO
