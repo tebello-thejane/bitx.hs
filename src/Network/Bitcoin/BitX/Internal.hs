@@ -106,7 +106,7 @@ rateLimit act1 act2 = go (500 * 1000)
                         threadDelay del
                         go (incDelay del)
             else act2 resp
-        maxLimit = 5 * 1000 * 1000 -- 5 seconds probably means something else is wrong...
+        maxLimit = 30 * 1000 * 1000 -- 30 seconds probably means something else is wrong...
         incDelay = round . (* (1.5 :: Double)) . fromIntegral
 
 consumeResponseIO :: BitXAesRecordConvert recd => Either NetCon.HttpException (NetCon.Response BL.ByteString)
@@ -136,8 +136,8 @@ eitherToMaybe (Right b) = Just b
 
 isRateLimited :: Either NetCon.HttpException a -> Bool
 #if MIN_VERSION_http_client(0,5,0)
-isRateLimited (Left  (NetCon.HttpExceptionRequest _ (NetCon.StatusCodeException r _ )))  = (responseStatus r == status503) || (responseStatus r == status429)
+isRateLimited (Left  (NetCon.HttpExceptionRequest _ (NetCon.StatusCodeException r _ )))  = responseStatus r == status429
 #else
-isRateLimited (Left  (NetCon.StatusCodeException st _ _)) = st == status503 || st == status429
+isRateLimited (Left  (NetCon.StatusCodeException st _ _)) = st == status429
 #endif
 isRateLimited _ = False
