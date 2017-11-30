@@ -188,6 +188,7 @@ data CcyPair =
     | XBTMYR -- ^ Bitcoin vs. Malaysian Ringgit
     | XBTNGN -- ^ Bitcoin vs. Nigerian Naira
     | XBTIDR -- ^ Bitcoin vs. Indonesian Rupiah
+    | ETHXBT -- ^ Ether vs. Bitcoin
   deriving (Show, Generic, Eq, Data, Typeable, Ord)
 
 instance NFData CcyPair
@@ -214,6 +215,8 @@ data Asset =
     | XBT -- ^ Bitcoin
     | MYR -- ^ Malaysian Ringgit
     | IDR -- ^ Indonesian Rupiah
+    | BCH -- ^ Bitcoin Cash
+    | ETH -- ^ Ether
   deriving (Show, Generic, Eq, Data, Typeable, Ord)
 
 instance NFData Asset
