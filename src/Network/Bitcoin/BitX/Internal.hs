@@ -33,6 +33,7 @@ import Data.Text (Text, pack)
 import Data.Text.Encoding (decodeUtf8)
 import Data.Monoid ((<>))
 import Control.Monad.Catch (MonadThrow)
+import System.IO.Unsafe (unsafePerformIO)
 #if __GLASGOW_HASKELL__ >= 710
 -- <$> is in base since 4.8 (GHC 7.10) due to the AMP
 import Control.Applicative ((<|>))
@@ -46,8 +47,9 @@ bitXAPIPrefix = "https://api.mybitx.com/api/"
 bitXAPIRoot :: Text
 bitXAPIRoot = bitXAPIPrefix <> "1/"
 
-globalManager :: IO NetCon.Manager
-globalManager = NetCon.newManager NetCon.tlsManagerSettings
+globalManager :: NetCon.Manager
+globalManager = unsafePerformIO (NetCon.newManager NetCon.tlsManagerSettings)
+{-# NOINLINE globalManager #-}
 
 psUrl :: MonadThrow m => String -> m Request
 #if MIN_VERSION_http_client(0,4,30)
@@ -58,8 +60,7 @@ psUrl = NetCon.parseUrl
 
 authConnect :: BitXAuth -> Request -> IO (Either NetCon.HttpException (Response BL.ByteString))
 authConnect auth req = do
-    manager <- globalManager
-    try . flip NetCon.httpLbs manager . NetCon.applyBasicAuth userID userSecret $ req
+    try . flip NetCon.httpLbs globalManager . NetCon.applyBasicAuth userID userSecret $ req
     where
         userID = Txt.encodeUtf8 (auth ^. Types.id)
         userSecret = Txt.encodeUtf8 (auth ^. Types.secret)
@@ -89,9 +90,8 @@ simpleBitXMETHAuth_ auth meth verb = withSocketsDo $
 
 simpleBitXGet_ :: BitXAesRecordConvert recd => Text -> IO (BitXAPIResponse recd)
 simpleBitXGet_ verb = withSocketsDo $ do
-    manager <- globalManager
     rateLimit
-        (try . flip NetCon.httpLbs manager . fromJust . psUrl $ Txt.unpack (bitXAPIRoot <> verb))
+        (try . flip NetCon.httpLbs globalManager . fromJust . psUrl $ Txt.unpack (bitXAPIRoot <> verb))
         consumeResponseIO
 
 rateLimit :: IO (Either NetCon.HttpException c) -> (Either NetCon.HttpException c -> IO d) -> IO d

@@ -90,7 +90,7 @@ script:
       cabal configure --enable-tests
 
       echo -e "\033[0;32mcabal build.\033[0m"
-      cabal build
+      travis_wait 60 cabal build
 
       echo -e "\033[0;32mcabal test.\033[0m"
       cabal test
