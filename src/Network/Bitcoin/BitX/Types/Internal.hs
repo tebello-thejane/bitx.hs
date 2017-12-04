@@ -33,6 +33,7 @@ import qualified Data.ByteString.Char8 as BS8 (pack)
 #if __GLASGOW_HASKELL__ >= 708
 import Data.Coerce
 #endif
+import Data.Maybe (fromMaybe)
 import Test.QuickCheck
 
 {-# ANN module ("HLint: ignore Use camelCase" :: String) #-}
@@ -658,7 +659,7 @@ instance BitXAesRecordConvert Types.PrivateTrade where
 ----------------------------------------- PrivateTrades type ----------------------------------------
 
 data PrivateTrades_ = PrivateTrades_
-    { privateTrades'trades :: [PrivateTrade_]
+    { privateTrades'trades :: Maybe [PrivateTrade_]
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
@@ -667,7 +668,7 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 instance BitXAesRecordConvert [Types.PrivateTrade] where
     type Aes [Types.PrivateTrade] = PrivateTrades_
     aesToRec PrivateTrades_ {..} =
-        map aesToRec privateTrades'trades
+        map aesToRec (fromMaybe [] privateTrades'trades)
 
 -------------------------------------------- FeeInfo type -------------------------------------------
 
