@@ -53,7 +53,7 @@ library
     Network.Bitcoin.BitX.Private.Fees
     Network.Bitcoin.BitX.Response
 
-  ghc-options: -Wall -Wcompat
+  ghc-options: -Wall
   if impl(ghc >= 6.8)
     ghc-options: -fwarn-tabs
 
