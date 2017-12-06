@@ -2,9 +2,9 @@
 [![Hackage](https://budueba.com/hackage/bitx-bitcoin)](https://hackage.haskell.org/package/bitx-bitcoin)
 [![BSD3](https://img.shields.io/badge/license-BSD3-brightgreen.svg?style=flat)](http://opensource.org/licenses/BSD-3-Clause)
 
-(Hopefully useful) Haskell bindings to the [Luno](https://www.luno.com/) (formerly BitX) bitcoin exchange's [API](https://www.luno.com/en/api).
+(Hopefully useful) Haskell bindings to the [Luno](https://www.luno.com/) (formerly BitX) cryptocurrency exchange's [API](https://www.luno.com/en/api).
 
-As a minimal example, to get the current selling price (in South African Rand) of bitcoin on the
+As a minimal example, to get the current selling price (in South African Rand) of Bitcoin on the
 Luno exchange, do the following:
 
 ```haskell
@@ -37,5 +37,5 @@ Note that the code snippet above depends on [http-types](https://hackage.haskell
 [microlens](https://hackage.haskell.org/package/microlens)), and finally **bitx-bitcoin**.
 
 This library is known to work on Windows, but if you wish to use it then you will have to do a bit
-more work due to the ``Network`` library not building on Windows out of the box. See
-[this blog post by Neil Mitchell](http://neilmitchell.blogspot.com/2010/12/installing-haskell-network-library-on.html).
+more work due to the ``Network`` library not building on Windows out of the box. Your best bet might be to just
+use Stack.
