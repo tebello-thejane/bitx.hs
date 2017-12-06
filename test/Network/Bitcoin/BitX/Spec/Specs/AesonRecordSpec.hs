@@ -173,12 +173,17 @@ spec =
              privateTradeTimestamp = posixSecondsToUTCTime 1467138492.909,
              privateTradeOrderType = BID,
              privateTradeVolume = 0.147741}
-    it "PrivateTrades is parsed properly" $
-      recordAesCheck
-        "{\"trades\":[{\"base\": \"0.147741\", \"counter\": \"1549.950831\", \"fee_base\": \"0.90\", \"fee_counter\": \"0.00\", \
-            \ \"is_buy\": false, \"order_id\": \"BXMC2CJ7HNB88U4\", \"pair\": \"XBTZAR\", \"price\": \"10491.00\", \
-            \ \"timestamp\": 1467138492909, \"type\": \"BID\", \"volume\": \"0.147741\" }]}"
-         [privateTradeInner]
+    describe "PrivateTrades" $ do
+      it "parses a canned example correctly" $
+        recordAesCheck
+          "{\"trades\":[{\"base\": \"0.147741\", \"counter\": \"1549.950831\", \"fee_base\": \"0.90\", \"fee_counter\": \"0.00\", \
+              \ \"is_buy\": false, \"order_id\": \"BXMC2CJ7HNB88U4\", \"pair\": \"XBTZAR\", \"price\": \"10491.00\", \
+              \ \"timestamp\": 1467138492909, \"type\": \"BID\", \"volume\": \"0.147741\" }]}"
+           [privateTradeInner]
+      it "parses null as an empty list" $
+        recordAesCheck
+          "{\"trades\":null}"
+          ([] :: [PrivateTrade])
     it "FeeInfo is parsed properly" $
       recordAesCheck
         "{\"maker_fee\": \"0.00\", \"taker_fee\": \"0.10\", \"thirty_day_volume\": \"0.894342\"}"
