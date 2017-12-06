@@ -1,5 +1,5 @@
 name:                bitx-bitcoin
-version:             0.11.0.1
+version:             0.12.0.0
 synopsis:            A Haskell library for working with the BitX bitcoin exchange.
 
 description:
@@ -21,7 +21,7 @@ license:             BSD3
 
 license-file:        LICENSE
 
-author:              Tebello Thejane
+author:              Tebello Thejane, Tristan Seligmann
 
 maintainer:          Tebello Thejane <zyxoas+hackage@gmail.com>
 
@@ -48,7 +48,6 @@ library
     Network.Bitcoin.BitX.Private
     Network.Bitcoin.BitX.Types
     Network.Bitcoin.BitX.Private.Quote
-  --  Network.Bitcoin.BitX.Private.Auth
     Network.Bitcoin.BitX.Private.Order
     Network.Bitcoin.BitX.Private.Withdrawal
     Network.Bitcoin.BitX.Private.Fees

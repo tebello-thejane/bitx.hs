@@ -1,3 +1,10 @@
+v0.12.0.0
+* We now handle nulls properly when deserialising JSON arrays.
+* Luno has added Ethereum and an ETHXBT currency pair.
+* Prices (bid, ask, and spot) are now consistently Scientific, rather than Int. BREAKING CHANGE.
+* We no longer create a brand new connection manager on every API call, significatly improving performance.
+* Luno's rate-limiting is now much more harsh.
+
 v0.11.0.1
 * Added new fee_info endpoint.
 
@@ -73,4 +80,3 @@ v0.2.0.0
 
 v0.1.0.0
 * Initial release!
-
