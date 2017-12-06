@@ -1,6 +1,5 @@
 *Add haddocks everywhere possible.
 *Test all conversions.
-*Investigate the issue with Aeson failing when the API returns a null instead of an array.
 *Maybe rethink this whole RequestStatus_ mess...
 *Find out why calling cancelWithdrawalRequest causes an internal server error during testing.
 ****Why is postOrder not working??
