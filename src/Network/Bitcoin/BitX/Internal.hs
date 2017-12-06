@@ -15,7 +15,7 @@ import qualified Network.Bitcoin.BitX.Types as Types
 import Network.Bitcoin.BitX.Types.Internal
 import qualified Network.HTTP.Client as NetCon
 import qualified Network.HTTP.Client.TLS as NetCon
-import Network.HTTP.Types.Status (status503, status429)
+import Network.HTTP.Types.Status (status429)
 import Network.HTTP.Client (Response(..), Request(..))
 import Control.Exception (try)
 import qualified Data.Aeson as Aeson (decode, eitherDecode)
@@ -59,8 +59,8 @@ psUrl = NetCon.parseUrl
 #endif
 
 authConnect :: BitXAuth -> Request -> IO (Either NetCon.HttpException (Response BL.ByteString))
-authConnect auth req = do
-    try . flip NetCon.httpLbs globalManager . NetCon.applyBasicAuth userID userSecret $ req
+authConnect auth =
+    try . flip NetCon.httpLbs globalManager . NetCon.applyBasicAuth userID userSecret
     where
         userID = Txt.encodeUtf8 (auth ^. Types.id)
         userSecret = Txt.encodeUtf8 (auth ^. Types.secret)
@@ -89,7 +89,7 @@ simpleBitXMETHAuth_ auth meth verb = withSocketsDo $
         consumeResponseIO
 
 simpleBitXGet_ :: BitXAesRecordConvert recd => Text -> IO (BitXAPIResponse recd)
-simpleBitXGet_ verb = withSocketsDo $ do
+simpleBitXGet_ verb = withSocketsDo $
     rateLimit
         (try . flip NetCon.httpLbs globalManager . fromJust . psUrl $ Txt.unpack (bitXAPIRoot <> verb))
         consumeResponseIO
