@@ -29,7 +29,6 @@ import Data.Monoid (mempty)
 import Data.Scientific (Scientific)
 import Data.ByteString (ByteString)
 import Data.List.Split (splitOn)
-import qualified Data.ByteString.Char8 as BS8 (pack)
 #if __GLASGOW_HASKELL__ >= 708
 import Data.Coerce
 #endif
@@ -79,16 +78,10 @@ showableToBytestring_ = Txt.encodeUtf8 . Txt.pack . show
 -- | Wrappers around Scientific and Int, and FromJSON instance, to facilitate automatic JSON instances
 
 newtype QuotedScientific = QuotedScientific Scientific deriving (Read, Show)
-newtype QuotedInt = QuotedInt Int deriving (Read, Show)
 
 instance FromJSON QuotedScientific where
    parseJSON (String x) = return . QuotedScientific . read . Txt.unpack $ x
    parseJSON (Number x) = return . QuotedScientific . read . show $ x
-   parseJSON _          = mempty
-
-instance FromJSON QuotedInt where
-   parseJSON (String x) = return . QuotedInt . (truncate :: Scientific -> Int) . read . Txt.unpack $ x
-   parseJSON (Number x) = return . QuotedInt . (truncate :: Scientific -> Int) . read . show $ x
    parseJSON _          = mempty
 
 qsToScientific :: QuotedScientific -> Scientific
@@ -97,14 +90,6 @@ qsToScientific = coerce
 {-# INLINE qsToScientific #-}
 #else
 qsToScientific (QuotedScientific sci) = sci
-#endif
-
-qiToInt :: QuotedInt -> Int
-#if __GLASGOW_HASKELL__ >= 708
-qiToInt = coerce
-{-# INLINE qiToInt #-}
-#else
-qiToInt (QuotedInt i) = i
 #endif
 
 -- | Wrapper around UTCTime and FromJSON instance, to facilitate automatic JSON instances
@@ -155,9 +140,9 @@ requestStatusParse (RequestStatus_      x     ) =
 
 data Ticker_ = Ticker_
     { ticker'timestamp :: TimestampMS
-    , ticker'bid :: Maybe QuotedInt
-    , ticker'ask :: Maybe QuotedInt
-    , ticker'last_trade :: Maybe QuotedInt
+    , ticker'bid :: Maybe QuotedScientific
+    , ticker'ask :: Maybe QuotedScientific
+    , ticker'last_trade :: Maybe QuotedScientific
     , ticker'rolling_24_hour_volume :: QuotedScientific
     , ticker'pair :: Types.CcyPair
     }
@@ -169,9 +154,9 @@ instance BitXAesRecordConvert Types.Ticker where
     type Aes Types.Ticker = Ticker_
     aesToRec Ticker_ {..} =
         Types.Ticker {tickerTimestamp = tsmsToUTCTime ticker'timestamp,
-                  tickerBid = fmap qiToInt ticker'bid,
-                  tickerAsk = fmap qiToInt ticker'ask,
-                  tickerLastTrade = fmap qiToInt ticker'last_trade,
+                  tickerBid = fmap qsToScientific ticker'bid,
+                  tickerAsk = fmap qsToScientific ticker'ask,
+                  tickerLastTrade = fmap qsToScientific ticker'last_trade,
                   tickerRolling24HourVolume = qsToScientific ticker'rolling_24_hour_volume,
                   tickerPair = ticker'pair}
 
@@ -207,7 +192,7 @@ instance BitXAesRecordConvert Types.BitXError where
 
 data Order_ = Order_
     { order'volume :: QuotedScientific,
-      order'price :: QuotedInt
+      order'price :: QuotedScientific
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"} ''Order_)
@@ -216,7 +201,7 @@ instance BitXAesRecordConvert Types.Order where
     type Aes Types.Order = Order_
     aesToRec Order_ {..} =
         Types.Order {orderVolume = qsToScientific order'volume,
-              orderPrice = qiToInt order'price}
+              orderPrice = qsToScientific order'price}
 
 -------------------------------------------- Orderbook type ----------------------------------------
 
@@ -244,7 +229,7 @@ instance BitXAesRecordConvert Types.Orderbook where
 data Trade_ = Trade_
     { trade'volume :: QuotedScientific
     , trade'timestamp :: TimestampMS
-    , trade'price :: QuotedInt
+    , trade'price :: QuotedScientific
     , trade'is_buy :: Bool
     }
 
@@ -256,7 +241,7 @@ instance BitXAesRecordConvert Types.Trade where
     aesToRec Trade_ {..} =
         Types.Trade { tradeTimestamp = tsmsToUTCTime trade'timestamp,
             tradeVolume = qsToScientific trade'volume,
-            tradePrice = qiToInt trade'price,
+            tradePrice = qsToScientific trade'price,
             tradeIsBuy = trade'is_buy}
 
 ----------------------------------------- PublicTrades type ----------------------------------------
@@ -283,7 +268,7 @@ data PrivateOrder_ = PrivateOrder_
     , privateOrder'completed_timestamp :: TimestampMS
     , privateOrder'fee_base :: QuotedScientific
     , privateOrder'fee_counter :: QuotedScientific
-    , privateOrder'limit_price :: QuotedInt
+    , privateOrder'limit_price :: QuotedScientific
     , privateOrder'limit_volume :: QuotedScientific
     , privateOrder'order_id :: Types.OrderID
     , privateOrder'pair :: Types.CcyPair
@@ -304,7 +289,7 @@ instance BitXAesRecordConvert Types.PrivateOrder where
                   privateOrderCompletedTimestamp = tsmsToUTCTime privateOrder'completed_timestamp,
                   privateOrderFeeBase = qsToScientific privateOrder'fee_base,
                   privateOrderFeeCounter = qsToScientific privateOrder'fee_counter,
-                  privateOrderLimitPrice = qiToInt privateOrder'limit_price,
+                  privateOrderLimitPrice = qsToScientific privateOrder'limit_price,
                   privateOrderLimitVolume = qsToScientific privateOrder'limit_volume,
                   privateOrderId = privateOrder'order_id,
                   privateOrderPair = privateOrder'pair,
@@ -332,7 +317,7 @@ instance POSTEncodeable Types.OrderRequest where
         [("pair", showableToBytestring_ (oreq ^. Types.pair)),
          ("type", showableToBytestring_ (oreq ^. Types.orderType)),
          ("volume", realToDecimalByteString_ (oreq ^. Types.volume)),
-         ("price", BS8.pack . show $ (oreq ^. Types.price))]
+         ("price", realToDecimalByteString_ (oreq ^. Types.price))]
 
 -------------------------------------------- OrderIDRec type ---------------------------------------
 
@@ -632,7 +617,7 @@ data PrivateTrade_ = PrivateTrade_
     , privateTrade'is_buy :: Bool
     , privateTrade'order_id :: Types.OrderID
     , privateTrade'pair :: Types.CcyPair
-    , privateTrade'price :: QuotedInt
+    , privateTrade'price :: QuotedScientific
     , privateTrade'timestamp :: TimestampMS
     , privateTrade'type :: OrderType_
     , privateTrade'volume :: QuotedScientific
@@ -651,7 +636,7 @@ instance BitXAesRecordConvert Types.PrivateTrade where
                   privateTradeIsBuy = privateTrade'is_buy,
                   privateTradeOrderId = privateTrade'order_id,
                   privateTradePair = privateTrade'pair,
-                  privateTradePrice = qiToInt privateTrade'price,
+                  privateTradePrice = qsToScientific privateTrade'price,
                   privateTradeTimestamp = tsmsToUTCTime privateTrade'timestamp,
                   privateTradeOrderType = orderTypeParse privateTrade'type,
                   privateTradeVolume = qsToScientific privateTrade'volume}

@@ -198,9 +198,9 @@ instance NFData CcyPair
 -- the price of the last filled bid order. Necessarily @bid <= ask.@
 data Ticker = Ticker {
     tickerTimestamp :: UTCTime,
-    tickerBid :: Maybe Int,
-    tickerAsk :: Maybe Int,
-    tickerLastTrade :: Maybe Int,
+    tickerBid :: Maybe Scientific,
+    tickerAsk :: Maybe Scientific,
+    tickerLastTrade :: Maybe Scientific,
     tickerRolling24HourVolume :: Scientific,
     tickerPair :: CcyPair
     } deriving (Eq, Show, Generic, Data, Typeable, Ord)
@@ -241,7 +241,7 @@ type RequestSuccess = Bool
 -- | A single placed order in the orderbook
 data Order = Order {
     orderVolume :: Scientific,
-    orderPrice :: Int
+    orderPrice :: Scientific
     } deriving (Eq, Show, Generic, Data, Typeable, Ord)
 
 instance NFData Order
@@ -269,7 +269,7 @@ makeFields ''Orderbook
 data Trade = Trade {
     tradeTimestamp :: UTCTime,
     tradeVolume :: Scientific,
-    tradePrice :: Int,
+    tradePrice :: Scientific,
     tradeIsBuy :: Bool
     } deriving (Eq, Show, Generic, Data, Typeable, Ord)
 
@@ -315,7 +315,7 @@ data PrivateOrder = PrivateOrder
          privateOrderCompletedTimestamp :: UTCTime,
          privateOrderFeeBase :: Scientific,
          privateOrderFeeCounter :: Scientific,
-         privateOrderLimitPrice :: Int,
+         privateOrderLimitPrice :: Scientific,
          privateOrderLimitVolume :: Scientific,
          privateOrderId :: OrderID,
          privateOrderPair :: CcyPair,
@@ -346,7 +346,7 @@ data OrderRequest = OrderRequest
         {orderRequestPair :: CcyPair,
          orderRequestOrderType :: OrderType,
          orderRequestVolume :: Scientific,
-         orderRequestPrice :: Int } deriving (Eq, Show, Generic, Data, Typeable, Ord)
+         orderRequestPrice :: Scientific } deriving (Eq, Show, Generic, Data, Typeable, Ord)
 
 instance NFData OrderRequest
 
@@ -485,7 +485,7 @@ data PrivateTrade = PrivateTrade {
     privateTradeIsBuy :: Bool,
     privateTradeOrderId :: Text,
     privateTradePair :: CcyPair,
-    privateTradePrice :: Int,
+    privateTradePrice :: Scientific,
     privateTradeTimestamp :: UTCTime,
     privateTradeOrderType :: OrderType,
     privateTradeVolume :: Scientific
@@ -513,4 +513,3 @@ instance FromJSON OrderType
 instance FromJSON WithdrawalType
 
 instance FromJSON QuoteType
-

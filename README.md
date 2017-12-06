@@ -22,7 +22,7 @@ main = do
     ValidResponse tic        ->
       case tic ^. BitX.ask of
         Nothing              ->  putStrLn "The BTC-ZAR exchange not currently have an ask price..."
-        Just p               ->  putStrLn ("1 bitcoin will set you back ZAR" ++ show p ++ ".00.")
+        Just p               ->  putStrLn ("1 Bitcoin will set you back ZAR" ++ show p ++ ".")
     ErrorResponse err        ->
         error $ "BitX error received: \"" ++ unpack (err ^. BitX.error) ++ "\""
     ExceptionResponse ex     ->
