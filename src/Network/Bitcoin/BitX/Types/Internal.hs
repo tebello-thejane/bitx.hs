@@ -299,7 +299,7 @@ instance BitXAesRecordConvert Types.PrivateOrder where
 ------------------------------------------ PrivateOrders type --------------------------------------
 
 data PrivateOrders_ = PrivateOrders_
-    {privateOrders'orders :: [PrivateOrder_]
+    {privateOrders'orders :: Maybe [PrivateOrder_]
     }
 
 $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . splitOn "'"}
@@ -308,7 +308,7 @@ $(AesTH.deriveFromJSON AesTH.defaultOptions{AesTH.fieldLabelModifier = last . sp
 instance BitXAesRecordConvert [Types.PrivateOrder] where
     type Aes [Types.PrivateOrder] = PrivateOrders_
     aesToRec PrivateOrders_ {..} =
-        map aesToRec privateOrders'orders
+        map aesToRec (fromMaybe [] privateOrders'orders)
 
 ------------------------------------------ OrderRequest type ---------------------------------------
 
