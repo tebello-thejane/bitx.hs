@@ -189,6 +189,7 @@ data CcyPair =
     | XBTNGN -- ^ Bitcoin vs. Nigerian Naira
     | XBTIDR -- ^ Bitcoin vs. Indonesian Rupiah
     | ETHXBT -- ^ Ether vs. Bitcoin
+    | XBTEUR -- ^ Bitcoin vs. Euro
   deriving (Show, Generic, Eq, Data, Typeable, Ord)
 
 instance NFData CcyPair
