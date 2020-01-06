@@ -23,7 +23,7 @@ import qualified Data.ByteString.Lazy as BL
 import Data.ByteString.Lazy (toStrict)
 import qualified Data.ByteString as BS
 import Data.Maybe (fromJust)
-import Network (withSocketsDo)
+import Network.Socket (withSocketsDo)
 import qualified Data.Text.Encoding as Txt
 import qualified Data.Text as Txt
 import Network.Bitcoin.BitX.Response
