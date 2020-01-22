@@ -190,6 +190,13 @@ data CcyPair =
     | XBTIDR -- ^ Bitcoin vs. Indonesian Rupiah
     | ETHXBT -- ^ Ether vs. Bitcoin
     | XBTEUR -- ^ Bitcoin vs. Euro
+    | ETHZAR -- ^ Ether vs. South African Rand
+    | BCHXBT -- ^ Bitcoin vs. Bitcoin Cash
+    | ETHMYR -- ^ Ether vs. Malaysian Ringgit
+    | XBTZMW -- ^ Bitcoin vs. Zambian Kwacha
+    | XBTSGD -- ^ Bitcoin vs. Singapore Dollar
+    | XBTUGX -- ^ Bitcoin vs. Ugandan Shilling
+    | ETHNGN -- ^ Ether vs. Nigerian Naira
   deriving (Show, Generic, Eq, Data, Typeable, Ord)
 
 instance NFData CcyPair
@@ -218,6 +225,10 @@ data Asset =
     | IDR -- ^ Indonesian Rupiah
     | BCH -- ^ Bitcoin Cash
     | ETH -- ^ Ether
+    | ZMW -- ^ Zambian Kwacha
+    | NGN -- ^ Nigerian Naira
+    | UGX -- ^ Ugandan Shilling
+    | SGD -- ^ Singapore Dollar
   deriving (Show, Generic, Eq, Data, Typeable, Ord)
 
 instance NFData Asset
@@ -226,9 +237,16 @@ instance NFData Asset
 data WithdrawalType =
     ZAR_EFT -- ^ ZAR by Electronic Funds Transfer
     | NAD_EFT -- ^ Namibian Dollar by EFT
+    | KES_EFT -- ^ Kenyan Shilling by EFT
     | KES_MPESA -- ^ Kenyan Shilling by Vodafone MPESA
     | MYR_IBG -- ^ Malaysian Ringgit by Interbank GIRO (?)
     | IDR_LLG -- ^ Indonesian Rupiah by Lalu Lintas Giro (??)
+    | NGN_EFT -- ^ Nigerian Naira by EFT
+    | ZMW_EFT -- ^ Zambian Kwacha by EFT
+    | SGD_GIRO -- ^ Singapore Dollar by GIRO / FAST
+    | SGD_WIRE -- ^ Singapore Dollar by SWIFT wire
+    | EUR_SEPA -- ^ Euro by SEPA
+    | UGX_EFT -- ^ Ugandan Shilling by EFT
     deriving (Show, Generic, Eq, Data, Typeable, Ord)
 
 instance NFData WithdrawalType
