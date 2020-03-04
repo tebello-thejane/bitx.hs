@@ -197,6 +197,9 @@ data CcyPair =
     | XBTSGD -- ^ Bitcoin vs. Singapore Dollar
     | XBTUGX -- ^ Bitcoin vs. Ugandan Shilling
     | ETHNGN -- ^ Ether vs. Nigerian Naira
+    | XRPZAR -- ^ Ripple vs. South African Rand
+    | XRPMYR -- ^ Ripple vs. Malaysian Ringgit
+    | XRPXBT -- ^ Ripple vs. Bitcoin
   deriving (Show, Generic, Eq, Data, Typeable, Ord)
 
 instance NFData CcyPair
@@ -229,6 +232,7 @@ data Asset =
     | NGN -- ^ Nigerian Naira
     | UGX -- ^ Ugandan Shilling
     | SGD -- ^ Singapore Dollar
+    | XRP -- ^ Ripple
   deriving (Show, Generic, Eq, Data, Typeable, Ord)
 
 instance NFData Asset
