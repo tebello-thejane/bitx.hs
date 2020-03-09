@@ -4,29 +4,21 @@ module Network.Bitcoin.BitX.Types.Internal.Decimal
     )
 where
 
-import Data.ByteString (ByteString)
+import Data.ByteString (ByteString, stripSuffix)
+import Data.ByteString.Builder (toLazyByteString)
+import Data.ByteString.Builder.Scientific
 import Data.ByteString.Char8 (pack)
+import Data.ByteString.Lazy (toStrict)
+import Data.Scientific (Scientific)
 
-import Numeric (showFFloat)
+realToDecimalByteString_ :: Scientific -> ByteString
+realToDecimalByteString_ =
+  handleInt . toStrict . toLazyByteString . formatScientificBuilder Fixed Nothing
 
-realToDecimalByteString_ :: (RealFrac a) => a -> ByteString
-realToDecimalByteString_ k =
-    pack
-    . handleIntegers
-    . reverse . dropWhile (== '0') . reverse
-    $ (showFFloat Nothing . (fromRational :: Rational -> Double)
-    . toRational $ truncate6 k) ""
-
-truncate6 :: RealFrac a => a -> Double
-truncate6 k =
-    (/ (1000 * 1000 :: Double)) . fromInteger
-    $ truncate (k * 1000 * 1000)
-
-handleIntegers :: String -> String
-handleIntegers x =
-    if last x == '.'
-        then init x
-        else x
+handleInt :: ByteString -> ByteString
+handleInt s = case stripSuffix (pack ".0") s of
+  Nothing -> s
+  Just s' -> s'
 
 -- |
 -- >>> realToDecimalByteString_ 3
@@ -57,11 +49,13 @@ handleIntegers x =
 -- "0.000001"
 --
 -- >>> realToDecimalByteString_ 0.0000001
--- "0"
+-- "0.0000001"
 --
 -- >>> realToDecimalByteString_ 0
 -- "0"
 --
 -- >>> realToDecimalByteString_ 123.1234567
--- "123.123456"
+-- "123.1234567"
 --
+-- >>> realToDecimalByteString_ 0.00002683
+-- "0.00002683"
