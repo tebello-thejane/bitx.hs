@@ -112,6 +112,7 @@ test-suite spec
                        directory,
                        text,
                        safe
+  build-tool-depends:  hspec-discover:hspec-discover == 2.*
   other-modules:
     Network.Bitcoin.BitX.Spec.Common
     Network.Bitcoin.BitX.Spec.Specs.AesonRecordSpec
