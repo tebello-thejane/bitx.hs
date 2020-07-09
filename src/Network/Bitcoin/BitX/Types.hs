@@ -200,6 +200,12 @@ data CcyPair =
     | XRPZAR -- ^ Ripple vs. South African Rand
     | XRPMYR -- ^ Ripple vs. Malaysian Ringgit
     | XRPXBT -- ^ Ripple vs. Bitcoin
+    | LTCXBT -- ^ Litecoin vs. Bitcoin
+    | LTCZAR -- ^ Litecoin vs. South African Rand
+    | LTCNGN -- ^ Litecoin vs. Nigerian Naira
+    | XRPNGN -- ^ Ripple vs. Nigerian Naira
+    | XBTGBP -- ^ Bitcoin vs. British Pound
+    | LTCMYR -- ^ Litecoin vs. Malaysian Ringgit
   deriving (Show, Generic, Eq, Data, Typeable, Ord)
 
 instance NFData CcyPair
@@ -233,6 +239,8 @@ data Asset =
     | UGX -- ^ Ugandan Shilling
     | SGD -- ^ Singapore Dollar
     | XRP -- ^ Ripple
+    | LTC -- ^ Litecoin
+    | GBP -- ^ British Pound
   deriving (Show, Generic, Eq, Data, Typeable, Ord)
 
 instance NFData Asset
